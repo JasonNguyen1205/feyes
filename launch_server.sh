@@ -134,6 +134,21 @@ echo -e "${YELLOW}Enabling PTX JIT for RTX GPU support...${NC}"
 export CUDA_FORCE_PTX_JIT=1
 echo -e "${GREEN}✓ GPU settings configured${NC}"
 
+# Configure firewall to allow port
+echo -e "${YELLOW}Configuring firewall to allow port $PORT...${NC}"
+if command -v ufw &> /dev/null; then
+    # Ubuntu/Debian UFW
+    sudo ufw allow $PORT/tcp 2>/dev/null && echo -e "${GREEN}✓ UFW: Port $PORT allowed${NC}" || echo -e "${YELLOW}⚠ Could not configure UFW (may need sudo)${NC}"
+elif command -v firewall-cmd &> /dev/null; then
+    # RedHat/CentOS firewalld
+    sudo firewall-cmd --permanent --add-port=$PORT/tcp 2>/dev/null && sudo firewall-cmd --reload 2>/dev/null && echo -e "${GREEN}✓ firewalld: Port $PORT allowed${NC}" || echo -e "${YELLOW}⚠ Could not configure firewalld (may need sudo)${NC}"
+elif command -v iptables &> /dev/null; then
+    # Generic iptables
+    sudo iptables -I INPUT -p tcp --dport $PORT -j ACCEPT 2>/dev/null && echo -e "${GREEN}✓ iptables: Port $PORT allowed${NC}" || echo -e "${YELLOW}⚠ Could not configure iptables (may need sudo)${NC}"
+else
+    echo -e "${YELLOW}⚠ No supported firewall found (ufw/firewalld/iptables)${NC}"
+fi
+
 # Check for shared folder
 SHARED_FOLDER="$SERVER_DIR/shared"
 if [ ! -d "$SHARED_FOLDER" ]; then

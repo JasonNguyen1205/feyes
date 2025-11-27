@@ -49,7 +49,7 @@ class ROIGroup:
 class AOIState:
     """Track connection, session, and cached metadata for the AOI client."""
 
-    server_url: str = "http://10.100.27.156:5000"
+    server_url: str = ""  # Will be set to localhost if available, otherwise user must configure
     connected: bool = False
     session_id: Optional[str] = None
     session_product: Optional[str] = None
@@ -65,6 +65,29 @@ class AOIState:
 
 
 state = AOIState()
+
+
+def test_server_reachable(server_url: str, timeout: float = 3.0) -> bool:
+    """Test if a server URL is reachable by checking its health endpoint.
+    
+    Args:
+        server_url: Full server URL (e.g., 'http://localhost:5000')
+        timeout: Request timeout in seconds
+        
+    Returns:
+        True if server is reachable and healthy, False otherwise
+    """
+    try:
+        url = f"{server_url.rstrip('/')}/api/health"
+        response = requests.get(url, timeout=timeout)
+        if response.ok:
+            logger.info(f"Server reachable at {server_url}")
+            return True
+        logger.warning(f"Server at {server_url} returned status {response.status_code}")
+        return False
+    except Exception as exc:
+        logger.debug(f"Server at {server_url} not reachable: {exc}")
+        return False
 
 
 def make_server_url(path: str) -> str:
@@ -946,6 +969,21 @@ def get_state():
     )
 
 
+@app.route("/api/server/test", methods=["POST"])
+def test_server():
+    """Test if a server URL is reachable without establishing full connection."""
+    data = request.get_json(silent=True) or {}
+    server_url = data.get("server_url") or data.get("serverUrl")
+    if not server_url:
+        return jsonify({"error": "server_url is required"}), 400
+    
+    is_reachable = test_server_reachable(server_url)
+    return jsonify({
+        "reachable": is_reachable,
+        "server_url": server_url
+    }), 200
+
+
 @app.route("/api/server/connect", methods=["POST"])
 def connect_server():
     """Connect to AOI server with comprehensive initialization."""
@@ -1010,7 +1048,16 @@ def disconnect_server():
 def get_products():
     """Get list of available products from server."""
     if not state.connected:
-        return jsonify({"error": "Not connected to server"}), 503
+        return jsonify({
+            "error": "Not connected to server",
+            "hint": "Please connect to server first using the Server Connection panel"
+        }), 503
+    
+    if not state.server_url:
+        return jsonify({
+            "error": "Server URL not configured",
+            "hint": "Please configure server connection first"
+        }), 503
 
     try:
         if not state.products_cache:
@@ -1018,7 +1065,11 @@ def get_products():
 
         return jsonify({"products": state.products_cache, "source": "server"}), 200
     except Exception as e:
-        return jsonify({"error": f"Failed to fetch products: {str(e)}"}), 500
+        logger.error(f"Failed to fetch products: {e}")
+        return jsonify({
+            "error": f"Failed to fetch products: {str(e)}",
+            "server_url": state.server_url
+        }), 500
 
 
 @app.route("/api/session", methods=["POST"])

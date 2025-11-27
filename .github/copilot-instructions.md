@@ -10,6 +10,20 @@
 
 ## Architecture Deep Dive
 
+### Server Connection Strategy (Nov 2025)
+**Intelligent auto-connection with fallback**:
+1. On client startup, automatically tests `http://localhost:5000` (3s timeout)
+2. If localhost server is reachable → auto-connects silently
+3. If localhost unreachable → prompts user to manually enter server IP
+4. Uses `/api/server/test` endpoint to check reachability without full connection
+5. `test_server_reachable()` helper in `client/app.py` validates server health
+
+**Implementation**:
+- Client `AOIState.server_url` defaults to empty string (not hardcoded)
+- Frontend `DOMContentLoaded` checks localhost first, then manual config
+- Server URL input shows "Auto-checking localhost:5000..." placeholder initially
+- Graceful degradation: if check fails, assumes localhost unavailable
+
 ### Session-Based Workflow
 Every inspection follows this lifecycle:
 ```
@@ -143,14 +157,15 @@ pytest tests/test_ai.py -k "mobilenet"
 
 ## Common Gotchas
 
-1. **Path conversions**: Client sends `/mnt/visual-aoi-shared/...`, server uses `/home/jason_nguyen/visual-aoi-server/shared/...` - API handles conversion
-2. **Field naming**: Always use `exposure` (NOT `exposure_time`) in configs and code
-3. **Device barcodes format**: Accepts both dict `{'1': 'barcode'}` and list `[{'device_id': 1, 'barcode': '...'}]` via `normalize_device_barcodes()`
-4. **RTX 5080 compatibility**: Use PyTorch (not TensorFlow) - better GPU support
-5. **ROI normalization**: ALWAYS call `normalize_roi()` when loading configs to handle legacy formats
-6. **Parallel processing safety**: Use `golden_update_lock` in `src/roi.py` when modifying golden samples
-7. **Session state**: Never use global variables for request state - always use session objects
-8. **Color ROI validation**: Server validates Color ROIs on save, adds defaults (color_tolerance=50, min_pixel_percentage=70.0)
+1. **Server connection**: Client auto-checks `localhost:5000` on startup; manual IP entry required if localhost unavailable
+2. **Path conversions**: Client sends `/mnt/visual-aoi-shared/...`, server uses `/home/jason_nguyen/visual-aoi-server/shared/...` - API handles conversion
+3. **Field naming**: Always use `exposure` (NOT `exposure_time`) in configs and code
+4. **Device barcodes format**: Accepts both dict `{'1': 'barcode'}` and list `[{'device_id': 1, 'barcode': '...'}]` via `normalize_device_barcodes()`
+5. **RTX 5080 compatibility**: Use PyTorch (not TensorFlow) - better GPU support
+6. **ROI normalization**: ALWAYS call `normalize_roi()` when loading configs to handle legacy formats
+7. **Parallel processing safety**: Use `golden_update_lock` in `src/roi.py` when modifying golden samples
+8. **Session state**: Never use global variables for request state - always use session objects
+9. **Color ROI validation**: Server validates Color ROIs on save, adds defaults (color_tolerance=50, min_pixel_percentage=70.0)
 
 ## UI/UX Patterns (Client)
 
@@ -233,6 +248,7 @@ server/
 
 ## Version-Specific Notes
 
+- **Server connection** (Nov 2025): Auto-check localhost:5000 with fallback to manual IP entry
 - **ROI v3.0** (Oct 2025): Added `is_device_barcode` field (field 10) for device barcode priority
 - **ROI v3.2** (Nov 2025): Added Color detection (type 4) with `color_config` field (field 11)
 - **Result v2.0** (Oct 2025): Device-grouped results with `device_summaries` structure
