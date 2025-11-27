@@ -168,3 +168,4 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 server/shared/*
+NVIDIA-Linux-x86_64-590.44.01.run
