@@ -1,0 +1,3960 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <!-- Chromium Performance Optimizations -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="force-rendering" content="webkit">
+
+    <!-- Resource Hints for Faster Loading -->
+    <link rel="preconnect" href="http://10.100.27.156:5000">
+    <link rel="dns-prefetch" href="http://10.100.27.156:5000">
+
+    <!-- Google Fonts - Titillium Web -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- PWA Features -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#007AFF">
+
+    <title>Visual AOI Client - Professional</title>
+
+    <!-- Stylesheets with Resource Hints -->
+    <link rel="preload" href="/static/professional.css" as="style">
+    <link rel="stylesheet" href="/static/professional.css">
+    <link rel="stylesheet" href="/static/chromium-optimizations.css">
+    <link rel="stylesheet" href="/static/compact-ui.css">
+
+    <!-- Favicons - Multiple formats for maximum compatibility -->
+    <!-- SVG favicon (modern browsers including Chromium) -->
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <!-- Data URI fallback (URL-encoded for Chromium) -->
+    <link rel="alternate icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔍%3C/text%3E%3C/svg%3E">
+</head>
+
+<body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+        <span id="themeIcon">🌙</span>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Visual AOI Client</h1>
+            <div class="subtitle">Professional Automated Optical Inspection System v2.0</div>
+            <div style="margin-top: 1rem;">
+                <a href="/roi-editor" class="glass-button secondary"
+                    style="text-decoration: none; display: inline-block;">
+                    🎯 ROI Configuration Editor
+                </a>
+            </div>
+        </div>
+
+        <!-- Settings Panel with Cog Icon -->
+        <div class="settings-panel">
+            <div class="settings-header" onclick="toggleSettingsPanel()"
+                title="Click to expand/collapse setup sections">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="settings-icon">⚙️</span>
+                    <span class="settings-title">Setup Configuration</span>
+                    <span class="settings-status" id="setupStatus">(Not configured)</span>
+                </div>
+                <button class="collapse-btn" id="settingsPanel-btn">📂</button>
+            </div>
+            <div class="settings-content" id="settingsContent">
+                <div class="grid">
+                    <!-- Step 1: Connect to Server -->
+                    <div class="section" id="serverSection">
+                        <div class="section-header" onclick="toggleSection('serverSection')">
+                            <h2>🔗 Step 1: Server Connection</h2>
+                            <button class="collapse-btn" id="serverSection-btn">📁</button>
+                        </div>
+                        <div class="section-content">
+                            <div class="controls">
+                                <div class="control-group">
+                                    <label>Server URL</label>
+                                    <input type="text" id="serverUrl" placeholder="http://10.100.27.156:5000"
+                                        value="http://10.100.27.156:5000">
+                                </div>
+                                <button onclick="connectServer()" class="glass-button">Connect</button>
+                                <button onclick="disconnectServer()" class="glass-button danger">Disconnect</button>
+                            </div>
+                            <div id="connectionStatus" class="status disconnected">
+                                <span class="status-indicator"></span>
+                                <span>Disconnected from server</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Select Product -->
+                    <div class="section" id="productSection">
+                        <div class="section-header" onclick="toggleSection('productSection')">
+                            <h2>📦 Step 2: Product Selection</h2>
+                            <button class="collapse-btn" id="productSection-btn">📁</button>
+                        </div>
+                        <div class="section-content">
+                            <div class="controls">
+                                <div class="control-group">
+                                    <label>Product Configuration</label>
+                                    <select id="productSelect">
+                                        <option value="">Select Product</option>
+                                    </select>
+                                </div>
+                                <div style="font-size: 0.9em; opacity: 0.7; margin-top: 8px;">
+                                    Select a product to configure camera with optimal settings
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Initialize Camera with Product Settings -->
+                    <div class="section" id="cameraSection">
+                        <div class="section-header" onclick="toggleSection('cameraSection')">
+                            <h2>📷 Step 3: Camera Initialization</h2>
+                            <button class="collapse-btn" id="cameraSection-btn">📁</button>
+                        </div>
+                        <div class="section-content">
+                            <div class="controls">
+                                <div class="control-group">
+                                    <label>Available Cameras</label>
+                                    <select id="cameraSelect">
+                                        <option value="">Select Camera</option>
+                                    </select>
+                                </div>
+                                <button onclick="initializeCamera()" class="glass-button">Initialize with
+                                    Product</button>
+                                <button onclick="startLiveView()" class="glass-button success">Live View</button>
+                                <button onclick="stopLiveView()" class="glass-button danger">Stop View</button>
+                            </div>
+                            <div id="cameraStatus" class="status disconnected">
+                                <span class="status-indicator"></span>
+                                <span>Camera not initialized</span>
+                            </div>
+                            <div style="font-size: 0.9em; opacity: 0.7; margin-top: 8px;">
+                                Camera will be initialized with optimal settings for selected product
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Create Session -->
+                    <div class="section" id="sessionSection">
+                        <div class="section-header" onclick="toggleSection('sessionSection')">
+                            <h2>🏭 Step 4: Session Management</h2>
+                            <button class="collapse-btn" id="sessionSection-btn">📁</button>
+                        </div>
+                        <div class="section-content">
+                            <div class="controls">
+                                <button onclick="createSession()" class="glass-button success">Create Session</button>
+                                <button onclick="closeSession()" class="glass-button danger">Close Session</button>
+                            </div>
+                            <div id="sessionStatus" class="status disconnected">
+                                <span class="status-indicator"></span>
+                                <span>No active session</span>
+                            </div>
+                            <div id="sessionInfo" class="session-info" style="display: none;">
+                                <div class="info-card">
+                                    <div class="info-label">Session ID</div>
+                                    <div class="info-value" id="sessionIdValue">-</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-label">Product</div>
+                                    <div class="info-value" id="sessionProductValue">-</div>
+                                </div>
+                                <div class="info-card">
+                                    <div class="info-label">Capture Groups</div>
+                                    <div class="info-value" id="sessionRoiGroupsValue">-</div>
+                                </div>
+                            </div>
+
+                            <!-- Device Barcodes - Auto-generated based on ROI groups -->
+                            <div id="deviceBarcodesDisplay" class="device-barcodes-container" style="display: none;">
+                                <h4>Device Barcodes</h4>
+                                <div id="deviceBarcodesList">
+                                    <!-- Device barcode entries will be auto-generated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section full-width inspection-controls">
+        <h2>⚡ Inspection Control</h2>
+        <div class="controls" style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+            <button onclick="performInspection()" class="glass-button" style="font-size: 1.3em; padding: 20px 40px;">
+                🔍 Perform Inspection
+            </button>
+
+            <!-- Inspection Delay Toggle -->
+            <div
+                style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.15);">
+                <span style="font-size: 0.95em; color: var(--secondary-fg); font-weight: 500;">⏱️ Inspection
+                    Delay:</span>
+                <label class="toggle-switch"
+                    style="position: relative; display: inline-block; width: 48px; height: 26px; margin: 0;">
+                    <input type="checkbox" id="delayToggle" onchange="toggleInspectionDelay(this)"
+                        style="opacity: 0; width: 0; height: 0;">
+                    <span
+                        style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #8E8E93; border-radius: 26px; transition: 0.3s;"
+                        class="toggle-slider"></span>
+                </label>
+                <span id="delayLabel"
+                    style="font-size: 0.85em; color: var(--tertiary-fg); font-weight: 600; min-width: 35px;">OFF</span>
+                <input type="number" id="delayTimeInput" min="0" max="60" step="0.5" value="2" placeholder="seconds"
+                    disabled
+                    style="width: 75px; padding: 6px 10px; font-size: 0.9em; border: 1px solid var(--input-border); border-radius: 8px; background: var(--input-bg); color: var(--input-fg); text-align: center;">
+                <span style="font-size: 0.85em; color: var(--secondary-fg); font-weight: 500;">sec</span>
+            </div>
+        </div>
+
+        <!-- Device Barcode Input Panel - Enhanced with professional keyboard navigation -->
+        <div class="barcode-input-panel" id="barcodeInputPanel"
+            style="display: none; margin: 20px 0; padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <div>
+                    <h3 style="margin: 0; font-size: 1.1em; color: var(--primary-fg);">📋 Device Barcodes</h3>
+                    <div style="font-size: 0.75em; color: var(--tertiary-fg); margin-top: 4px;">
+                        Sequential scanning - one device at a time
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 0.85em; color: var(--tertiary-fg);">
+                        <kbd>Enter</kbd> Next device • <kbd>Ctrl+R</kbd> Reset
+                    </div>
+                    <div style="font-size: 0.75em; color: var(--tertiary-fg); margin-top: 4px;">
+                        <kbd>↑</kbd>/<kbd>↓</kbd> Navigate • <kbd>F1</kbd> Focus first
+                    </div>
+                </div>
+            </div>
+            <div id="deviceBarcodesContainer" class="device-barcodes-container">
+                <!-- Auto-generated barcode inputs will appear here -->
+            </div>
+            <div class="barcode-controls"
+                style="margin-top: 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <button onclick="clearAllBarcodes()" class="glass-button secondary"
+                    style="font-size: 0.9em; padding: 8px 16px;">
+                    🗑️ Clear All (Ctrl+Shift+C)
+                </button>
+                <button onclick="focusFirstBarcode()" class="glass-button secondary"
+                    style="font-size: 0.9em; padding: 8px 16px;">
+                    🎯 Focus First (F1)
+                </button>
+
+                <!-- Auto-Inspection Toggle -->
+                <div
+                    style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: rgba(255, 255, 255, 0.03); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <span style="font-size: 0.85em; color: var(--tertiary-fg);">⚡ Auto-Inspect:</span>
+                    <label class="toggle-switch"
+                        style="position: relative; display: inline-block; width: 44px; height: 24px; margin: 0;">
+                        <input type="checkbox" id="autoInspectToggle" checked onchange="toggleAutoInspect(this)"
+                            style="opacity: 0; width: 0; height: 0;">
+                        <span
+                            style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--success); border-radius: 24px; transition: 0.3s;"
+                            class="toggle-slider"></span>
+                    </label>
+                    <span id="autoInspectLabel"
+                        style="font-size: 0.75em; color: var(--success); font-weight: 600;">ON</span>
+                </div>
+
+                <div style="margin-left: auto; font-size: 0.85em; color: var(--warning-color);" id="barcodeWarning">
+                    ⚠️ Please enter at least one device barcode
+                </div>
+            </div>
+        </div>
+
+        <div class="timing-info" id="timingInfo" style="display: none;">
+            <div class="timing-card">
+                <div class="timing-value" id="captureTime">-</div>
+                <div class="timing-label">Capture Time (ms)</div>
+            </div>
+            <div class="timing-card">
+                <div class="timing-value" id="processingTime">-</div>
+                <div class="timing-label">Processing Time (ms)</div>
+            </div>
+            <div class="timing-card">
+                <div class="timing-value" id="totalTime">-</div>
+                <div class="timing-label">Total Time (ms)</div>
+            </div>
+            <div class="timing-card">
+                <div class="timing-value" id="roiGroupsCount">-</div>
+                <div class="timing-label">Capture Groups</div>
+            </div>
+        </div>
+
+        <!-- Device Results Cards - Dynamically Generated (Each on New Line) -->
+        <div id="deviceResultsCards" class="device-results-section" style="display: none;">
+            <!-- Device cards will be inserted here -->
+        </div>
+    </div>
+
+    <div class="grid">
+        <!-- <div class="section">
+                <h2>📺 Live View</h2>
+                <div class="live-view">
+                    <img id="liveImage" src="/static/placeholder.png" alt="Live camera view" style="display: none;">
+                    <div id="liveViewPlaceholder">
+                        <div style="font-size: 2em; margin-bottom: 16px;">📷</div>
+                        <div>Live view not active</div>
+                        <div style="font-size: 0.9em; opacity: 0.7; margin-top: 8px;">Initialize camera and start
+                            live
+                            view</div>
+                    </div>
+                </div>
+                 <div class="live-view-controls" style="margin-top: 16px; text-align: center;">
+                    <div class="control-group" style="display: inline-block; margin-right: 20px;">
+                        <label>Refresh Rate</label>
+                        <select id="refreshRate" onchange="updateRefreshRate()">
+                            <option value="100">10 FPS</option>
+                            <option value="200">5 FPS</option>
+                            <option value="500">2 FPS</option>
+                            <option value="1000">1 FPS</option>
+                        </select>
+                    </div>
+                    <div class="live-view-status" id="liveViewStatus"
+                        style="display: inline-block; color: var(--tertiary-fg); font-size: 0.9em;">
+                        Status: Inactive
+                    </div>
+                </div> 
+            </div> -->
+
+        <div class="section full-width" id="resultsSection">
+            <div class="section-header" onclick="toggleSection('resultsSection')">
+                <h2>📊 Inspection Results</h2>
+                <button class="collapse-btn" id="resultsSection-btn">📁</button>
+            </div>
+            <div class="section-content">
+                <div id="resultsSummary" class="results-summary" style="display: none;">
+                    <!-- Summary will be populated here -->
+                </div>
+                <div class="results-toolbar">
+                    <div class="toolbar-left">
+                        <button onclick="exportResults()" class="glass-button secondary" id="exportBtn">
+                            <span class="btn-icon">📄</span>
+                            <span class="btn-text">Export Results</span>
+                        </button>
+                        <button onclick="toggleDeviceDetails()" class="glass-button secondary" id="deviceDetailsToggle">
+                            <span class="btn-icon">🔍</span>
+                            <span class="btn-text">Show Device Details</span>
+                        </button>
+                    </div>
+                    <div class="toolbar-right">
+                        <span class="timestamp-label" id="resultsTimestamp">
+                            No results yet
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Device-Separated Inspection Results -->
+    <div class="section" id="deviceResultsSection" style="display: none;">
+        <div class="section-header" onclick="toggleSection('deviceResultsSection')">
+            <h2>🔍 Detailed Inspection Results by Device</h2>
+            <button class="collapse-btn" id="deviceResultsSection-btn">📁</button>
+        </div>
+        <div class="section-content">
+            <div id="deviceResultsContainer">
+                <!-- Device results will be populated here -->
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Process Flow Modal -->
+    <div id="flowModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔄 Process Flow</h2>
+                <button onclick="closeFlowModal()" class="glass-button danger">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="flowVisualization" class="flow-container">
+                    <!-- Flow visualization will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ROI Detail Modal - Lazy loads images on open for performance -->
+    <div id="roiDetailModal" class="modal" style="display: none;">
+        <div class="modal-content"
+            style="max-width: 1200px; width: 90%; max-height: 90vh; display: flex; flex-direction: column;">
+            <div class="modal-header">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="color: var(--tertiary-fg); font-size: 1.2em; opacity: 0.5;"
+                        title="Drag to move">⋮⋮</span>
+                    <h2 id="roiDetailModalTitle" style="margin: 0;">🔍 ROI Details</h2>
+                </div>
+                <button onclick="closeROIDetailModal()" class="glass-button danger">✕</button>
+            </div>
+            <div class="modal-body" id="roiDetailModalBody" style="overflow-y: auto; flex: 1;">
+                <!-- ROI details will be loaded here when modal opens -->
+            </div>
+        </div>
+    </div>
+
+    <!-- System Information Footer -->
+    <div class="system-info">
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="info-label">System Status:</span>
+                <span class="info-value" id="systemStatus">Initializing...</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Version:</span>
+                <span class="info-value">v2.0.0</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Last Update:</span>
+                <span class="info-value" id="lastUpdate">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Connected:</span>
+                <span class="info-value" id="connectionTime">-</span>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script>
+        // Global state management inspired by src/ui.py
+        let appState = {
+            collapsedSections: new Set(),
+            setupComplete: {
+                server: false,
+                camera: false,
+                session: false
+            },
+            connected: false,
+            cameraInitialized: false,
+            sessionActive: false,
+            sessionId: null,
+            sessionProduct: null, // Store current product name
+            serverUrl: null, // Store server URL
+            liveViewActive: false,
+            theme: 'light',
+            refreshRate: 100,
+            currentResult: null, // Store current inspection result
+            autoInspectOnScan: true, // Auto-trigger inspection when all barcodes are scanned
+            scannedBarcodes: {} // Store operator-scanned barcodes by device_id
+        };
+
+        // Section collapse/expand functionality
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const content = section.querySelector('.section-content');
+            const btn = document.getElementById(sectionId + '-btn');
+
+            if (appState.collapsedSections.has(sectionId)) {
+                // Expand
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.opacity = '1';
+                section.classList.remove('collapsed');
+                btn.textContent = '📁';
+                btn.title = 'Collapse section';
+                appState.collapsedSections.delete(sectionId);
+            } else {
+                // Collapse
+                content.style.maxHeight = '0';
+                content.style.opacity = '0';
+                section.classList.add('collapsed');
+                btn.textContent = '📂';
+                btn.title = 'Expand section';
+                appState.collapsedSections.add(sectionId);
+            }
+
+            // Save collapsed state
+            localStorage.setItem('aoi-collapsed-sections', JSON.stringify([...appState.collapsedSections]));
+        }
+
+        function loadCollapsedState() {
+            const saved = localStorage.getItem('aoi-collapsed-sections');
+            if (saved) {
+                const collapsed = JSON.parse(saved);
+                collapsed.forEach(sectionId => {
+                    if (document.getElementById(sectionId)) {
+                        appState.collapsedSections.add(sectionId);
+                        toggleSection(sectionId);
+                    }
+                });
+            }
+        }
+
+        function checkSetupComplete() {
+            // Auto-collapse sections after setup is complete
+            if (appState.connected && !appState.collapsedSections.has('serverSection')) {
+                setTimeout(() => {
+                    if (!appState.setupComplete.server) {
+                        toggleSection('serverSection');
+                        appState.setupComplete.server = true;
+                        showNotification('Server setup complete - panel collapsed', 'success');
+                    }
+                }, 2000);
+            }
+
+            if (appState.cameraInitialized && !appState.collapsedSections.has('cameraSection')) {
+                setTimeout(() => {
+                    if (!appState.setupComplete.camera) {
+                        toggleSection('cameraSection');
+                        appState.setupComplete.camera = true;
+                        showNotification('Camera setup complete - panel collapsed', 'success');
+                    }
+                }, 2000);
+            }
+
+            if (appState.sessionActive && !appState.collapsedSections.has('sessionSection')) {
+                setTimeout(() => {
+                    if (!appState.setupComplete.session) {
+                        toggleSection('sessionSection');
+                        appState.setupComplete.session = true;
+                        showNotification('Session setup complete - panel collapsed', 'success');
+                    }
+                }, 2000);
+            }
+        }
+
+        function autoCollapseSetupSections() {
+            // Auto-collapse all setup sections for compact UI on page load
+            const setupSections = ['serverSection', 'productSection', 'cameraSection', 'sessionSection'];
+            setupSections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (section && !appState.collapsedSections.has(sectionId)) {
+                    const content = section.querySelector('.section-content');
+                    const btn = document.getElementById(sectionId + '-btn');
+
+                    content.style.maxHeight = '0';
+                    content.style.opacity = '0';
+                    section.classList.add('collapsed');
+                    if (btn) {
+                        btn.textContent = '📂';
+                        btn.title = 'Expand section';
+                    }
+                    appState.collapsedSections.add(sectionId);
+                }
+            });
+            localStorage.setItem('aoi-collapsed-sections', JSON.stringify([...appState.collapsedSections]));
+
+            // Also collapse the settings panel initially
+            collapseSettingsPanel();
+        }
+
+        // Toggle the entire settings panel (all 4 setup sections)
+        function toggleSettingsPanel() {
+            const content = document.getElementById('settingsContent');
+            const btn = document.getElementById('settingsPanel-btn');
+            const panel = document.querySelector('.settings-panel');
+
+            const isCollapsed = content.style.maxHeight === '0px' || content.style.maxHeight === '';
+
+            if (isCollapsed) {
+                // Expand
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.opacity = '1';
+                panel.classList.remove('collapsed');
+                btn.textContent = '📁';
+                btn.title = 'Collapse setup';
+                localStorage.setItem('aoi-settings-collapsed', 'false');
+            } else {
+                // Collapse
+                content.style.maxHeight = '0';
+                content.style.opacity = '0';
+                panel.classList.add('collapsed');
+                btn.textContent = '📂';
+                btn.title = 'Expand setup';
+                localStorage.setItem('aoi-settings-collapsed', 'true');
+            }
+
+            // Update status message
+            updateSetupStatus();
+        }
+
+        function collapseSettingsPanel() {
+            const content = document.getElementById('settingsContent');
+            const btn = document.getElementById('settingsPanel-btn');
+            const panel = document.querySelector('.settings-panel');
+
+            content.style.maxHeight = '0';
+            content.style.opacity = '0';
+            panel.classList.add('collapsed');
+            if (btn) {
+                btn.textContent = '📂';
+                btn.title = 'Expand setup';
+            }
+            localStorage.setItem('aoi-settings-collapsed', 'true');
+        }
+
+        function updateSetupStatus() {
+            const statusElement = document.getElementById('setupStatus');
+            if (!statusElement) return;
+
+            let statusParts = [];
+            if (appState.connected) statusParts.push('Server ✓');
+            if (appState.productSelected) statusParts.push('Product ✓');
+            if (appState.cameraInitialized) statusParts.push('Camera ✓');
+            if (appState.sessionActive) statusParts.push('Session ✓');
+
+            if (statusParts.length === 0) {
+                statusElement.textContent = '(Not configured)';
+                statusElement.style.color = 'var(--tertiary-fg)';
+            } else if (statusParts.length === 4) {
+                statusElement.textContent = '(All configured ✓)';
+                statusElement.style.color = 'var(--success)';
+            } else {
+                statusElement.textContent = `(${statusParts.join(', ')})`;
+                statusElement.style.color = 'var(--warning)';
+            }
+        }
+
+        function collapseAllSetupPanels() {
+            const setupSections = ['serverSection', 'productSection', 'cameraSection', 'sessionSection'];
+            setupSections.forEach(sectionId => {
+                if (!appState.collapsedSections.has(sectionId)) {
+                    toggleSection(sectionId);
+                }
+            });
+            showNotification('All setup panels collapsed', 'info');
+        }
+
+        function expandAllPanels() {
+            [...appState.collapsedSections].forEach(sectionId => {
+                toggleSection(sectionId);
+            });
+            showNotification('All panels expanded', 'info');
+        }
+
+        // Theme management inspired by src/ui.py theme system
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            document.documentElement.setAttribute('data-theme', newTheme);
+            document.getElementById('themeIcon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            appState.theme = newTheme;
+
+            // Save theme preference
+            localStorage.setItem('aoi-theme', newTheme);
+        }
+
+        // Section collapse/expand functionality
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const content = section.querySelector('.section-content');
+            const btn = document.getElementById(sectionId + '-btn');
+
+            if (appState.collapsedSections.has(sectionId)) {
+                // Expand
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.style.opacity = '1';
+                section.classList.remove('collapsed');
+                btn.textContent = '📁';
+                btn.title = 'Collapse section';
+                appState.collapsedSections.delete(sectionId);
+            } else {
+                // Collapse
+                content.style.maxHeight = '0';
+                content.style.opacity = '0';
+                section.classList.add('collapsed');
+                btn.textContent = '📂';
+                btn.title = 'Expand section';
+                appState.collapsedSections.add(sectionId);
+            }
+
+            // Save collapsed state
+            localStorage.setItem('aoi-collapsed-sections', JSON.stringify([...appState.collapsedSections]));
+        }
+
+        function loadCollapsedState() {
+            const saved = localStorage.getItem('aoi-collapsed-sections');
+            if (saved) {
+                const collapsed = JSON.parse(saved);
+                collapsed.forEach(sectionId => {
+                    if (document.getElementById(sectionId)) {
+                        appState.collapsedSections.add(sectionId);
+                        toggleSection(sectionId);
+                    }
+                });
+            }
+        }
+
+        function checkSetupComplete() {
+            // Auto-collapse sections after setup is complete
+            if (appState.connected && !appState.collapsedSections.has('serverSection')) {
+                setTimeout(() => {
+                    if (!appState.setupComplete.server) {
+                        toggleSection('serverSection');
+                        appState.setupComplete.server = true;
+                        showNotification('Server setup complete - panel collapsed', 'success');
+                    }
+                }, 2000);
+            }
+
+            if (appState.cameraInitialized && !appState.collapsedSections.has('cameraSection')) {
+                setTimeout(() => {
+                    if (!appState.setupComplete.camera) {
+                        toggleSection('cameraSection');
+                        appState.setupComplete.camera = true;
+                        showNotification('Camera setup complete - panel collapsed', 'success');
+                    }
+                }, 2000);
+            }
+
+            if (appState.sessionActive && !appState.collapsedSections.has('sessionSection')) {
+                setTimeout(() => {
+                    if (!appState.setupComplete.session) {
+                        toggleSection('sessionSection');
+                        appState.setupComplete.session = true;
+                        showNotification('Session setup complete - panel collapsed', 'success');
+                    }
+                }, 2000);
+            }
+        }
+
+        // Load saved theme on startup
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('aoi-theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.getElementById('themeIcon').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+            appState.theme = savedTheme;
+        }
+
+        // Enhanced API helper functions
+        async function apiCall(method, endpoint, data = null, timeout = 10000) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+            try {
+                const options = {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    signal: controller.signal
+                };
+                if (data) options.body = JSON.stringify(data);
+
+                const response = await fetch(endpoint, options);
+                clearTimeout(timeoutId);
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || `HTTP ${response.status}: ${response.statusText}`);
+                }
+                return result;
+            } catch (error) {
+                clearTimeout(timeoutId);
+                if (error.name === 'AbortError') {
+                    throw new Error('Request timeout');
+                }
+                throw error;
+            }
+        }
+
+        // Enhanced server connection with system initialization tracking
+        async function connectServer() {
+            const serverUrl = document.getElementById('serverUrl').value.trim();
+            if (!serverUrl) {
+                showNotification('Please enter a server URL', 'warning');
+                return;
+            }
+
+            try {
+                updateSystemStatus('Connecting to server...');
+                const result = await apiCall('POST', '/api/server/connect', { server_url: serverUrl });
+
+                updateConnectionStatus('connected', 'Connected to server');
+                populateProducts(result.products || []);
+                appState.connected = true;
+                appState.serverUrl = serverUrl; // Store server URL
+
+                updateSystemStatus('Connected and ready');
+                updateLastUpdate();
+                showNotification('Server connected successfully', 'success');
+                updateSetupStatus();
+
+                // Check if we should auto-collapse this section
+                checkSetupComplete();
+
+                console.log('Server connection successful:', result);
+            } catch (error) {
+                updateConnectionStatus('disconnected', `Connection failed: ${error.message}`);
+                updateSystemStatus('Connection failed');
+                showNotification(`Connection failed: ${error.message}`, 'error');
+                console.error('Connection error:', error);
+            }
+        }
+
+        async function disconnectServer() {
+            try {
+                await apiCall('POST', '/api/server/disconnect');
+                updateConnectionStatus('disconnected', 'Disconnected from server');
+                clearProducts();
+                clearSession();
+                appState.connected = false;
+                appState.serverUrl = null; // Clear server URL
+                appState.sessionProduct = null; // Clear product
+
+                // NEW: Reset camera state since it was initialized with product-specific settings
+                appState.cameraInitialized = false;
+                updateCameraStatus('disconnected', 'Camera not initialized');
+
+                updateSystemStatus('Disconnected');
+                updateLastUpdate();
+                showNotification('Server disconnected - Please re-initialize camera with product', 'info');
+            } catch (error) {
+                console.error('Disconnect error:', error);
+                showNotification('Disconnect error occurred', 'warning');
+            }
+        }
+
+        // Enhanced camera functions with professional UI feedback
+        // NEW FLOW: Camera initialization requires product selection first
+        async function initializeCamera() {
+            const cameraSerial = document.getElementById('cameraSelect').value;
+            if (!cameraSerial) {
+                showNotification('Please select a camera', 'warning');
+                return;
+            }
+
+            // NEW: Validate server connection first
+            if (!appState.connected) {
+                showNotification('Please connect to server first', 'warning');
+                return;
+            }
+
+            // NEW: Get selected product for product-specific initialization
+            const product = document.getElementById('productSelect').value;
+            if (!product) {
+                showNotification('Please select a product first', 'warning');
+                return;
+            }
+
+            try {
+                // PROFESSIONAL CAMERA INITIALIZATION FLOW
+                console.log('='.repeat(70));
+                console.log('📷 CAMERA INITIALIZATION REQUEST');
+
+                // Step 1: Check existing camera status
+                updateSystemStatus('Checking camera status...');
+                const statusResponse = await fetch('/api/camera/status');
+                const cameraStatus = await statusResponse.json();
+                console.log(`  Current Status:`, cameraStatus);
+
+                // Step 2: Reset pipeline if already initialized (webpage refresh scenario)
+                if (cameraStatus.app_initialized || cameraStatus.pipeline_active) {
+                    console.log(`⚠️  Camera already initialized - resetting pipeline (State: ${cameraStatus.pipeline_state})`);
+                    updateSystemStatus('Resetting camera pipeline...');
+                    updateCameraStatus('warning', 'Resetting pipeline...');
+
+                    const resetResponse = await fetch('/api/camera/reset', { method: 'POST' });
+                    if (!resetResponse.ok) {
+                        throw new Error('Failed to reset camera pipeline');
+                    }
+
+                    console.log('✓ Pipeline reset successful');
+                    await new Promise(resolve => setTimeout(resolve, 500)); // Wait 0.5s for pipeline to stop
+                }
+
+                // Step 3: Initialize camera with product-specific settings
+                updateSystemStatus('Initializing camera with product settings...');
+                console.log(`🔧 Initializing camera hardware with product: ${product}`);
+
+                const payload = {
+                    serial: cameraSerial,
+                    product_name: product,
+                    force_reset: true  // Always force reset for clean initialization
+                };
+
+                const result = await apiCall('POST', '/api/camera/initialize', payload);
+
+                // Step 4: Display initialization details with pipeline state
+                let statusMsg = 'Camera initialized';
+                if (result.product) {
+                    statusMsg += ` for ${result.product}`;
+                    if (result.settings && typeof result.settings === 'object') {
+                        statusMsg += ` (F:${result.settings.focus}, E:${result.settings.exposure})`;
+                    }
+                }
+
+                // Add pipeline state to status message
+                if (result.pipeline_state) {
+                    statusMsg += ` - Pipeline: ${result.pipeline_state}`;
+                }
+
+                updateCameraStatus('connected', statusMsg);
+                appState.cameraInitialized = true;
+                appState.productSelected = !!product; // Mark product as selected
+                appState.sessionProduct = product; // Store product for session creation
+                updateSystemStatus('Camera ready for inspection');
+                updateLastUpdate();
+                showNotification(statusMsg, 'success');
+                updateSetupStatus();
+
+                // Check if we should auto-collapse this section
+                checkSetupComplete();
+
+                console.log('✅ Camera initialization successful:', result);
+                console.log('='.repeat(70));
+            } catch (error) {
+                updateCameraStatus('disconnected', `Camera initialization failed: ${error.message}`);
+                updateSystemStatus('Camera initialization failed');
+                showNotification(`Camera initialization failed: ${error.message}`, 'error');
+                console.error('❌ Camera initialization error:', error);
+                console.log('='.repeat(70));
+            }
+        }
+
+        async function startLiveView() {
+            if (!appState.cameraInitialized) {
+                showNotification('Please initialize camera first', 'warning');
+                return;
+            }
+
+            try {
+                await apiCall('POST', '/api/camera/start-live');
+                appState.liveViewActive = true;
+
+                // Start polling for live images
+                startLiveImagePolling();
+
+                document.getElementById('liveViewPlaceholder').style.display = 'none';
+                document.getElementById('liveImage').style.display = 'block';
+                document.getElementById('liveViewStatus').textContent = 'Status: Active';
+
+                showNotification('Live view started', 'success');
+            } catch (error) {
+                console.error('Live view error:', error);
+                showNotification(`Failed to start live view: ${error.message}`, 'error');
+            }
+        }
+
+        async function stopLiveView() {
+            try {
+                await apiCall('POST', '/api/camera/stop-live');
+                appState.liveViewActive = false;
+
+                document.getElementById('liveViewPlaceholder').style.display = 'block';
+                document.getElementById('liveImage').style.display = 'none';
+                document.getElementById('liveViewStatus').textContent = 'Status: Inactive';
+
+                showNotification('Live view stopped', 'info');
+            } catch (error) {
+                console.error('Stop live view error:', error);
+                showNotification('Failed to stop live view', 'warning');
+            }
+        }
+
+        function startLiveImagePolling() {
+            if (!appState.liveViewActive) return;
+
+            fetch('/api/camera/live-image')
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    }
+                    throw new Error('Failed to fetch live image');
+                })
+                .then(blob => {
+                    const imageUrl = URL.createObjectURL(blob);
+                    const imgElement = document.getElementById('liveImage');
+                    imgElement.src = imageUrl;
+
+                    // Clean up previous URL to prevent memory leaks
+                    imgElement.onload = () => URL.revokeObjectURL(imageUrl);
+                })
+                .catch(error => {
+                    console.error('Live image error:', error);
+                    // Continue polling even if individual frames fail
+                })
+                .finally(() => {
+                    if (appState.liveViewActive) {
+                        setTimeout(startLiveImagePolling, appState.refreshRate);
+                    }
+                });
+        }
+
+        function updateRefreshRate() {
+            appState.refreshRate = parseInt(document.getElementById('refreshRate').value);
+            showNotification(`Refresh rate updated to ${1000 / appState.refreshRate} FPS`, 'info');
+        }
+
+        // Enhanced session management with detailed feedback
+        // NEW FLOW: Session creation requires camera to be initialized first
+        async function createSession() {
+            const product = document.getElementById('productSelect').value;
+            if (!product) {
+                showNotification('Please select a product', 'warning');
+                return;
+            }
+
+            // NEW: Validate proper initialization flow
+            if (!appState.connected) {
+                showNotification('Please connect to server first', 'warning');
+                return;
+            }
+
+            if (!appState.cameraInitialized) {
+                showNotification('Please initialize camera with product settings first', 'warning');
+                return;
+            }
+
+            // NEW: Verify camera was initialized with the same product
+            if (appState.sessionProduct !== product) {
+                showNotification(`Camera is initialized for different product. Please re-initialize camera with ${product}`, 'warning');
+                return;
+            }
+
+            try {
+                updateSystemStatus('Creating session...');
+                const result = await apiCall('POST', '/api/session', { product });
+
+                updateSessionStatus('connected', `Session active: ${result.session_id}`);
+                appState.sessionActive = true;
+                appState.sessionId = result.session_id;
+                appState.sessionProduct = product; // Store product name
+
+                // Update session info display
+                updateSessionInfo(result);
+                updateSystemStatus('Session active - Ready for inspection');
+                updateLastUpdate();
+                showNotification(`Session created for ${product}`, 'success');
+                updateSetupStatus();
+
+                // Check if we should auto-collapse this section
+                checkSetupComplete();
+
+                console.log('Session created:', result);
+            } catch (error) {
+                updateSessionStatus('disconnected', `Session failed: ${error.message}`);
+                updateSystemStatus('Session creation failed');
+
+                // Provide helpful error messages
+                let errorMsg = error.message;
+                if (errorMsg.includes('Camera must be initialized')) {
+                    errorMsg = 'Camera must be initialized before creating session';
+                }
+
+                showNotification(`Session failed: ${errorMsg}`, 'error');
+                console.error('Session error:', error);
+            }
+        }
+
+        async function closeSession() {
+            try {
+                await apiCall('POST', '/api/session/close');
+                clearSession();
+
+                // Clear session product
+                appState.sessionProduct = null;
+
+                // Hide and clear barcode input panel
+                const barcodePanel = document.getElementById('barcodeInputPanel');
+                if (barcodePanel) {
+                    barcodePanel.style.display = 'none';
+                    const container = document.getElementById('deviceBarcodesContainer');
+                    if (container) {
+                        container.innerHTML = ''; // Clear all input fields
+                    }
+                }
+
+                // Clear barcode state
+                appState.scannedBarcodes = {};
+                appState.devicesNeedBarcode = [];
+
+                updateSystemStatus('Session closed');
+                updateLastUpdate();
+                showNotification('Session closed', 'info');
+            } catch (error) {
+                console.error('Close session error:', error);
+                showNotification('Error closing session', 'warning');
+            }
+        }
+
+        // Enhanced inspection with comprehensive UI feedback
+        async function performInspection() {
+            if (!appState.sessionActive) {
+                showNotification('Please create a session first', 'warning');
+                return;
+            }
+
+            if (!appState.cameraInitialized) {
+                showNotification('Please initialize camera first', 'warning');
+                return;
+            }
+
+            // Check if inspection delay is enabled
+            const delayToggle = document.getElementById('delayToggle');
+            const delayInput = document.getElementById('delayTimeInput');
+
+            if (delayToggle && delayToggle.checked && delayInput) {
+                const delaySeconds = parseFloat(delayInput.value) || 2;
+                const delayMs = delaySeconds * 1000;
+
+                showNotification(`Starting inspection in ${delaySeconds}s...`, 'info');
+                updateSystemStatus(`Waiting ${delaySeconds}s before inspection...`);
+
+                // Wait for the specified delay
+                await new Promise(resolve => setTimeout(resolve, delayMs));
+            }
+
+            // Clear previous results before starting new inspection
+            clearResults();
+
+            // CRITICAL: Clear ALL barcode state from previous inspection
+            appState.scannedBarcodes = {};
+
+            // Collect device barcodes from inputs (only devices that need manual input)
+            const barcodePanel = document.getElementById('barcodeInputPanel');
+            const barcodeContainer = document.getElementById('deviceBarcodesContainer');
+            let deviceBarcodes = [];  // Always start with empty array
+
+            console.log('🧹 Cleared previous inspection state - starting fresh');
+
+            // IMPORTANT: Only collect barcodes if panel is visible AND container has input fields
+            if (barcodePanel &&
+                barcodePanel.style.display !== 'none' &&
+                barcodeContainer &&
+                barcodeContainer.children.length > 0) {
+
+                const barcodeInputs = document.querySelectorAll('#deviceBarcodesContainer input');
+
+                // Only process if we actually have input elements
+                if (barcodeInputs.length > 0) {
+                    deviceBarcodes = Array.from(barcodeInputs).map(input => ({
+                        device_id: parseInt(input.dataset.deviceId),
+                        barcode: input.value.trim()
+                    })).filter(entry => entry.barcode);
+
+                    // Store scanned barcodes in appState for later display
+                    appState.scannedBarcodes = {};
+                    deviceBarcodes.forEach(entry => {
+                        appState.scannedBarcodes[entry.device_id] = entry.barcode;
+                    });
+
+                    // Check if all required barcodes are entered (in sequential mode)
+                    if (deviceBarcodes.length < barcodeInputs.length) {
+                        const missingCount = barcodeInputs.length - deviceBarcodes.length;
+                        showNotification(`Please scan remaining ${missingCount} barcode${missingCount > 1 ? 's' : ''}`, 'warning');
+                        // Highlight first empty input
+                        const firstEmpty = Array.from(barcodeInputs).find(inp => !inp.value.trim());
+                        if (firstEmpty && !firstEmpty.disabled) {
+                            firstEmpty.classList.add('error');
+                            firstEmpty.focus();
+                        }
+                        return;
+                    }
+                }
+            } else {
+                // No manual input - clear scanned barcodes (will use ROI detection)
+                appState.scannedBarcodes = {};
+                deviceBarcodes = [];
+            }
+
+            // FINAL SAFETY CHECK: Ensure deviceBarcodes is truly empty if no manual input needed
+            if (!barcodePanel ||
+                barcodePanel.style.display === 'none' ||
+                !barcodeContainer ||
+                barcodeContainer.children.length === 0) {
+                deviceBarcodes = []; // Force empty array
+                console.log('✅ No manual barcode input required - sending empty device_barcodes array');
+            }
+
+            try {
+                updateSystemStatus('Running inspection...');
+                showNotification('Inspection started...', 'info');
+
+                // Debug: Log what's being sent to server
+                const requestPayload = {
+                    device_barcodes: deviceBarcodes
+                };
+
+                console.log('='.repeat(70));
+                console.log('� SENDING TO SERVER: POST /api/inspect');
+                console.log('Request Payload:', JSON.stringify(requestPayload, null, 2));
+                console.log('Device Barcodes Details:');
+                if (deviceBarcodes.length > 0) {
+                    deviceBarcodes.forEach((entry, index) => {
+                        console.log(`  [${index}] Device ${entry.device_id}: "${entry.barcode}"`);
+                    });
+                } else {
+                    console.log('  (empty array - no manual barcodes)');
+                }
+                console.log('UI State:');
+                console.log(`  - Panel visible: ${barcodePanel ? barcodePanel.style.display : 'N/A'}`);
+                console.log(`  - Container children: ${barcodeContainer ? barcodeContainer.children.length : 0}`);
+                console.log(`  - appState.scannedBarcodes:`, appState.scannedBarcodes);
+                console.log('='.repeat(70));
+
+                const startTime = Date.now();
+                const result = await apiCall('POST', '/api/inspect', requestPayload, 60000); // 60 second timeout for inspection
+
+                const endTime = Date.now();
+                const totalTime = endTime - startTime;
+
+                displayResults(result);
+                updateTimingInfo(result, totalTime);
+                updateSystemStatus('Inspection completed');
+                updateLastUpdate();
+
+                const overallResult = result.summary?.overall_result || result.overall_result || 'Unknown';
+                showNotification(`Inspection completed: ${overallResult}`,
+                    overallResult === 'PASS' ? 'success' : 'warning');
+
+                console.log('Inspection completed:', result);
+
+                // Reset barcode inputs after successful inspection
+                setTimeout(() => {
+                    resetBarcodesAfterInspection();
+                }, 1000); // 1 second delay to allow user to see completion message
+
+            } catch (error) {
+                console.error('Inspection error:', error);
+                updateSystemStatus('Inspection failed');
+                showNotification(`Inspection failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function saveGoldenSample() {
+            showNotification('Golden sample saving functionality would be implemented here', 'info');
+        }
+
+        function clearResults() {
+            // Clear current result state
+            appState.currentResult = null;
+
+            // Close any open modal
+            const roiModal = document.getElementById('roiDetailModal');
+            if (roiModal && roiModal.style.display === 'flex') {
+                closeROIDetailModal();
+            }
+
+            // Hide summary sections (don't clear innerHTML - just hide)
+            const resultsSummary = document.getElementById('resultsSummary');
+            if (resultsSummary) {
+                resultsSummary.style.display = 'none';
+            }
+
+            // Hide timing info (don't clear innerHTML - elements are needed later)
+            const timingInfo = document.getElementById('timingInfo');
+            if (timingInfo) {
+                timingInfo.style.display = 'none';
+            }
+
+            // Reset timing values to defaults
+            const captureTimeEl = document.getElementById('captureTime');
+            const processingTimeEl = document.getElementById('processingTime');
+            const totalTimeEl = document.getElementById('totalTime');
+            const roiGroupsCountEl = document.getElementById('roiGroupsCount');
+            if (captureTimeEl) captureTimeEl.textContent = '-';
+            if (processingTimeEl) processingTimeEl.textContent = '-';
+            if (totalTimeEl) totalTimeEl.textContent = '-';
+            if (roiGroupsCountEl) roiGroupsCountEl.textContent = '-';
+
+            const resultsTimestamp = document.getElementById('resultsTimestamp');
+            if (resultsTimestamp) {
+                resultsTimestamp.textContent = 'No results yet';
+            }
+
+            // Clear device result cards section (new full-width cards)
+            const deviceResultsCards = document.getElementById('deviceResultsCards');
+            if (deviceResultsCards) {
+                deviceResultsCards.innerHTML = '';
+                deviceResultsCards.style.display = 'none';
+            }
+
+            // Clear device results
+            const deviceSection = document.getElementById('deviceResultsSection');
+            if (deviceSection) {
+                deviceSection.style.display = 'none';
+            }
+            const deviceContainer = document.getElementById('deviceResultsContainer');
+            if (deviceContainer) {
+                deviceContainer.innerHTML = '';
+            }
+
+            // Reset toggle button
+            const toggleButton = document.getElementById('deviceDetailsToggle');
+            if (toggleButton) {
+                const icon = toggleButton.querySelector('.btn-icon');
+                const text = toggleButton.querySelector('.btn-text');
+                if (icon) icon.textContent = '🔍';
+                if (text) text.textContent = 'Show Device Details';
+            }
+
+            console.log('✓ Previous results cleared');
+        }
+
+        // Enhanced UI update functions
+        function updateConnectionStatus(status, message) {
+            const statusEl = document.getElementById('connectionStatus');
+            statusEl.className = `status ${status}`;
+            statusEl.innerHTML = `<span class="status-indicator"></span><span>${message}</span>`;
+
+            if (status === 'connected') {
+                document.getElementById('connectionTime').textContent = new Date().toLocaleTimeString();
+            }
+        }
+
+        function updateCameraStatus(status, message) {
+            const statusEl = document.getElementById('cameraStatus');
+            statusEl.className = `status ${status}`;
+            statusEl.innerHTML = `<span class="status-indicator"></span><span>${message}</span>`;
+        }
+
+        function updateSessionStatus(status, message) {
+            const statusEl = document.getElementById('sessionStatus');
+            statusEl.className = `status ${status}`;
+            statusEl.innerHTML = `<span class="status-indicator"></span><span>${message}</span>`;
+        }
+
+        function updateSessionInfo(sessionData) {
+            document.getElementById('sessionIdValue').textContent = sessionData.session_id || '-';
+            document.getElementById('sessionProductValue').textContent = sessionData.product || '-';
+            const roiGroupsCount = sessionData.roi_groups_count || 0;
+            document.getElementById('sessionRoiGroupsValue').textContent = roiGroupsCount;
+            document.getElementById('sessionInfo').style.display = 'block';
+
+            // Get devices that need manual barcode input (devices without barcode ROIs)
+            const devicesNeedBarcode = sessionData.devices_need_barcode || [];
+
+            // Show barcode panel if there are devices needing manual input
+            const barcodePanel = document.getElementById('barcodeInputPanel');
+            if (barcodePanel) {
+                if (devicesNeedBarcode.length > 0) {
+                    barcodePanel.style.display = 'block';
+                    // Generate inputs only for devices that need manual barcodes
+                    generateDeviceBarcodeInputs(devicesNeedBarcode);
+
+                    // Show informative message based on how many devices need barcodes
+                    const totalDevices = roiGroupsCount > 0 ? Math.max(...devicesNeedBarcode) : devicesNeedBarcode.length;
+                    if (devicesNeedBarcode.length === totalDevices) {
+                        showNotification(`All ${devicesNeedBarcode.length} device(s) require manual barcode scanning`, 'info');
+                    } else {
+                        showNotification(`${devicesNeedBarcode.length} of ${totalDevices} device(s) require manual barcode scanning`, 'info');
+                    }
+                } else {
+                    // IMPORTANT: Clear barcode panel and reset state when no manual input needed
+                    barcodePanel.style.display = 'none';
+                    const container = document.getElementById('deviceBarcodesContainer');
+                    if (container) {
+                        container.innerHTML = ''; // Clear all input fields
+                    }
+                    appState.scannedBarcodes = {}; // Clear scanned barcodes state
+                    appState.devicesNeedBarcode = []; // Clear devices list
+                    showNotification('All devices have barcode ROIs - no manual input needed', 'info');
+                }
+            }
+        } function generateDeviceBarcodeInputs(deviceIds) {
+            const container = document.getElementById('deviceBarcodesContainer');
+            if (!container) return;
+
+            // Clear existing inputs
+            container.innerHTML = '';
+            appState.devicesNeedBarcode = deviceIds;
+            appState.currentBarcodeIndex = 0;
+
+            if (deviceIds.length > 0) {
+                deviceIds.forEach((deviceId, index) => {
+                    const inputGroup = document.createElement('div');
+                    inputGroup.className = 'barcode-input-group';
+                    inputGroup.innerHTML = `
+                        <label>
+                            <span class="device-badge" style="display: inline-block; min-width: 20px; text-align: center; background: var(--primary); color: white; border-radius: 50%; width: 24px; height: 24px; line-height: 24px; font-size: 0.85em;">${deviceId}</span>
+                            Device ${deviceId}
+                            <span class="status-icon" style="margin-left: 8px; display: none;"></span>
+                        </label>
+                        <input type="text" 
+                               placeholder="Waiting..." 
+                               data-device-id="${deviceId}"
+                               data-index="${index}"
+                               disabled
+                               oninput="handleBarcodeInput(this)"
+                               onkeydown="handleBarcodeKeyDown(event, this)"
+                               onfocus="handleBarcodeFocusIn(this)"
+                               onblur="handleBarcodeFocusOut(this)">
+                    `;
+                    container.appendChild(inputGroup);
+                });
+
+                // Enable and focus first input
+                const firstInput = container.querySelector('input');
+                if (firstInput) {
+                    firstInput.disabled = false;
+                    firstInput.placeholder = 'Scan barcode now (press Enter when done)';
+                    firstInput.classList.add('active');
+                    setTimeout(() => firstInput.focus(), 100);
+                }
+
+                showNotification(`Scan barcode for Device ${deviceIds[0]} to start`, 'info');
+                updateBarcodeWarning();
+            }
+        }
+
+        // Enhanced barcode input handler with real-time validation
+        function handleBarcodeInput(input) {
+            const value = input.value.trim();
+
+            if (value.length > 0) {
+                input.classList.add('filled');
+                input.classList.remove('error');
+            } else {
+                input.classList.remove('filled', 'error');
+            }
+        }
+
+        // Enhanced keyboard handler with comprehensive shortcuts (inspired by client_app_simple.py)
+        function handleBarcodeKeyDown(event, input) {
+            const container = document.getElementById('deviceBarcodesContainer');
+            const allInputs = Array.from(container.querySelectorAll('input'));
+            const currentIndex = parseInt(input.dataset.index);
+
+            // Enter key - Advance to next device or trigger inspection
+            if (event.key === 'Enter') {
+                event.preventDefault();
+
+                const value = input.value.trim();
+                if (!value) {
+                    input.classList.add('error');
+                    showNotification('Please enter a barcode', 'warning');
+                    return;
+                }
+
+                // Mark current input as complete
+                input.disabled = true;
+                input.classList.remove('active', 'error');
+                input.classList.add('completed');
+
+                // Update status icon
+                const statusIcon = input.parentElement.querySelector('.status-icon');
+                if (statusIcon) {
+                    statusIcon.textContent = '✓';
+                    statusIcon.style.display = 'inline';
+                    statusIcon.style.color = 'var(--success)';
+                }
+
+                // Move to next input or trigger inspection
+                if (currentIndex < allInputs.length - 1) {
+                    const nextInput = allInputs[currentIndex + 1];
+                    nextInput.disabled = false;
+                    nextInput.placeholder = 'Scan barcode now (press Enter when done)';
+                    nextInput.classList.add('active');
+                    nextInput.focus();
+
+                    const deviceId = nextInput.dataset.deviceId;
+                    showNotification(`Scan barcode for Device ${deviceId}`, 'info');
+                } else {
+                    // All barcodes entered - check auto-inspect mode
+                    updateBarcodeWarning();
+
+                    if (appState.autoInspectOnScan) {
+                        // Auto-inspect ON: trigger inspection automatically
+                        showNotification('All barcodes entered - starting inspection...', 'success');
+                        setTimeout(() => performInspection(), 500);
+                    } else {
+                        // Auto-inspect OFF: wait for manual button press
+                        showNotification('All barcodes entered - press "Perform Inspection" button to start', 'info');
+                    }
+                }
+            }
+            // Up arrow - Navigate to previous device (if enabled)
+            else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                if (currentIndex > 0) {
+                    const prevInput = allInputs[currentIndex - 1];
+                    if (!prevInput.disabled) {
+                        prevInput.focus();
+                    }
+                }
+            }
+            // Down arrow - Navigate to next device (if enabled)
+            else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                if (currentIndex < allInputs.length - 1) {
+                    const nextInput = allInputs[currentIndex + 1];
+                    if (!nextInput.disabled) {
+                        nextInput.focus();
+                    }
+                }
+            }
+            // Ctrl+R - Reset all barcodes
+            else if (event.ctrlKey && event.key === 'r') {
+                event.preventDefault();
+                resetAllBarcodes();
+            }
+            // Ctrl+Shift+C - Clear all barcodes
+            else if (event.ctrlKey && event.shiftKey && event.key === 'C') {
+                event.preventDefault();
+                clearAllBarcodes();
+            }
+            // F1 - Focus first input
+            else if (event.key === 'F1') {
+                event.preventDefault();
+                focusFirstBarcode();
+            }
+        }
+
+        // Focus indicator handlers (inspired by Tkinter on_barcode_focus_in/out)
+        function handleBarcodeFocusIn(input) {
+            input.style.boxShadow = '0 0 0 4px rgba(0, 122, 255, 0.2)';
+            input.style.borderColor = 'var(--primary)';
+        }
+
+        function handleBarcodeFocusOut(input) {
+            if (!input.classList.contains('active')) {
+                input.style.boxShadow = '';
+                input.style.borderColor = '';
+            }
+        }
+
+        // Clear all barcode inputs
+        function clearAllBarcodes() {
+            const container = document.getElementById('deviceBarcodesContainer');
+            const allInputs = container.querySelectorAll('input');
+
+            allInputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('filled', 'completed', 'error');
+
+                // Hide status icon
+                const statusIcon = input.parentElement.querySelector('.status-icon');
+                if (statusIcon) {
+                    statusIcon.style.display = 'none';
+                }
+            });
+
+            showNotification('All barcodes cleared', 'info');
+            updateBarcodeWarning();
+        }
+
+        // Reset all barcodes and re-enable sequential flow
+        function resetAllBarcodes() {
+            const container = document.getElementById('deviceBarcodesContainer');
+            const allInputs = container.querySelectorAll('input');
+
+            allInputs.forEach((input, index) => {
+                input.value = '';
+                input.disabled = (index !== 0);
+                input.classList.remove('filled', 'completed', 'error', 'active');
+
+                if (index === 0) {
+                    input.classList.add('active');
+                    input.placeholder = 'Scan barcode now (press Enter when done)';
+                } else {
+                    input.placeholder = 'Waiting...';
+                }
+
+                // Hide status icon
+                const statusIcon = input.parentElement.querySelector('.status-icon');
+                if (statusIcon) {
+                    statusIcon.style.display = 'none';
+                }
+            });
+
+            // Focus first input
+            const firstInput = allInputs[0];
+            if (firstInput) {
+                setTimeout(() => firstInput.focus(), 100);
+            }
+
+            appState.currentBarcodeIndex = 0;
+            showNotification('Barcode flow reset - start from Device 1', 'info');
+            updateBarcodeWarning();
+        }
+
+        // Focus first barcode input
+        function focusFirstBarcode() {
+            const container = document.getElementById('deviceBarcodesContainer');
+            const firstInput = container.querySelector('input:not([disabled])');
+
+            if (firstInput) {
+                firstInput.focus();
+                showNotification('Focused first barcode input', 'info');
+            } else {
+                showNotification('No active barcode inputs available', 'warning');
+            }
+        }
+
+        // Toggle auto-inspection mode
+        function toggleAutoInspect(checkbox) {
+            appState.autoInspectOnScan = checkbox.checked;
+            const label = document.getElementById('autoInspectLabel');
+            const slider = checkbox.nextElementSibling;
+
+            if (checkbox.checked) {
+                label.textContent = 'ON';
+                label.style.color = 'var(--success)';
+                showNotification('Auto-Inspect ON - Inspection will start automatically after all barcodes are scanned', 'success');
+            } else {
+                label.textContent = 'OFF';
+                label.style.color = 'var(--tertiary-fg)';
+                showNotification('Auto-Inspect OFF - Press "Perform Inspection" button manually after scanning', 'info');
+            }
+        }
+
+        // Toggle inspection delay
+        function toggleInspectionDelay(checkbox) {
+            const label = document.getElementById('delayLabel');
+            const slider = checkbox.nextElementSibling;
+            const delayInput = document.getElementById('delayTimeInput');
+
+            if (checkbox.checked) {
+                label.textContent = 'ON';
+                label.style.color = 'var(--success)';
+                slider.style.backgroundColor = 'var(--success)';
+                delayInput.disabled = false;
+                delayInput.style.opacity = '1';
+                const delayTime = parseFloat(delayInput.value) || 2;
+                showNotification(`Inspection delay enabled: ${delayTime}s before starting`, 'info');
+            } else {
+                label.textContent = 'OFF';
+                label.style.color = 'var(--tertiary-fg)';
+                slider.style.backgroundColor = '#8E8E93';
+                delayInput.disabled = true;
+                delayInput.style.opacity = '0.5';
+                showNotification('Inspection delay disabled', 'info');
+            }
+        }
+
+        // Reset barcode inputs after inspection
+        function resetBarcodesAfterInspection() {
+            const container = document.getElementById('deviceBarcodesContainer');
+            if (!container) return;
+
+            const allInputs = container.querySelectorAll('input');
+            if (allInputs.length === 0) return;
+
+            // Clear all inputs and reset to initial state
+            allInputs.forEach((input, index) => {
+                input.value = '';
+                input.disabled = (index !== 0);
+                input.classList.remove('filled', 'completed', 'error', 'active');
+
+                if (index === 0) {
+                    input.classList.add('active');
+                    input.placeholder = 'Scan barcode now (press Enter when done)';
+                } else {
+                    input.placeholder = 'Waiting...';
+                }
+
+                // Hide status icon
+                const statusIcon = input.parentElement.querySelector('.status-icon');
+                if (statusIcon) {
+                    statusIcon.style.display = 'none';
+                }
+            });
+
+            // Focus first input
+            const firstInput = allInputs[0];
+            if (firstInput) {
+                setTimeout(() => firstInput.focus(), 100);
+            }
+
+            appState.currentBarcodeIndex = 0;
+            updateBarcodeWarning();
+            console.log('Barcode inputs reset after inspection');
+        }
+
+        function updateBarcodeWarning() {
+            const warning = document.getElementById('barcodeWarning');
+            const container = document.getElementById('deviceBarcodesContainer');
+            if (!warning || !container) return;
+
+            const allInputs = container.querySelectorAll('input');
+            const filledCount = Array.from(allInputs).filter(inp => inp.value.trim().length > 0).length;
+            const totalCount = allInputs.length;
+
+            if (filledCount === 0) {
+                warning.textContent = `⚠️ Scan barcodes for ${totalCount} device${totalCount > 1 ? 's' : ''} before inspection`;
+                warning.classList.remove('hidden');
+            } else if (filledCount < totalCount) {
+                warning.textContent = `📊 Progress: ${filledCount}/${totalCount} devices scanned`;
+                warning.classList.remove('hidden');
+                warning.style.background = 'rgba(0, 122, 255, 0.1)';
+                warning.style.borderColor = 'var(--info)';
+            } else {
+                warning.classList.add('hidden');
+            }
+        } function updateSystemStatus(status) {
+            document.getElementById('systemStatus').textContent = status;
+        }
+
+        function updateLastUpdate() {
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+        }
+
+        function populateProducts(products) {
+            const select = document.getElementById('productSelect');
+            select.innerHTML = '<option value="">Select Product</option>';
+
+            products.forEach(product => {
+                const option = document.createElement('option');
+                let productName;
+                if (typeof product === 'string') {
+                    productName = product;
+                } else if (product && typeof product === 'object') {
+                    productName = product.product_name || product.name || product.id || 'Unknown Product';
+                } else {
+                    productName = 'Unknown Product';
+                }
+
+                option.value = productName;
+                option.textContent = productName;
+                select.appendChild(option);
+            });
+
+            console.log('Populated products:', products);
+        }
+
+        async function loadProductsFromServer() {
+            try {
+                const response = await apiCall('GET', '/api/products');
+                const products = response.products || [];
+                populateProducts(products);
+                console.log('Loaded products from server:', response);
+            } catch (error) {
+                console.error('Failed to load products:', error);
+            }
+        }
+
+        function clearProducts() {
+            document.getElementById('productSelect').innerHTML = '<option value="">Select Product</option>';
+        }
+
+        function clearSession() {
+            updateSessionStatus('disconnected', 'No active session');
+            appState.sessionActive = false;
+            appState.sessionId = null;
+            document.getElementById('sessionInfo').style.display = 'none';
+            updateSetupStatus();
+        }
+
+        // Schema version detection and normalization
+        function detectSchemaVersion(result) {
+            // v2.0 has overall_result as object with "passed" field
+            if (result.overall_result && typeof result.overall_result === 'object' &&
+                result.overall_result.passed !== undefined) {
+                return '2.0';
+            }
+
+            // v1.0 has summary.overall_result as string
+            if (result.summary && result.summary.overall_result) {
+                return '1.0';
+            }
+
+            return 'unknown';
+        }
+
+        function normalizeToV2(result) {
+            const version = detectSchemaVersion(result);
+            console.log('🔍 Detected schema version:', version);
+
+            if (version === '2.0') {
+                return result;  // Already v2
+            }
+
+            if (version === '1.0') {
+                console.log('⚡ Converting schema v1.0 to v2.0');
+                // Convert v1 to v2 structure
+                const normalized = {
+                    overall_result: {
+                        passed: result.summary.overall_result === 'PASS',
+                        passed_rois: result.summary.pass_count || 0,
+                        failed_rois: result.summary.fail_count || 0,
+                        total_rois: (result.summary.pass_count || 0) + (result.summary.fail_count || 0)
+                    },
+                    device_summaries: {},
+                    roi_results: [],
+                    processing_time: result.processing_time,
+                    product_name: result.product_name,
+                    session_id: result.session_id,
+                    timestamp: result.timestamp
+                };
+
+                // Convert device summaries
+                if (result.device_summaries) {
+                    for (const [deviceId, device] of Object.entries(result.device_summaries)) {
+                        const deviceRoiResults = device.roi_results || device.results || [];
+                        normalized.device_summaries[deviceId] = {
+                            barcode: device.barcode,
+                            device_passed: device.device_passed,
+                            passed_rois: device.passed_rois,
+                            failed_rois: (device.total_rois || deviceRoiResults.length) - (device.passed_rois || 0),
+                            total_rois: device.total_rois || deviceRoiResults.length,
+                            results: deviceRoiResults  // Rename roi_results → results
+                        };
+
+                        // Add to top-level roi_results
+                        if (deviceRoiResults.length > 0) {
+                            normalized.roi_results.push(...deviceRoiResults);
+                        }
+                    }
+                }
+
+                return normalized;
+            }
+
+            console.warn('⚠️ Unknown schema version, using as-is');
+            return result;  // Unknown version, return as-is
+        }
+
+        function validateSchemaV2(result) {
+            const errors = [];
+            const warnings = [];
+
+            // Check required top-level fields
+            if (!result.overall_result) {
+                errors.push('Missing overall_result object');
+            } else {
+                if (result.overall_result.passed === undefined) {
+                    errors.push('Missing overall_result.passed boolean');
+                }
+                if (result.overall_result.total_rois === undefined) {
+                    warnings.push('Missing overall_result.total_rois');
+                }
+            }
+
+            if (!result.device_summaries) {
+                warnings.push('Missing device_summaries');
+            }
+
+            if (!result.roi_results || !Array.isArray(result.roi_results)) {
+                warnings.push('Missing or invalid roi_results array');
+            }
+
+            // Validate device summaries
+            if (result.device_summaries) {
+                for (const [deviceId, device] of Object.entries(result.device_summaries)) {
+                    if (!device.results && !device.roi_results) {
+                        errors.push(`Device ${deviceId}: Missing "results" or "roi_results" field`);
+                    }
+                    if (device.device_passed === undefined) {
+                        warnings.push(`Device ${deviceId}: Missing device_passed`);
+                    }
+                }
+            }
+
+            return {
+                valid: errors.length === 0,
+                errors,
+                warnings
+            };
+        }
+
+        function displayResults(result) {
+            const resultsEl = document.getElementById('results');
+            const summaryEl = document.getElementById('resultsSummary');
+
+            // Normalize to v2.0 schema
+            const normalizedResult = normalizeToV2(result);
+
+            // Validate schema
+            const validation = validateSchemaV2(normalizedResult);
+            if (!validation.valid) {
+                console.error('❌ Schema validation errors:', validation.errors);
+            }
+            if (validation.warnings.length > 0) {
+                console.warn('⚠️ Schema validation warnings:', validation.warnings);
+            }
+
+            // Display summary (v2.0 format)
+            if (normalizedResult.overall_result) {
+                const overallResult = normalizedResult.overall_result;
+                const passed = overallResult.passed !== undefined ? overallResult.passed : false;
+                const overallStatus = passed ? 'PASS' : 'FAIL';
+                const totalRois = overallResult.total_rois || 0;
+                const passedRois = overallResult.passed_rois || 0;
+                const failedRois = overallResult.failed_rois || 0;
+
+                // Calculate device statistics from device_summaries
+                const deviceSummaries = normalizedResult.device_summaries || {};
+                const totalDevices = Object.keys(deviceSummaries).length;
+                const passCount = Object.values(deviceSummaries).filter(d => d.device_passed).length;
+                const failCount = totalDevices - passCount;
+
+                // Display metadata
+                const processingTime = normalizedResult.processing_time
+                    ? normalizedResult.processing_time.toFixed(2) + 's'
+                    : '';
+                const productName = normalizedResult.product_name || '';
+
+                summaryEl.innerHTML = `
+                    <h3>📊 Inspection Summary</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-top: 12px;">
+                        <div class="summary-stat">
+                            <div class="stat-value" style="color: var(--primary); font-size: 1.4em; font-weight: bold;">
+                                ${overallStatus}
+                            </div>
+                            <div class="stat-label">Overall Result</div>
+                        </div>
+                        <div class="summary-stat">
+                            <div class="stat-value">${totalDevices}</div>
+                            <div class="stat-label">Total Devices</div>
+                        </div>
+                        <div class="summary-stat">
+                            <div class="stat-value" style="color: var(--success);">${passCount}</div>
+                            <div class="stat-label">Pass Count</div>
+                        </div>
+                        <div class="summary-stat">
+                            <div class="stat-value" style="color: var(--error);">${failCount}</div>
+                            <div class="stat-label">Fail Count</div>
+                        </div>
+                        ${processingTime ? `
+                        <div class="summary-stat">
+                            <div class="stat-value">${processingTime}</div>
+                            <div class="stat-label">Processing Time</div>
+                        </div>
+                        ` : ''}
+                        ${productName ? `
+                        <div class="summary-stat">
+                            <div class="stat-value" style="font-size: 0.9em;">${escapeHtml(productName)}</div>
+                            <div class="stat-label">Product</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                summaryEl.style.display = 'block';
+            }
+
+            // Update timestamp with proper validation
+            let timestamp;
+            if (normalizedResult.timestamp) {
+                const date = new Date(normalizedResult.timestamp * 1000);
+                // Check if date is valid
+                if (!isNaN(date.getTime())) {
+                    timestamp = date.toLocaleString();
+                } else {
+                    timestamp = new Date().toLocaleString();
+                }
+            } else {
+                timestamp = new Date().toLocaleString();
+            }
+            document.getElementById('resultsTimestamp').textContent = `Updated: ${timestamp}`;
+
+            // Render device-separated results (visual UI only)
+            renderDeviceResults(normalizedResult);
+
+            // Store normalized result
+            appState.currentResult = normalizedResult;
+        }
+
+        function renderDeviceResults(result) {
+            const container = document.getElementById('deviceResultsContainer');
+            const section = document.getElementById('deviceResultsSection');
+
+            console.log('📊 renderDeviceResults called with:', result);
+
+            if (!result.device_summaries || Object.keys(result.device_summaries).length === 0) {
+                console.warn('⚠️ No device summaries found');
+                section.style.display = 'none';
+                return;
+            }
+
+            console.log('✅ Found', Object.keys(result.device_summaries).length, 'devices');
+
+            // Keep section hidden by default - user must click "Show Device Details" button
+            // section.style.display = 'block';
+            let html = '';
+
+            // Sort devices by ID
+            const sortedDevices = Object.entries(result.device_summaries).sort((a, b) =>
+                parseInt(a[0]) - parseInt(b[0])
+            );
+
+            sortedDevices.forEach(([deviceId, deviceData]) => {
+                console.log(`📱 Device ${deviceId} data:`, {
+                    device_passed: deviceData.device_passed,
+                    passed_rois: deviceData.passed_rois,
+                    total_rois: deviceData.total_rois,
+                    results: deviceData.results,
+                    roi_results: deviceData.roi_results,
+                    results_length: (deviceData.results || []).length,
+                    roi_results_length: (deviceData.roi_results || []).length
+                });
+
+                const passed = deviceData.device_passed !== undefined ? deviceData.device_passed : false;
+                const statusClass = passed ? 'passed' : 'failed';
+                const statusText = passed ? 'PASS' : 'FAIL';
+                const statusIcon = passed ? '✓' : '✗';
+
+                // Get ROI results for barcode extraction
+                const roiResults = deviceData.results || deviceData.roi_results || [];
+                const scannedBarcode = getScannedBarcode(deviceId, roiResults);
+
+                // Use scannedBarcode as the source of truth (either from manual input or passed ROI detection)
+                // Do NOT use deviceData.barcode from server as it may be stale/cached
+                const barcodeDisplay = scannedBarcode ? escapeHtml(scannedBarcode) : '';
+
+                html += `
+                    <div class="device-card ${statusClass}">
+                        <div class="device-header">
+                            <div class="device-title">📱 Device ${deviceId}</div>
+                            <div class="device-status ${statusClass}">
+                                ${statusIcon} ${statusText}
+                            </div>
+                        </div>
+
+                        <div class="device-info">
+                            ${barcodeDisplay ? `
+                                <div class="device-info-item">
+                                    <div class="device-info-label">Barcode</div>
+                                    <div class="device-info-value">${barcodeDisplay}</div>
+                                </div>
+                            ` : ''}
+                            <div class="device-info-item">
+                                <div class="device-info-label">ROI Status</div>
+                                <div class="device-info-value">
+                                    ${deviceData.passed_rois || 0} / ${deviceData.total_rois || 0} Passed
+                                    ${deviceData.failed_rois ? ` (${deviceData.failed_rois} Failed)` : ''}
+                                </div>
+                            </div>
+                            <div class="device-info-item">
+                                <div class="device-info-label">Success Rate</div>
+                                <div class="device-info-value">
+                                    ${deviceData.total_rois > 0
+                        ? ((deviceData.passed_rois / deviceData.total_rois) * 100).toFixed(1)
+                        : 0}%
+                                </div>
+                            </div>
+                        </div>
+
+                        ${(() => {
+                        // Check for results in multiple possible field names (v1.0 vs v2.0 compatibility)
+                        const roiResults = deviceData.results || deviceData.roi_results || [];
+                        const failedCount = roiResults.filter(r => !r.passed).length;
+
+                        if (roiResults.length > 0) {
+                            return `
+                                    <div class="roi-section">
+                                        <div class="roi-section-summary">
+                                            � ${roiResults.length} ROI${roiResults.length > 1 ? 's' : ''} inspected
+                                            ${failedCount > 0 ? `<span style="color: var(--error); margin-left: 8px;">⚠️ ${failedCount} failed</span>` : ''}
+                                        </div>
+                                        <button class="glass-button primary" 
+                                                onclick="openROIDetailModal(${deviceId})"
+                                                style="width: 100%; margin-top: 12px; padding: 12px;">
+                                            🔍 View Detailed Results
+                                        </button>
+                                    </div>
+                                `;
+                        } else {
+                            return `
+                                    <div class="roi-section">
+                                        <div class="empty-state-hint" style="padding: 16px; text-align: center; color: var(--tertiary-fg);">
+                                            No ROI details available for this device
+                                        </div>
+                                    </div>
+                                `;
+                        }
+                    })()}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html || `
+                <div class="empty-state">
+                    <div class="empty-state-icon">📋</div>
+                    <div class="empty-state-text">No device results available</div>
+                    <div class="empty-state-hint">Run an inspection to see detailed results</div>
+                </div>
+            `;
+        }
+
+        // Render ROI results with lazy-loaded images (for modal view)
+        function renderROIResultsWithLazyImages(roiResults, deviceId = null) {
+            return roiResults.map(roi => {
+                console.log(`🔍 ROI ${roi.roi_id} - preparing lazy load image data`);
+
+                const passed = roi.passed !== undefined ? roi.passed : false;
+                const statusClass = passed ? 'passed' : 'failed';
+                const statusText = passed ? 'PASS' : 'FAIL';
+                const statusIcon = passed ? '✓' : '✗';
+                const similarity = roi.ai_similarity !== undefined && roi.ai_similarity !== null
+                    ? (roi.ai_similarity * 100).toFixed(2)
+                    : null;
+
+                // Determine similarity level for color coding
+                let similarityClass = 'low';
+                if (similarity !== null) {
+                    if (similarity >= 80) similarityClass = 'high';
+                    else if (similarity >= 60) similarityClass = 'medium';
+                }
+
+                // Prepare image sources (don't load yet - use placeholders)
+                let goldenSrc = '';
+                if (roi.roi_type_name !== 'barcode') {
+                    if (roi.golden_image && roi.golden_image.startsWith('data:image')) {
+                        goldenSrc = roi.golden_image;
+                    } else if (roi.golden_image_path) {
+                        const relativePath = roi.golden_image_path.replace('/mnt/visual-aoi-shared/', '/shared/');
+                        goldenSrc = `${relativePath}?t=${Date.now()}`;
+                    } else if (roi.golden_image) {
+                        goldenSrc = roi.golden_image;
+                    }
+                }
+
+                let captureSrc = '';
+                if (roi.roi_image && roi.roi_image.startsWith('data:image')) {
+                    captureSrc = roi.roi_image;
+                } else if (roi.roi_image_path) {
+                    const relativePath = roi.roi_image_path.replace('/mnt/visual-aoi-shared/', '/shared/');
+                    captureSrc = `${relativePath}?t=${Date.now()}`;
+                } else if (roi.capture_image_file) {
+                    captureSrc = `/static/captures/${roi.capture_image_file}?t=${Date.now()}`;
+                } else if (appState.sessionId && roi.roi_id) {
+                    captureSrc = `/shared/sessions/${appState.sessionId}/output/roi_${roi.roi_id}.jpg?t=${Date.now()}`;
+                }
+
+                const shouldShowImages = roi.roi_type_name === 'barcode' ? captureSrc : (goldenSrc || captureSrc);
+
+                return `
+                    <div class="roi-item ${statusClass}" data-passed="${passed}">
+                        <div class="roi-header">
+                            <div class="roi-title">
+                                <span>ROI ${roi.roi_id}</span>
+                                <span class="roi-badge ${roi.roi_type_name || 'default'}">
+                                    ${roi.roi_type_name || 'Unknown'}
+                                </span>
+                            </div>
+                            <div class="roi-status-badge ${statusClass}">
+                                ${statusIcon} ${statusText}
+                            </div>
+                        </div>
+
+                        <div class="roi-details">
+                            ${similarity !== null ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">AI Similarity</div>
+                                    <div class="roi-detail-value">
+                                        ${similarity}%
+                                        <div class="similarity-bar">
+                                            <div class="similarity-fill ${similarityClass}" 
+                                                 style="width: ${similarity}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.roi_type_name === 'compare' && roi.threshold !== undefined ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">Threshold</div>
+                                    <div class="roi-detail-value">
+                                        ${(roi.threshold * 100).toFixed(2)}%
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.roi_type_name === 'compare' && roi.match_result ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">Match Result</div>
+                                    <div class="roi-detail-value" style="color: ${roi.match_result === 'Match' ? 'var(--success)' : 'var(--error)'};">
+                                        ${roi.match_result === 'Match' ? '✓' : '✗'} ${escapeHtml(roi.match_result)}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.barcode_values && roi.barcode_values.length > 0 ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">Barcode Value</div>
+                                    <div class="roi-detail-value code">
+                                        ${escapeHtml(roi.barcode_values.join(', '))}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.ocr_text ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">OCR Text</div>
+                                    <div class="roi-detail-value code">
+                                        ${escapeHtml(roi.ocr_text)}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.roi_type_name === 'color' && roi.color_result ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">Color Match</div>
+                                    <div class="roi-detail-value" style="color: ${roi.color_result.matched ? 'var(--success)' : 'var(--error)'};">
+                                        ${roi.color_result.matched ? '✓ Matched' : '✗ No Match'}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.roi_type_name === 'color' && roi.color_result && roi.color_result.matched_color ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">Detected Color</div>
+                                    <div class="roi-detail-value">
+                                        <span style="display: inline-block; width: 20px; height: 20px; background: ${roi.color_result.color_hex || '#ccc'}; border: 1px solid var(--glass-border); border-radius: 4px; margin-right: 8px; vertical-align: middle;"></span>
+                                        ${escapeHtml(roi.color_result.matched_color)}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.roi_type_name === 'color' && roi.color_result && roi.color_result.pixel_count ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">Pixel Count</div>
+                                    <div class="roi-detail-value">
+                                        ${roi.color_result.pixel_count.toLocaleString()} pixels
+                                        ${roi.color_result.percentage ? ` (${roi.color_result.percentage.toFixed(1)}%)` : ''}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.coordinates && roi.coordinates.length === 4 ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">Position</div>
+                                    <div class="roi-detail-value code">
+                                        [${roi.coordinates.join(', ')}]
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.error ? `
+                                <div class="roi-detail-item" style="border-left: 3px solid var(--error); padding-left: 8px;">
+                                    <div class="roi-detail-label" style="color: var(--error);">⚠️ Error</div>
+                                    <div class="roi-detail-value" style="color: var(--error);">
+                                        ${escapeHtml(roi.error)}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.roi_type_name === 'compare' ? `
+                                <div class="roi-detail-item" style="margin-top: 12px;">
+                                    <button class="glass-button primary" 
+                                            onclick="saveAsGoldenSample(${roi.roi_id}, '${roi.roi_type_name}')"
+                                            style="width: 100%; padding: 10px; font-size: 0.9em;">
+                                        <span style="margin-right: 8px;">🌟</span>
+                                        <span>Save as Golden Sample</span>
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <!-- ROI Images Section - LAZY LOADED -->
+                        ${shouldShowImages ? `
+                            <div class="roi-images">
+                                ${goldenSrc ? `
+                                    <div class="roi-image-container">
+                                        <div class="roi-image-label">🌟 Golden Sample</div>
+                                        <div class="roi-image-placeholder" 
+                                             data-src="${goldenSrc}"
+                                             data-alt="Golden sample for ROI ${roi.roi_id}"
+                                             data-caption="Golden Sample - ROI ${roi.roi_id}"
+                                             style="width: 100%; height: 150px; background: linear-gradient(135deg, var(--glass-bg) 0%, var(--surface) 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--secondary-fg); font-size: 0.9em;">
+                                            ⏳ Loading image...
+                                        </div>
+                                        <div class="roi-image-hint">Click to enlarge</div>
+                                    </div>
+                                ` : ''}
+                                ${captureSrc ? `
+                                    <div class="roi-image-container">
+                                        <div class="roi-image-label">📸 Captured Image</div>
+                                        <div class="roi-image-placeholder" 
+                                             data-src="${captureSrc}"
+                                             data-alt="Captured image for ROI ${roi.roi_id}"
+                                             data-caption="Captured Image - ROI ${roi.roi_id}"
+                                             style="width: 100%; height: 150px; background: linear-gradient(135deg, var(--glass-bg) 0%, var(--surface) 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--secondary-fg); font-size: 0.9em;">
+                                            ⏳ Loading image...
+                                        </div>
+                                        <div class="roi-image-hint">Click to enlarge</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Legacy function kept for backward compatibility (if needed elsewhere)
+        function renderROIResults(roiResults, deviceId = null) {
+            return roiResults.map(roi => {
+                console.log(`🔍 ROI ${roi.roi_id} image data:`, {
+                    golden_image: roi.golden_image ? (roi.golden_image.startsWith('data:') ? 'base64 data' : roi.golden_image) : 'none',
+                    golden_image_path: roi.golden_image_path || 'none',
+                    roi_image: roi.roi_image ? (roi.roi_image.startsWith('data:') ? 'base64 data' : roi.roi_image) : 'none',
+                    roi_image_path: roi.roi_image_path || 'none',
+                    capture_image_file: roi.capture_image_file || 'none'
+                });
+
+                const passed = roi.passed !== undefined ? roi.passed : false;
+                const statusClass = passed ? 'passed' : 'failed';
+                const statusText = passed ? 'PASS' : 'FAIL';
+                const statusIcon = passed ? '✓' : '✗';
+                const similarity = roi.ai_similarity !== undefined && roi.ai_similarity !== null
+                    ? (roi.ai_similarity * 100).toFixed(2)
+                    : null;
+
+                // Determine similarity level for color coding
+                let similarityClass = 'low';
+                if (similarity !== null) {
+                    if (similarity >= 80) similarityClass = 'high';
+                    else if (similarity >= 60) similarityClass = 'medium';
+                }
+
+                return `
+                    <div class="roi-item ${statusClass}" data-passed="${passed}">
+                        <div class="roi-header">
+                            <div class="roi-title">
+                                <span>ROI ${roi.roi_id}</span>
+                                <span class="roi-badge ${roi.roi_type_name || 'default'}">
+                                    ${roi.roi_type_name || 'Unknown'}
+                                </span>
+                            </div>
+                            <div class="roi-status-badge ${statusClass}">
+                                ${statusIcon} ${statusText}
+                            </div>
+                        </div>
+
+                        <div class="roi-details">
+                            ${similarity !== null ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">AI Similarity</div>
+                                    <div class="roi-detail-value">
+                                        ${similarity}%
+                                        <div class="similarity-bar">
+                                            <div class="similarity-fill ${similarityClass}" 
+                                                 style="width: ${similarity}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.roi_type_name === 'compare' && roi.threshold !== undefined ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">Threshold</div>
+                                    <div class="roi-detail-value">
+                                        ${(roi.threshold * 100).toFixed(2)}%
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.roi_type_name === 'compare' && roi.match_result ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">Match Result</div>
+                                    <div class="roi-detail-value" style="color: ${roi.match_result === 'Match' ? 'var(--success)' : 'var(--error)'};">
+                                        ${roi.match_result === 'Match' ? '✓' : '✗'} ${escapeHtml(roi.match_result)}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.barcode_values && roi.barcode_values.length > 0 ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">Barcode Value</div>
+                                    <div class="roi-detail-value code">
+                                        ${escapeHtml(roi.barcode_values.join(', '))}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.ocr_text ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">OCR Text</div>
+                                    <div class="roi-detail-value code">
+                                        ${escapeHtml(roi.ocr_text)}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.roi_type_name === 'color' && roi.color_result ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">Color Match</div>
+                                    <div class="roi-detail-value" style="color: ${roi.color_result.matched ? 'var(--success)' : 'var(--error)'};">
+                                        ${roi.color_result.matched ? '✓ Matched' : '✗ No Match'}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.roi_type_name === 'color' && roi.color_result && roi.color_result.matched_color ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">Detected Color</div>
+                                    <div class="roi-detail-value">
+                                        <span style="display: inline-block; width: 20px; height: 20px; background: ${roi.color_result.color_hex || '#ccc'}; border: 1px solid var(--glass-border); border-radius: 4px; margin-right: 8px; vertical-align: middle;"></span>
+                                        ${escapeHtml(roi.color_result.matched_color)}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.roi_type_name === 'color' && roi.color_result && roi.color_result.pixel_count ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">Pixel Count</div>
+                                    <div class="roi-detail-value">
+                                        ${roi.color_result.pixel_count.toLocaleString()} pixels
+                                        ${roi.color_result.percentage ? ` (${roi.color_result.percentage.toFixed(1)}%)` : ''}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.coordinates && roi.coordinates.length === 4 ? `
+                                <div class="roi-detail-item">
+                                    <div class="roi-detail-label">Position</div>
+                                    <div class="roi-detail-value code">
+                                        [${roi.coordinates.join(', ')}]
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.error ? `
+                                <div class="roi-detail-item" style="border-left: 3px solid var(--error); padding-left: 8px;">
+                                    <div class="roi-detail-label" style="color: var(--error);">⚠️ Error</div>
+                                    <div class="roi-detail-value" style="color: var(--error);">
+                                        ${escapeHtml(roi.error)}
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            ${roi.roi_type_name === 'compare' ? `
+                                <div class="roi-detail-item" style="margin-top: 12px;">
+                                    <button class="glass-button primary" 
+                                            onclick="saveAsGoldenSample(${roi.roi_id}, '${roi.roi_type_name}')"
+                                            style="width: 100%; padding: 10px; font-size: 0.9em;">
+                                        <span style="margin-right: 8px;">🌟</span>
+                                        <span>Save as Golden Sample</span>
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <!-- ROI Images Section -->
+                        ${(() => {
+                        // Handle both old and new image path formats
+                        // Client has direct access to shared folder at /mnt/visual-aoi-shared/
+                        let goldenSrc = '';
+                        // Note: Barcode ROIs typically don't have golden samples
+                        if (roi.roi_type_name !== 'barcode') {
+                            if (roi.golden_image && roi.golden_image.startsWith('data:image')) {
+                                // Base64 encoded image
+                                goldenSrc = roi.golden_image;
+                            } else if (roi.golden_image_path) {
+                                // File path from shared folder - convert to relative URL
+                                // /mnt/visual-aoi-shared/sessions/xxx/output/golden_5.jpg -> /shared/sessions/xxx/output/golden_5.jpg
+                                const relativePath = roi.golden_image_path.replace('/mnt/visual-aoi-shared/', '/shared/');
+                                // Add cache-busting timestamp to ensure fresh images are loaded
+                                goldenSrc = `${relativePath}?t=${Date.now()}`;
+                            } else if (roi.golden_image) {
+                                // Fallback to whatever is in golden_image
+                                goldenSrc = roi.golden_image;
+                            }
+                        }
+
+                        let captureSrc = '';
+                        if (roi.roi_image && roi.roi_image.startsWith('data:image')) {
+                            // Base64 encoded image
+                            captureSrc = roi.roi_image;
+                        } else if (roi.roi_image_path) {
+                            // File path from shared folder - convert to relative URL
+                            // /mnt/visual-aoi-shared/sessions/xxx/output/roi_5.jpg -> /shared/sessions/xxx/output/roi_5.jpg
+                            const relativePath = roi.roi_image_path.replace('/mnt/visual-aoi-shared/', '/shared/');
+                            // CRITICAL: Add cache-busting timestamp to force browser to load NEW image
+                            captureSrc = `${relativePath}?t=${Date.now()}`;
+                        } else if (roi.capture_image_file) {
+                            // Legacy format - try local static folder
+                            captureSrc = `/static/captures/${roi.capture_image_file}?t=${Date.now()}`;
+                        } else if (appState.sessionId && roi.roi_id) {
+                            // Fallback: construct path based on session and ROI ID convention
+                            // Server typically saves ROI images as: /mnt/visual-aoi-shared/sessions/{session_id}/output/roi_{roi_id}.jpg
+                            captureSrc = `/shared/sessions/${appState.sessionId}/output/roi_${roi.roi_id}.jpg?t=${Date.now()}`;
+                            console.log(`⚠️ ROI ${roi.roi_id}: No image path provided by server, using fallback: ${captureSrc}`);
+                        }
+
+                        // For barcode ROIs, always show captured image section (even if path missing for debugging)
+                        // For other ROIs, show if either golden or captured image exists
+                        const shouldShowImages = roi.roi_type_name === 'barcode' ? captureSrc : (goldenSrc || captureSrc);
+
+                        if (shouldShowImages) {
+                            return `
+                                    <div class="roi-images">
+                                        ${goldenSrc ? `
+                                            <div class="roi-image-container">
+                                                <div class="roi-image-label">🌟 Golden Sample</div>
+                                                <img src="${goldenSrc}" 
+                                                     alt="Golden sample for ROI ${roi.roi_id}"
+                                                     class="roi-image"
+                                                     onclick="openImageModal(this.src, 'Golden Sample - ROI ${roi.roi_id}')"
+                                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'200\\' height=\\'150\\'%3E%3Crect fill=\\'%23f0f0f0\\' width=\\'200\\' height=\\'150\\'/%3E%3Ctext x=\\'50%25\\' y=\\'50%25\\' text-anchor=\\'middle\\' fill=\\'%23999\\' font-family=\\'Arial\\' font-size=\\'14\\'%3EImage Unavailable%3C/text%3E%3C/svg%3E'; this.parentElement.classList.add('image-error');">
+                                                <div class="roi-image-hint">Click to enlarge</div>
+                                            </div>
+                                        ` : ''}
+                                        ${captureSrc ? `
+                                            <div class="roi-image-container">
+                                                <div class="roi-image-label">📸 Captured Image</div>
+                                                <img src="${captureSrc}" 
+                                                     alt="Captured image for ROI ${roi.roi_id}"
+                                                     class="roi-image"
+                                                     onclick="openImageModal(this.src, 'Captured Image - ROI ${roi.roi_id}')"
+                                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'200\\' height=\\'150\\'%3E%3Crect fill=\\'%23f0f0f0\\' width=\\'200\\' height=\\'150\\'/%3E%3Ctext x=\\'50%25\\' y=\\'50%25\\' text-anchor=\\'middle\\' fill=\\'%23999\\' font-family=\\'Arial\\' font-size=\\'14\\'%3EImage Unavailable%3C/text%3E%3C/svg%3E'; this.parentElement.classList.add('image-error');">
+                                                <div class="roi-image-hint">Click to enlarge</div>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `;
+                        }
+                        return '';
+                    })()}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return String(text).replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Clean barcode format - handles both linked and legacy formats
+        // API Schema Reference: http://10.100.27.156:5000/apispec_1.json
+        // 
+        // device_summaries[device_id]["barcode"]: LINKED/VALIDATED barcode (string)
+        //   - Transformed by external API: POST http://10.100.10.83:5000/api/ProcessLock/FA/GetLinkData
+        //   - Example: "1897848-0001555-118714"
+        //   - Should be clean string, but may come as Python list string in legacy format
+        //
+        // roi_results[]["barcode_values"]: ORIGINAL SCANNED barcodes (array)
+        //   - Raw scanned values from image
+        //   - Already proper JSON array (no cleaning needed)
+        //
+        // This function handles legacy Python list string format: ['value'] -> value
+        function cleanBarcode(barcode) {
+            if (!barcode || barcode === '-') return barcode;
+
+            // Convert to string and trim
+            let cleaned = String(barcode).trim();
+
+            // Remove Python list brackets and quotes: ['value'] -> value
+            // Handles: ['xxx'], ["xxx"], ['xxx', 'yyy'], etc.
+            if (cleaned.startsWith('[') && cleaned.endsWith(']')) {
+                cleaned = cleaned.slice(1, -1).trim();
+
+                // Remove quotes (single or double)
+                if ((cleaned.startsWith("'") && cleaned.endsWith("'")) ||
+                    (cleaned.startsWith('"') && cleaned.endsWith('"'))) {
+                    cleaned = cleaned.slice(1, -1);
+                }
+
+                // If multiple values, take the first one
+                if (cleaned.includes(',')) {
+                    cleaned = cleaned.split(',')[0].trim();
+                    // Remove quotes again after split
+                    if ((cleaned.startsWith("'") && cleaned.endsWith("'")) ||
+                        (cleaned.startsWith('"') && cleaned.endsWith('"'))) {
+                        cleaned = cleaned.slice(1, -1);
+                    }
+                }
+            }
+
+            return cleaned;
+        }
+
+        // Get scanned (original) barcode from operator input or ROI results
+        // Priority: 1. Operator manual scan (appState.scannedBarcodes), 2. ROI detection (barcode_values)
+        function getScannedBarcode(deviceId, roiResults) {
+            // First check if operator manually scanned this device's barcode
+            if (appState.scannedBarcodes && appState.scannedBarcodes[deviceId]) {
+                return appState.scannedBarcodes[deviceId];
+            }
+
+            // Fall back to ROI detection - ONLY if barcode ROI passed and has values
+            if (!roiResults || roiResults.length === 0) return null;
+
+            for (const roi of roiResults) {
+                if (roi.roi_type_name === 'barcode' &&
+                    roi.passed === true &&  // IMPORTANT: Only use barcode if ROI passed
+                    roi.barcode_values &&
+                    roi.barcode_values.length > 0 &&
+                    roi.barcode_values[0]) {  // Ensure value is not empty/null
+                    return roi.barcode_values[0];
+                }
+            }
+            return null;
+        }
+
+        // Format barcode display: (scanned) - linked
+        function formatBarcodeDisplay(linkedBarcode, scannedBarcode) {
+            const cleanLinked = cleanBarcode(linkedBarcode);
+
+            if (!scannedBarcode || scannedBarcode === cleanLinked) {
+                // No scanned barcode or same as linked - show linked only
+                return escapeHtml(cleanLinked);
+            }
+
+            // Show both: (scanned) - linked
+            return `<span style="color: var(--tertiary-fg); font-size: 0.9em;">(${escapeHtml(scannedBarcode)})</span> → <span style="font-weight: 600;">${escapeHtml(cleanLinked)}</span>`;
+        }
+
+        // ROI Detail Modal functions - Lazy load images on open for performance
+        function openROIDetailModal(deviceId) {
+            console.log(`📂 Opening ROI detail modal for device ${deviceId}`);
+
+            const modal = document.getElementById('roiDetailModal');
+            const modalTitle = document.getElementById('roiDetailModalTitle');
+            const modalBody = document.getElementById('roiDetailModalBody');
+
+            // Get device data from current results
+            if (!appState.currentResult || !appState.currentResult.device_summaries) {
+                console.error('❌ No inspection results available');
+                return;
+            }
+
+            const deviceData = appState.currentResult.device_summaries[deviceId];
+            if (!deviceData) {
+                console.error(`❌ No data found for device ${deviceId}`);
+                return;
+            }
+
+            // Get ROI results
+            const roiResults = deviceData.results || deviceData.roi_results || [];
+            const failedCount = roiResults.filter(r => !r.passed).length;
+
+            // Get barcode from actual ROI results or manual input (don't trust server's cached barcode field)
+            const scannedBarcode = getScannedBarcode(deviceId, roiResults);
+            const barcodeDisplay = scannedBarcode ? escapeHtml(scannedBarcode) : '';
+
+            // Set modal title
+            modalTitle.textContent = `🔍 Device ${deviceId} - ROI Inspection Details (${roiResults.length} ROIs)`;
+
+            // Render ROI details with filter button
+            modalBody.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div style="font-size: 1.1em; font-weight: 600;">
+                            ${barcodeDisplay ? `📱 Barcode: ${barcodeDisplay}` : ''}
+                        </div>
+                        ${failedCount > 0 ? `
+                            <button class="filter-failures-btn" 
+                                    onclick="toggleFailureFilterInModal()"
+                                    id="modalFilterBtn"
+                                    title="Show only failed ROIs">
+                                <span class="filter-icon">🔴</span>
+                                <span class="filter-text">Show Only Failures (${failedCount})</span>
+                            </button>
+                        ` : ''}
+                    </div>
+                    <div class="roi-list" id="modalROIList">
+                        ${renderROIResultsWithLazyImages(roiResults, deviceId)}
+                    </div>
+                </div>
+            `;
+
+            // Show modal
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            // Initialize drag functionality for modal
+            initModalDrag();
+
+            // PERFORMANCE: Load images AFTER modal is visible (lazy loading)
+            setTimeout(() => {
+                loadROIImages();
+            }, 100);
+        }
+
+        function closeROIDetailModal() {
+            const modal = document.getElementById('roiDetailModal');
+            const modalContent = modal.querySelector('.modal-content');
+
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+
+            // Reset modal position when closing
+            if (modalContent) {
+                modalContent.style.transform = 'none';
+                modalContent.style.left = 'auto';
+                modalContent.style.top = 'auto';
+            }
+        }
+
+        // Modal drag functionality
+        function initModalDrag() {
+            const modal = document.getElementById('roiDetailModal');
+            const modalContent = modal.querySelector('.modal-content');
+            const modalHeader = modal.querySelector('.modal-header');
+
+            if (!modalHeader || !modalContent) return;
+
+            let isDragging = false;
+            let currentX;
+            let currentY;
+            let initialX;
+            let initialY;
+            let xOffset = 0;
+            let yOffset = 0;
+
+            // Change cursor on header to indicate draggable
+            modalHeader.style.cursor = 'move';
+            modalHeader.style.userSelect = 'none';
+
+            modalHeader.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', dragEnd);
+
+            // Touch support for tablets
+            modalHeader.addEventListener('touchstart', dragStart, { passive: false });
+            document.addEventListener('touchmove', drag, { passive: false });
+            document.addEventListener('touchend', dragEnd);
+
+            function dragStart(e) {
+                if (e.type === 'touchstart') {
+                    initialX = e.touches[0].clientX - xOffset;
+                    initialY = e.touches[0].clientY - yOffset;
+                } else {
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+                }
+
+                if (e.target === modalHeader || modalHeader.contains(e.target)) {
+                    // Don't start drag if clicking close button
+                    if (e.target.closest('button')) return;
+
+                    isDragging = true;
+                    modalContent.style.transition = 'none';
+                }
+            }
+
+            function drag(e) {
+                if (isDragging) {
+                    e.preventDefault();
+
+                    if (e.type === 'touchmove') {
+                        currentX = e.touches[0].clientX - initialX;
+                        currentY = e.touches[0].clientY - initialY;
+                    } else {
+                        currentX = e.clientX - initialX;
+                        currentY = e.clientY - initialY;
+                    }
+
+                    xOffset = currentX;
+                    yOffset = currentY;
+
+                    setTranslate(currentX, currentY, modalContent);
+                }
+            }
+
+            function dragEnd(e) {
+                initialX = currentX;
+                initialY = currentY;
+                isDragging = false;
+            }
+
+            function setTranslate(xPos, yPos, el) {
+                el.style.transform = `translate(${xPos}px, ${yPos}px)`;
+            }
+        }
+
+        // Toggle filter in modal
+        function toggleFailureFilterInModal() {
+            const roiList = document.getElementById('modalROIList');
+            const filterBtn = document.getElementById('modalFilterBtn');
+            const allItems = roiList.querySelectorAll('.roi-item');
+
+            const isFiltering = filterBtn.classList.contains('active');
+
+            if (isFiltering) {
+                // Currently filtering - switch to show all
+                allItems.forEach(item => item.style.display = 'block');
+                filterBtn.classList.remove('active');
+
+                // Update button text to show failed count
+                const failedCount = Array.from(allItems).filter(item =>
+                    item.getAttribute('data-passed') === 'false'
+                ).length;
+                filterBtn.querySelector('.filter-text').textContent =
+                    `Show Only Failures (${failedCount})`;
+                filterBtn.querySelector('.filter-icon').textContent = '🔴';
+            } else {
+                // Currently showing all - switch to filter failures only
+                allItems.forEach(item => {
+                    const passed = item.getAttribute('data-passed') === 'true';
+                    item.style.display = passed ? 'none' : 'block';
+                });
+                filterBtn.classList.add('active');
+
+                // Update button text to show total count
+                filterBtn.querySelector('.filter-text').textContent =
+                    `Show All ROIs (${allItems.length})`;
+                filterBtn.querySelector('.filter-icon').textContent = '🔵';
+            }
+        }
+
+        // Load ROI images lazily - called after modal opens
+        function loadROIImages() {
+            console.log('🖼️ Loading ROI images (lazy loaded for performance)...');
+            const imagePlaceholders = document.querySelectorAll('.roi-image-placeholder');
+
+            imagePlaceholders.forEach(placeholder => {
+                const img = document.createElement('img');
+                img.src = placeholder.getAttribute('data-src');
+                img.alt = placeholder.getAttribute('data-alt');
+                img.className = 'roi-image';
+                img.onclick = function () {
+                    openImageModal(this.src, placeholder.getAttribute('data-caption'));
+                };
+                img.onerror = function () {
+                    this.onerror = null;
+                    this.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'150\'%3E%3Crect fill=\'%23f0f0f0\' width=\'200\' height=\'150\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' text-anchor=\'middle\' fill=\'%23999\' font-family=\'Arial\' font-size=\'14\'%3EImage Unavailable%3C/text%3E%3C/svg%3E';
+                    this.parentElement.classList.add('image-error');
+                };
+
+                // Replace placeholder with actual image
+                placeholder.replaceWith(img);
+            });
+        }
+
+        // Image modal functions
+        function openImageModal(src, caption) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            const captionText = document.getElementById('modalCaption');
+
+            modal.style.display = 'flex';
+            modalImg.src = src;
+            captionText.textContent = caption || '';
+
+            // Prevent body scroll when modal is open
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modals on Escape key
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closeImageModal();
+                closeROIDetailModal();
+            }
+        });
+
+        function createResultsSummary(result) {
+            let summary = `Inspection Results Summary\n`;
+            summary += `${'='.repeat(30)}\n\n`;
+
+            // Handle v2.0 schema (result is already normalized)
+            if (result.overall_result) {
+                const overallResult = result.overall_result;
+                const overallStatus = overallResult.passed ? 'PASS' : 'FAIL';
+
+                summary += `Overall Result: ${overallStatus}\n`;
+
+                // Calculate device statistics
+                const deviceSummaries = result.device_summaries || {};
+                const totalDevices = Object.keys(deviceSummaries).length;
+                const passCount = Object.values(deviceSummaries).filter(d => d.device_passed).length;
+                const failCount = totalDevices - passCount;
+
+                summary += `Total Devices: ${totalDevices}\n`;
+                summary += `Pass Count: ${passCount}\n`;
+                summary += `Fail Count: ${failCount}\n\n`;
+            } else if (result.summary) {
+                // Fallback for old format (shouldn't happen as we normalize)
+                summary += `Overall Result: ${result.summary.overall_result || 'N/A'}\n`;
+                summary += `Total Devices: ${result.summary.total_devices || 0}\n`;
+                summary += `Pass Count: ${result.summary.pass_count || 0}\n`;
+                summary += `Fail Count: ${result.summary.fail_count || 0}\n\n`;
+            }
+
+            if (result.device_summaries) {
+                summary += `Device Details:\n`;
+                summary += `${'-'.repeat(15)}\n`;
+                for (const [deviceId, deviceData] of Object.entries(result.device_summaries)) {
+                    // Handle v2.0: device_passed is boolean
+                    const passStatus = deviceData.device_passed !== undefined
+                        ? (deviceData.device_passed ? 'PASS' : 'FAIL')
+                        : 'N/A';
+                    summary += `Device ${deviceId}: ${passStatus}\n`;
+
+                    // Handle v2.0: use 'results' field (already normalized)
+                    const roiResults = deviceData.results || deviceData.roi_results || [];
+
+                    // Format barcode with scanned/detected → linked format
+                    if (deviceData.barcode) {
+                        const scannedBarcode = getScannedBarcode(deviceId, roiResults);
+                        const linkedBarcode = deviceData.barcode;
+                        const cleanLinked = cleanBarcode(linkedBarcode);
+
+                        if (scannedBarcode && scannedBarcode !== cleanLinked) {
+                            // Show both: (scanned) → linked
+                            summary += `  Barcode: (${scannedBarcode}) → ${cleanLinked}\n`;
+                        } else {
+                            // Show linked only
+                            summary += `  Barcode: ${cleanLinked}\n`;
+                        }
+                    }
+                    const totalRois = deviceData.total_rois || roiResults.length;
+
+                    if (deviceData.passed_rois !== undefined) {
+                        summary += `  ROIs: ${deviceData.passed_rois}/${totalRois} passed\n`;
+
+                        // Display detailed ROI results
+                        if (roiResults.length > 0) {
+                            summary += `\n  ROI Details:\n`;
+                            roiResults.forEach(roi => {
+                                const status = roi.passed ? '✓ PASS' : '✗ FAIL';
+                                summary += `    ROI ${roi.roi_id} (${roi.roi_type_name}): ${status}\n`;
+
+                                // Show AI similarity if available
+                                if (roi.ai_similarity !== undefined && roi.ai_similarity !== null) {
+                                    const similarity = (roi.ai_similarity * 100).toFixed(2);
+                                    summary += `      Similarity: ${similarity}%\n`;
+                                }
+
+                                // Show threshold for compare ROIs
+                                if (roi.roi_type_name === 'compare' && roi.threshold !== undefined) {
+                                    const threshold = (roi.threshold * 100).toFixed(2);
+                                    summary += `      Threshold: ${threshold}%\n`;
+                                }
+
+                                // Show match result for compare ROIs
+                                if (roi.roi_type_name === 'compare' && roi.match_result) {
+                                    summary += `      Match: ${roi.match_result}\n`;
+                                }
+
+                                // Show barcode values if available
+                                if (roi.barcode_values && roi.barcode_values.length > 0) {
+                                    summary += `      Barcode: ${roi.barcode_values.join(', ')}\n`;
+                                }
+
+                                // Show OCR text if available
+                                if (roi.ocr_text) {
+                                    summary += `      OCR Text: ${roi.ocr_text}\n`;
+                                }
+
+                                // Show color checking results if available
+                                if (roi.roi_type_name === 'color' && roi.color_result) {
+                                    summary += `      Color Match: ${roi.color_result.matched ? '✓ Matched' : '✗ No Match'}\n`;
+                                    if (roi.color_result.matched_color) {
+                                        summary += `      Detected Color: ${roi.color_result.matched_color}`;
+                                        if (roi.color_result.color_hex) {
+                                            summary += ` (${roi.color_result.color_hex})`;
+                                        }
+                                        summary += `\n`;
+                                    }
+                                    if (roi.color_result.pixel_count) {
+                                        summary += `      Pixel Count: ${roi.color_result.pixel_count.toLocaleString()} pixels`;
+                                        if (roi.color_result.percentage) {
+                                            summary += ` (${roi.color_result.percentage.toFixed(1)}%)`;
+                                        }
+                                        summary += `\n`;
+                                    }
+                                }
+
+                                // Show coordinates if available
+                                if (roi.coordinates && roi.coordinates.length === 4) {
+                                    summary += `      Position: [${roi.coordinates.join(', ')}]\n`;
+                                }
+
+                                // Show error if present
+                                if (roi.error) {
+                                    summary += `      ⚠️ Error: ${roi.error}\n`;
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+
+            return summary;
+        }
+
+        function updateTimingInfo(result, totalTimeMs = null) {
+            const captureTime = result.capture_time ? Math.round(result.capture_time * 1000) : '-';
+            const processingTime = result.processing_time ? Math.round(result.processing_time * 1000) : '-';
+            const totalTime = totalTimeMs ? totalTimeMs : (result.total_time ? Math.round(result.total_time * 1000) : '-');
+            const roiGroups = result.roi_groups_count || '-';
+
+            document.getElementById('captureTime').textContent = captureTime;
+            document.getElementById('processingTime').textContent = processingTime;
+            document.getElementById('totalTime').textContent = totalTime;
+            document.getElementById('roiGroupsCount').textContent = roiGroups;
+
+            // Create device-specific result cards
+            updateDeviceResultCards(result);
+
+            document.getElementById('timingInfo').style.display = 'grid';
+        }
+
+        function updateDeviceResultCards(result) {
+            const container = document.getElementById('deviceResultsCards');
+            console.log('🔧 updateDeviceResultCards called');
+            console.log('🔧 Container found:', !!container);
+            console.log('🔧 Result structure:', result);
+            console.log('🔧 device_summaries:', result.device_summaries);
+
+            if (!container) {
+                console.error('❌ deviceResultsCards container not found!');
+                return;
+            }
+
+            // Clear existing device cards
+            container.innerHTML = '';
+
+            // Get device summaries from result
+            const deviceSummaries = result.device_summaries || {};
+            const devices = Object.entries(deviceSummaries).sort((a, b) =>
+                parseInt(a[0]) - parseInt(b[0])
+            );
+
+            console.log('🔧 Found devices:', devices.length, devices);
+
+            if (devices.length === 0) {
+                // No devices, hide the container
+                console.log('⚠️ No devices found, hiding device results section');
+                container.style.display = 'none';
+                return;
+            }
+
+            // Show the container
+            container.style.display = 'flex';
+
+            // Create a card for each device (full-width horizontal layout)
+            console.log('✅ Creating cards for', devices.length, 'devices');
+            devices.forEach(([deviceId, deviceData]) => {
+                console.log(`🔧 Creating card for Device ${deviceId}:`, deviceData);
+                const devicePassed = deviceData.device_passed;
+                const deviceResult = devicePassed ? 'PASS' : 'FAIL';
+
+                // Get scanned and linked barcodes
+                const roiResults = deviceData.results || deviceData.roi_results || [];
+                const scannedBarcode = getScannedBarcode(deviceId, roiResults);
+                const linkedBarcode = deviceData.barcode;
+                const barcodeDisplay = linkedBarcode ? formatBarcodeDisplay(linkedBarcode, scannedBarcode) : '-';
+
+                const passedRois = deviceData.passed_rois || 0;
+                const totalRois = deviceData.total_rois || 0;
+
+                const card = document.createElement('div');
+                card.className = 'device-result-card';
+                card.title = `Click to view Device ${deviceId} details`;
+
+                // Left side: Device info
+                const leftSide = document.createElement('div');
+                leftSide.innerHTML = `
+                    <div style="font-size: 1.1em; font-weight: 700; color: var(--primary); margin-bottom: 6px;">
+                        📱 Device ${deviceId}
+                    </div>
+                    <div style="font-size: 0.9em; color: var(--secondary-fg);">
+                        Barcode: <span style="font-family: monospace; color: var(--tertiary-fg);">${barcodeDisplay}</span>
+                    </div>
+                    <div style="font-size: 0.85em; color: var(--tertiary-fg); margin-top: 4px;">
+                        ${passedRois}/${totalRois} ROIs passed
+                    </div>
+                `;
+
+                // Right side: Pass/Fail status
+                const rightSide = document.createElement('div');
+                rightSide.style.textAlign = 'right';
+                rightSide.innerHTML = `
+                    <div style="font-size: 2em; font-weight: 900; color: ${devicePassed ? 'var(--success)' : 'var(--error)'}; letter-spacing: 0.05em;">
+                        ${deviceResult}
+                    </div>
+                    <div style="font-size: 0.8em; color: var(--secondary-fg); margin-top: 4px; cursor: pointer;">
+                        🔍 View ROI Details
+                    </div>
+                `;
+
+                card.appendChild(leftSide);
+                card.appendChild(rightSide);
+
+                // Add click handler to open modal directly (better UX, faster performance)
+                card.addEventListener('click', () => {
+                    openROIDetailModal(deviceId);
+                });
+
+                container.appendChild(card);
+                console.log(`✅ Device ${deviceId} card appended to container`);
+            });
+            console.log('✅ All device cards created and appended');
+        }
+
+        function toggleDeviceDetails() {
+            const section = document.getElementById('deviceResultsSection');
+            const button = document.getElementById('deviceDetailsToggle');
+
+            if (!section) return;
+
+            const isHidden = section.style.display === 'none' || !section.style.display;
+
+            if (isHidden) {
+                section.style.display = 'block';
+                if (button) {
+                    const icon = button.querySelector('.btn-icon');
+                    const text = button.querySelector('.btn-text');
+                    if (icon) icon.textContent = '📁';
+                    if (text) text.textContent = 'Hide Device Details';
+                }
+                showNotification('Device details shown', 'info');
+                // Scroll to the section (instant, no animation for weak devices)
+                section.scrollIntoView({ behavior: 'auto', block: 'start' });
+            } else {
+                section.style.display = 'none';
+                if (button) {
+                    const icon = button.querySelector('.btn-icon');
+                    const text = button.querySelector('.btn-text');
+                    if (icon) icon.textContent = '🔍';
+                    if (text) text.textContent = 'Show Device Details';
+                }
+                showNotification('Device details hidden', 'info');
+            }
+        }
+
+        // Toggle failure filter for a specific device
+        function toggleFailureFilter(deviceId) {
+            const roiList = document.getElementById(`roiList-${deviceId}`);
+            const filterBtn = document.getElementById(`filterBtn-${deviceId}`);
+
+            if (!roiList || !filterBtn) {
+                console.error(`ROI list or filter button not found for device ${deviceId}`);
+                return;
+            }
+
+            const roiItems = roiList.querySelectorAll('.roi-item');
+            const isFiltering = filterBtn.classList.contains('active');
+
+            if (isFiltering) {
+                // Show all ROIs
+                roiItems.forEach(item => {
+                    item.style.display = '';
+                });
+                filterBtn.classList.remove('active');
+                filterBtn.querySelector('.filter-text').textContent =
+                    `Show Only Failures (${Array.from(roiItems).filter(item => item.dataset.passed === 'false').length})`;
+                filterBtn.querySelector('.filter-icon').textContent = '🔴';
+                filterBtn.title = 'Show only failed ROIs';
+            } else {
+                // Show only failed ROIs
+                let failedCount = 0;
+                roiItems.forEach(item => {
+                    if (item.dataset.passed === 'false') {
+                        item.style.display = '';
+                        failedCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+                filterBtn.classList.add('active');
+                filterBtn.querySelector('.filter-text').textContent = `Show All ROIs`;
+                filterBtn.querySelector('.filter-icon').textContent = '🟢';
+                filterBtn.title = 'Show all ROIs';
+
+                if (failedCount === 0) {
+                    showNotification(`No failed ROIs in Device ${deviceId}`, 'info');
+                } else {
+                    showNotification(`Showing ${failedCount} failed ROI(s) for Device ${deviceId}`, 'info');
+                }
+            }
+        }
+
+        function exportResults() {
+            if (!appState.currentResult) {
+                showNotification('No results to export', 'warning');
+                return;
+            }
+
+            // Create text summary for export
+            const summaryText = createResultsSummary(appState.currentResult);
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const filename = `aoi-results-${timestamp}.txt`;
+
+            const blob = new Blob([summaryText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showNotification(`Results exported as ${filename}`, 'success');
+        }
+
+        async function saveAsGoldenSample(roiId, roiType) {
+            try {
+                // Validate that we have an active session and product
+                if (!appState.sessionId) {
+                    showNotification('No active session. Please create a session first.', 'error');
+                    return;
+                }
+
+                const productName = appState.sessionProduct;
+                if (!productName) {
+                    showNotification('No product selected. Please select a product.', 'error');
+                    return;
+                }
+
+                // Find the ROI data from current result
+                if (!appState.currentResult || !appState.currentResult.device_summaries) {
+                    showNotification('No inspection result available. Please run an inspection first.', 'error');
+                    return;
+                }
+
+                // Search for the ROI in device summaries
+                let roiData = null;
+                for (const [deviceId, deviceData] of Object.entries(appState.currentResult.device_summaries)) {
+                    const roiResults = deviceData.results || deviceData.roi_results || [];
+                    roiData = roiResults.find(roi => roi.roi_id === roiId);
+                    if (roiData) break;
+                }
+
+                if (!roiData) {
+                    showNotification(`ROI ${roiId} not found in current results`, 'error');
+                    return;
+                }
+
+                // Get the captured ROI image path
+                let imagePath = roiData.roi_image_path || roiData.capture_image_file;
+                if (!imagePath) {
+                    showNotification('No captured image available for this ROI', 'error');
+                    return;
+                }
+
+                // Confirm with user
+                const confirmed = confirm(
+                    `Save current captured image as golden sample for ROI ${roiId}?\n\n` +
+                    `Product: ${productName}\n` +
+                    `ROI Type: ${roiType}\n` +
+                    `This will update the reference image for comparison.`
+                );
+
+                if (!confirmed) {
+                    return;
+                }
+
+                showNotification('Saving golden sample...', 'info');
+
+                // Fetch the captured image from shared folder
+                let imageUrl = '';
+                if (imagePath.startsWith('/mnt/')) {
+                    // Convert server path to client URL
+                    imageUrl = imagePath.replace('/mnt/visual-aoi-shared/', '/shared/');
+                } else if (imagePath.startsWith('/shared/')) {
+                    imageUrl = imagePath;
+                } else {
+                    // Legacy format - static folder
+                    imageUrl = `/static/captures/${imagePath}`;
+                }
+
+                console.log('📸 Fetching captured image from:', imageUrl);
+                console.log('Original path:', imagePath);
+
+                // Fetch the image from client
+                const imageResponse = await fetch(imageUrl);
+                console.log('Image fetch response:', {
+                    status: imageResponse.status,
+                    statusText: imageResponse.statusText,
+                    ok: imageResponse.ok,
+                    contentType: imageResponse.headers.get('content-type')
+                });
+
+                if (!imageResponse.ok) {
+                    throw new Error(`Failed to fetch ROI image from ${imageUrl}: ${imageResponse.status} ${imageResponse.statusText}`);
+                }
+
+                const imageBlob = await imageResponse.blob();
+                console.log('Image blob created:', {
+                    size: imageBlob.size,
+                    type: imageBlob.type
+                });
+
+                // Prepare form data according to server Swagger spec
+                const formData = new FormData();
+                formData.append('product_name', productName);
+                formData.append('roi_id', roiId.toString()); // Ensure string type
+                formData.append('golden_image', imageBlob, `roi_${roiId}.jpg`);
+
+                console.log('📤 Sending to server:', {
+                    product_name: productName,
+                    roi_id: roiId.toString(),
+                    image_size: imageBlob.size,
+                    image_type: imageBlob.type,
+                    filename: `roi_${roiId}.jpg`
+                });
+
+                // Send to CLIENT proxy endpoint (avoids CORS issues)
+                // Client will forward to server at http://10.100.27.156:5000
+                const saveEndpoint = `/api/golden-sample/save`;
+                console.log('Sending request to:', saveEndpoint, '(client proxy → server)');
+
+                const response = await fetch(saveEndpoint, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                console.log('Server response:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    ok: response.ok,
+                    headers: {
+                        contentType: response.headers.get('content-type')
+                    }
+                });
+
+                // Try to parse JSON response
+                let result;
+                try {
+                    result = await response.json();
+                    console.log('Server result:', result);
+                } catch (parseError) {
+                    console.error('Failed to parse server response as JSON:', parseError);
+                    // If status is 200, consider it success even if JSON parsing fails
+                    if (response.ok) {
+                        result = { message: 'Golden sample saved successfully' };
+                    } else {
+                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                    }
+                }
+
+                if (!response.ok) {
+                    const errorMsg = result.error || result.message || `Server error: ${response.status} ${response.statusText}`;
+                    throw new Error(errorMsg);
+                }
+
+                // Show success message with details from server
+                const successMsg = result.message || `Golden sample saved for ROI ${roiId}`;
+                const backupInfo = result.backup_info ? `\nBackup: ${result.backup_info}` : '';
+                showNotification(`✅ ${successMsg}${backupInfo}`, 'success');
+                console.log('✅ Golden sample saved successfully:', result);
+
+            } catch (error) {
+                console.error('Error saving golden sample:', error);
+                showNotification(`Failed to save golden sample: ${error.message}`, 'error');
+            }
+        }
+
+        // Flow UI functions (simplified for web version)
+
+        function showFlowUI() {
+            showNotification('Flow visualization feature coming soon', 'info');
+        }
+
+        function closeFlowModal() {
+            document.getElementById('flowModal').style.display = 'none';
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span class="notification-icon">${getNotificationIcon(type)}</span>
+                    <span class="notification-message">${message}</span>
+                </div>
+            `;
+
+            // Add to page
+            document.body.appendChild(notification);
+
+            // Animate in
+            setTimeout(() => notification.classList.add('show'), 10);
+
+            // Remove after delay
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function getNotificationIcon(type) {
+            switch (type) {
+                case 'success': return '✅';
+                case 'error': return '❌';
+                case 'warning': return '⚠️';
+                case 'info':
+                default: return 'ℹ️';
+            }
+        }
+
+        // Global keyboard shortcut handler (inspired by Tkinter client patterns)
+        document.addEventListener('keydown', function (event) {
+            // F1 - Focus first barcode input (if visible)
+            if (event.key === 'F1' && !event.ctrlKey && !event.shiftKey) {
+                const barcodePanel = document.getElementById('barcodeInputPanel');
+                if (barcodePanel && barcodePanel.style.display !== 'none') {
+                    event.preventDefault();
+                    focusFirstBarcode();
+                }
+            }
+            // Ctrl+Shift+C - Clear all barcodes (if panel visible)
+            else if (event.ctrlKey && event.shiftKey && event.key === 'C') {
+                const barcodePanel = document.getElementById('barcodeInputPanel');
+                if (barcodePanel && barcodePanel.style.display !== 'none') {
+                    event.preventDefault();
+                    clearAllBarcodes();
+                }
+            }
+            // Ctrl+R - Reset barcode flow (if panel visible)
+            else if (event.ctrlKey && event.key === 'r') {
+                const barcodePanel = document.getElementById('barcodeInputPanel');
+                if (barcodePanel && barcodePanel.style.display !== 'none') {
+                    event.preventDefault();
+                    resetAllBarcodes();
+                }
+            }
+        });
+
+        // Initialize camera list and products on page load
+        document.addEventListener('DOMContentLoaded', async function () {
+            loadTheme();
+            loadCollapsedState();
+
+            // Auto-collapse all setup sections for compact UI
+            autoCollapseSetupSections();
+
+            updateSystemStatus('Initializing...');
+
+            // NEW: Check camera status on page load (handles webpage refresh)
+            try {
+                const statusResponse = await fetch('/api/camera/status');
+                if (statusResponse.ok) {
+                    const cameraStatus = await statusResponse.json();
+
+                    console.log('📷 Camera status on page load:', cameraStatus);
+
+                    if (cameraStatus.app_initialized) {
+                        // Camera was initialized from previous session
+                        appState.cameraInitialized = true;
+                        console.log(`⚠️  Camera pipeline active from previous session (State: ${cameraStatus.pipeline_state})`);
+
+                        // Update UI to reflect existing camera state
+                        const statusMsg = `Pipeline active (${cameraStatus.pipeline_state})`;
+                        updateCameraStatus('warning', statusMsg);
+                        updateSystemStatus('Camera pipeline active - re-initialize to reset');
+                    } else {
+                        console.log('✓ No active camera pipeline detected');
+                        updateCameraStatus('disconnected', 'Camera not initialized');
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to check camera status:', error);
+                // Non-critical error - continue with normal startup
+            }
+
+            // Load cameras
+            try {
+                const response = await apiCall('GET', '/api/cameras');
+                const cameras = Array.isArray(response) ? response : (response.cameras || []);
+                const select = document.getElementById('cameraSelect');
+
+                cameras.forEach(camera => {
+                    const option = document.createElement('option');
+                    const cameraSerial = typeof camera === 'string' ? camera : (camera.serial || camera.serial_number || camera.id);
+                    const cameraName = typeof camera === 'string' ? camera : (camera.name || camera.display_name || cameraSerial || 'Unknown Camera');
+
+                    option.value = cameraSerial;
+                    option.textContent = cameraName;
+                    select.appendChild(option);
+                });
+
+                console.log('Loaded cameras:', cameras);
+            } catch (error) {
+                console.error('Failed to load cameras:', error);
+                showNotification('Failed to load cameras', 'warning');
+            }
+
+            // Load products
+            await loadProductsFromServer();
+
+            updateSystemStatus('Ready');
+            updateLastUpdate();
+
+            // Show keyboard shortcuts info on first load
+            if (!localStorage.getItem('aoi-shortcuts-seen')) {
+                setTimeout(() => {
+                    showNotification('💡 Tip: Use Enter to advance, ↑/↓ to navigate, F1 to focus first input', 'info');
+                    localStorage.setItem('aoi-shortcuts-seen', 'true');
+                }, 2000);
+            }
+        });
+    </script>
+
+    <style>
+        /* Additional styles for new UI components */
+
+        /* Delay time input styling */
+        #delayTimeInput {
+            transition: all 0.3s ease;
+        }
+
+        #delayTimeInput:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: var(--tertiary-bg);
+        }
+
+        #delayTimeInput:enabled:hover {
+            border-color: var(--primary);
+        }
+
+        #delayTimeInput:enabled:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        /* Keyboard button styling (professional look inspired by documentation) */
+        kbd {
+            display: inline-block;
+            padding: 2px 6px;
+            font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+            font-size: 0.85em;
+            color: var(--fg);
+            background: var(--glass-surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+            white-space: nowrap;
+            margin: 0 2px;
+        }
+
+        /* Enhanced barcode controls styling */
+        .barcode-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .barcode-controls button {
+            transition: all 0.2s ease;
+        }
+
+        .barcode-controls button:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Device badge enhanced styling */
+        .device-badge {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .barcode-input-group:hover .device-badge {
+            transform: scale(1.1);
+        }
+
+        /* Status icon animation */
+        .status-icon {
+            animation: fadeInScale 0.3s ease;
+        }
+
+        @keyframes fadeInScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Toggle Switch Styles */
+        .toggle-switch input[type="checkbox"] {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--tertiary-bg);
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch input:checked+.toggle-slider {
+            background-color: var(--success);
+        }
+
+        .toggle-switch input:checked+.toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        .toggle-switch input:focus+.toggle-slider {
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+        }
+
+        .session-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+            padding: 16px;
+            background: var(--glass-surface);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .info-card {
+            text-align: center;
+            padding: 8px;
+        }
+
+        .info-label {
+            font-size: 0.8em;
+            color: var(--tertiary-fg);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .barcode-summary {
+            display: flex;
+            gap: 20px;
+            margin-top: 12px;
+            padding: 12px;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .summary-label {
+            color: var(--secondary-fg);
+            font-size: 0.9em;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .summary-stat {
+            text-align: center;
+            padding: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: var(--secondary-fg);
+        }
+
+        .system-info {
+            margin-top: 32px;
+            padding: 20px;
+            background: var(--glass-surface);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-item .info-label {
+            color: var(--secondary-fg);
+            font-weight: 500;
+        }
+
+        .info-item .info-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 8px 32px var(--shadow-dark);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            transform: translateX(400px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            max-width: 350px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .notification-icon {
+            font-size: 1.2em;
+        }
+
+        .notification-message {
+            flex: 1;
+            color: var(--fg);
+            font-weight: 500;
+        }
+
+        .notification-success {
+            border-left: 4px solid var(--success);
+        }
+
+        .notification-error {
+            border-left: 4px solid var(--error);
+        }
+
+        .notification-warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .notification-info {
+            border-left: 4px solid var(--info);
+        }
+
+        /* Modal styles for flow UI */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90%;
+            overflow: hidden;
+            box-shadow: 0 20px 60px var(--shadow-dark);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .modal-body {
+            padding: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .flow-container {
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--tertiary-fg);
+        }
+    </style>
+
+    <!-- Image Modal for Zoom -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal()" style="display: none;">
+        <span class="image-modal-close" onclick="closeImageModal()">&times;</span>
+        <div class="image-modal-content-wrapper">
+            <img class="image-modal-content" id="modalImage" src="" alt="">
+            <div id="modalCaption" class="image-modal-caption"></div>
+        </div>
+    </div>
+
+    <!-- Chromium Performance Monitoring & Optimizations -->
+    <script>
+        // Enable Chrome Performance API monitoring
+        if (window.performance && window.performance.mark) {
+            performance.mark('app-ready');
+        }
+
+        // IntersectionObserver lazy loading REMOVED for weak device performance
+        // Native browser loading is more efficient on Raspberry Pi
+
+        // Passive event listeners for better scroll performance
+        if (typeof EventTarget !== 'undefined') {
+            const originalAddEventListener = EventTarget.prototype.addEventListener;
+            EventTarget.prototype.addEventListener = function (type, listener, options) {
+                if (['scroll', 'wheel', 'touchstart', 'touchmove', 'touchend'].includes(type)) {
+                    if (typeof options === 'boolean') {
+                        options = { capture: options, passive: true };
+                    } else if (typeof options === 'object' && options.passive === undefined) {
+                        options.passive = true;
+                    }
+                }
+                return originalAddEventListener.call(this, type, listener, options);
+            };
+        }
+
+        // Request Idle Callback for non-critical operations
+        const runWhenIdle = (callback) => {
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(callback, { timeout: 2000 });
+            } else {
+                setTimeout(callback, 1);
+            }
+        };
+
+        // Optimize reflow/repaint with requestAnimationFrame
+        let rafId = null;
+        const scheduleUpdate = (callback) => {
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+            }
+            rafId = requestAnimationFrame(() => {
+                callback();
+                rafId = null;
+            });
+        };
+
+        // Network Information API for adaptive loading
+        if ('connection' in navigator && 'effectiveType' in navigator.connection) {
+            const connection = navigator.connection;
+            const isSlowConnection = connection.effectiveType === 'slow-2g' ||
+                connection.effectiveType === '2g' ||
+                connection.saveData === true;
+
+            if (isSlowConnection) {
+                console.log('🐌 Slow connection detected - reducing quality');
+                document.documentElement.classList.add('slow-connection');
+            }
+        }
+
+        // Memory monitoring (Chromium only)
+        if (performance.memory) {
+            runWhenIdle(() => {
+                const used = performance.memory.usedJSHeapSize / 1048576;
+                const total = performance.memory.totalJSHeapSize / 1048576;
+                console.log(`💾 Memory: ${used.toFixed(2)}MB / ${total.toFixed(2)}MB`);
+
+                if (used / total > 0.9) {
+                    console.warn('⚠️ High memory usage detected');
+                }
+            });
+        }
+
+        // Service Worker registration for offline support (future enhancement)
+        if ('serviceWorker' in navigator) {
+            runWhenIdle(() => {
+                // Uncomment when service worker is implemented
+                // navigator.serviceWorker.register('/sw.js').then(registration => {
+                //     console.log('✅ Service Worker registered:', registration);
+                // }).catch(error => {
+                //     console.log('❌ Service Worker registration failed:', error);
+                // });
+            });
+        }
+
+        // Prefetch critical resources when idle
+        runWhenIdle(() => {
+            // Prefetch common API endpoints
+            const endpoints = [
+                '/api/camera/status',
+                '/api/cameras',
+                '/api/products'
+            ];
+
+            endpoints.forEach(url => {
+                const link = document.createElement('link');
+                link.rel = 'prefetch';
+                link.href = url;
+                document.head.appendChild(link);
+            });
+        });
+
+        // Performance metrics logging
+        window.addEventListener('load', () => {
+            runWhenIdle(() => {
+                if (window.performance && window.performance.timing) {
+                    const timing = performance.timing;
+                    const loadTime = timing.loadEventEnd - timing.navigationStart;
+                    const domReadyTime = timing.domContentLoadedEventEnd - timing.navigationStart;
+                    const renderTime = timing.domComplete - timing.domLoading;
+
+                    console.log('⚡ Performance Metrics:');
+                    console.log(`   Page Load: ${loadTime}ms`);
+                    console.log(`   DOM Ready: ${domReadyTime}ms`);
+                    console.log(`   Render: ${renderTime}ms`);
+                }
+            });
+        });
+
+        // Detect if running in Chromium
+        const isChromium = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+        if (isChromium) {
+            console.log('✅ Running on Chromium - optimizations active');
+            document.documentElement.setAttribute('data-browser', 'chromium');
+        }
+    </script>
+
+</body>
+
+</html>

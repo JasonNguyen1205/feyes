@@ -1,0 +1,343 @@
+/* Compact UI Mode - Professional Settings Panel */
+
+/* Settings Panel Wrapper - Enhanced Design */
+.settings-panel {
+    background: linear-gradient(135deg, var(--glass-bg) 0%, var(--tertiary-bg) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px;
+    border: 2px solid var(--border-color);
+    margin-bottom: 28px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.settings-panel.collapsed {
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    cursor: pointer;
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.05) 0%, transparent 100%);
+    border-bottom: 2px solid var(--border-color);
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.settings-header:hover {
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.08) 0%, rgba(0, 122, 255, 0.02) 100%);
+}
+
+.settings-header:active {
+    transform: scale(0.995);
+}
+
+.settings-icon {
+    font-size: 1.4em;
+    display: inline-block;
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.settings-icon:hover {
+    transform: rotate(90deg);
+}
+
+.settings-title {
+    font-weight: 600;
+    font-size: 1.1em;
+    letter-spacing: 0.3px;
+    color: var(--fg);
+}
+
+.settings-status {
+    font-size: 0.9em;
+    color: var(--tertiary-fg);
+    font-weight: 500;
+    margin-left: 8px;
+    transition: color 0.3s ease;
+    padding: 4px 10px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+}
+
+.settings-content {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.3s ease;
+    padding: 0 20px;
+}
+
+.settings-content:not([style*="max-height: 0"]) {
+    padding: 24px 20px;
+}
+
+/* Collapse button in settings header - Enhanced */
+.settings-header .collapse-btn {
+    background: var(--glass-bg);
+    border: 2px solid var(--border-color);
+    color: var(--secondary-fg);
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 1.1em;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    font-weight: 500;
+}
+
+.settings-header .collapse-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: scale(1.05);
+}
+
+/* Make sections more compact when collapsed */
+.section.collapsed .section-content {
+    max-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.section.collapsed {
+    margin-bottom: 8px !important;
+}
+
+.section-header {
+    padding: 12px 16px !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* HOVER REMOVED for weak device performance */
+
+/* Compact grid layout */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+@media (max-width: 1200px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Make header more compact */
+.header {
+    padding: 16px 24px !important;
+    margin-bottom: 16px !important;
+}
+
+.header h1 {
+    font-size: 1.5em !important;
+    margin: 0 !important;
+}
+
+.header .subtitle {
+    font-size: 0.85em !important;
+    margin-top: 4px !important;
+}
+
+.header>div {
+    margin-top: 8px !important;
+}
+
+/* Prominent Inspection Control Section */
+.inspection-controls {
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.1) 0%, rgba(90, 200, 250, 0.05) 100%) !important;
+    border: 2px solid var(--primary) !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    box-shadow: 0 8px 32px rgba(0, 122, 255, 0.2) !important;
+    margin-bottom: 24px !important;
+}
+
+.inspection-controls h2 {
+    font-size: 1.4em !important;
+    margin: 0 0 16px 0 !important;
+    color: var(--primary) !important;
+    text-align: center;
+}
+
+.inspection-controls .controls {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0 !important;
+}
+
+.inspection-controls .glass-button {
+    font-size: 1.3em !important;
+    padding: 20px 40px !important;
+    background: var(--primary) !important;
+    color: white !important;
+    border: none !important;
+    box-shadow: 0 8px 24px rgba(0, 122, 255, 0.4) !important;
+    font-weight: 600 !important;
+    min-width: 300px !important;
+}
+
+/* HOVER REMOVED for weak device performance */
+
+.inspection-controls .glass-button:active {
+    transform: translateY(0) !important;
+}
+
+/* Compact section headers with collapse indicators */
+.section-header h2 {
+    font-size: 1em !important;
+    margin: 0 !important;
+}
+
+.collapse-btn {
+    font-size: 0.9em !important;
+    padding: 4px 8px !important;
+    min-width: 32px !important;
+}
+
+/* Reduce spacing in controls */
+.controls {
+    gap: 8px !important;
+}
+
+.control-group {
+    margin-bottom: 8px !important;
+}
+
+.control-group label {
+    font-size: 0.85em !important;
+    margin-bottom: 4px !important;
+}
+
+/* Compact status indicators */
+.status {
+    padding: 8px 12px !important;
+    font-size: 0.85em !important;
+}
+
+/* Make theme toggle smaller */
+.theme-toggle {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 1em !important;
+}
+
+/* Compact container padding */
+.container {
+    padding: 16px !important;
+    max-width: 1600px !important;
+}
+
+/* Session info cards more compact */
+.session-info {
+    gap: 8px !important;
+}
+
+.info-card {
+    padding: 8px 12px !important;
+}
+
+.info-label {
+    font-size: 0.75em !important;
+}
+
+.info-value {
+    font-size: 0.9em !important;
+}
+
+/* Auto-collapse all sections on page load except inspection */
+.section:not(.inspection-controls) .section-content {
+    transition: max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+}
+
+/* Make barcode input panel more compact */
+.barcode-input-panel {
+    padding: 16px !important;
+    margin: 16px 0 !important;
+}
+
+.barcode-input-panel h3 {
+    font-size: 1em !important;
+}
+
+.device-barcode-entry {
+    padding: 8px !important;
+    margin-bottom: 8px !important;
+}
+
+/* Compact barcode controls */
+.barcode-controls {
+    margin-top: 12px !important;
+}
+
+.barcode-controls .glass-button {
+    font-size: 0.85em !important;
+    padding: 6px 12px !important;
+}
+
+/* Results section stays full width but more organized */
+.results-section {
+    margin-top: 16px;
+}
+
+/* Hide ROI editor link initially - can be shown via button */
+.header .glass-button.secondary {
+    font-size: 0.85em !important;
+    padding: 6px 12px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .inspection-controls .glass-button {
+        min-width: 100% !important;
+        font-size: 1.1em !important;
+        padding: 16px 24px !important;
+    }
+
+    .header h1 {
+        font-size: 1.2em !important;
+    }
+}
+
+/* Focus state for inspection button */
+.inspection-controls .glass-button:focus {
+    outline: 3px solid rgba(0, 122, 255, 0.5);
+    outline-offset: 2px;
+}
+
+/* Add subtle animation to inspection section */
+@keyframes pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 8px 32px rgba(0, 122, 255, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 8px 32px rgba(0, 122, 255, 0.4);
+    }
+}
+
+.inspection-controls.ready {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* Compact full-width class */
+.full-width {
+    grid-column: 1 / -1;
+}

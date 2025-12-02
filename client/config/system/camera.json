@@ -1,0 +1,39 @@
+{
+  "camera_hardware": {
+    "serial": "30320436",
+    "width": 7716,
+    "height": 5360,
+    "fps": "143/20",
+    "format": "BAYER_GBRG"
+  },
+  "camera_defaults": {
+    "focus": 305,
+    "exposure": 15000
+  },
+  "camera_validation": {
+    "retry_attempts": 3,
+    "retry_delay": 1.0,
+    "image_min_brightness": 10,
+    "image_max_brightness": 245,
+    "image_min_contrast": 5
+  },
+  "camera_performance": {
+    "focus_settle_delay": 3.0,
+    "enable_fast_capture": true,
+    "max_threads": 16
+  },
+  "camera_info": {
+    "description": "TIS camera configuration for Visual AOI system - Native bayer format DFK AFU420-L62",
+    "last_updated": "2025-09-05",
+    "version": "1.2",
+    "native_format": "video/x-bayer, format=gbrg",
+    "supported_resolutions": [
+      "264x256 @ up to 400fps (minimum)",
+      "960x720 @ up to 165fps", 
+      "1920x1080 @ up to 111fps",
+      "3840x2160 @ up to 35fps",
+      "7716x5360 @ 7fps (full resolution, native)"
+    ],
+    "supported_framerates_7716x5360": ["2/1", "3/1", "4/1", "5/1", "6/1", "7/1", "143/20"]
+  }
+}

@@ -1,0 +1,233 @@
+/* General Body and Typography */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e8e8e8;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    color: #1a2b4d;
+    font-size: 1.8em;
+    margin: 0;
+}
+
+.status-container {
+    display: flex;
+    gap: 20px;
+    font-size: 0.9em;
+}
+
+.status-indicator {
+    font-size: 1.5em;
+    vertical-align: middle;
+}
+
+.status-indicator.disconnected {
+    color: #f44336;
+}
+
+.status-indicator.connected {
+    color: #4CAF50;
+}
+
+.status-indicator.pending {
+    color: #FFC107;
+}
+
+/* Main Content Layout */
+main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 25px;
+    grid-template-areas:
+        "controls image"
+        "results image";
+}
+
+.controls-section {
+    grid-area: controls;
+}
+
+.results-section {
+    grid-area: results;
+}
+
+.image-section {
+    grid-area: image;
+}
+
+/* Controls Section */
+.controls-section h2,
+.results-section h2,
+.image-section h2 {
+    font-size: 1.4em;
+    color: #1a2b4d;
+    margin-top: 0;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+}
+
+.control-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    align-items: center;
+}
+
+.control-item {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+
+select,
+button {
+    padding: 10px 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+select {
+    background-color: #fff;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+    font-weight: 600;
+}
+
+button:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #a0a0a0;
+    cursor: not-allowed;
+}
+
+#export-results-btn {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+#export-results-btn:hover {
+    background-color: #1e7e34;
+    border-color: #1e7e34;
+}
+
+/* Image Section */
+.image-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+#camera-feed {
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #e9ecef;
+}
+
+/* Results Section */
+#results-overview {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+#results-details {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #e8e8e8;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.device-result {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.device-header {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.device-header.pass {
+    color: #28a745;
+}
+
+.device-header.fail {
+    color: #dc3545;
+}
+
+.roi-result {
+    margin-left: 20px;
+    font-size: 0.9em;
+}
+
+.roi-result.pass::before {
+    content: '✓ ';
+    color: #28a745;
+}
+
+.roi-result.fail::before {
+    content: '✗ ';
+    color: #dc3545;
+}
+
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px solid #e8e8e8;
+    font-size: 0.9em;
+    color: #777;
+}

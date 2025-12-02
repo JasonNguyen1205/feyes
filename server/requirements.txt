@@ -1,0 +1,29 @@
+# Visual AOI Server - Python Dependencies
+
+# Core Web Framework
+flask>=2.0.0
+flasgger>=0.9.0  # For Swagger/OpenAPI documentation
+requests>=2.25.0
+
+# Image Processing
+opencv-python>=4.5.0
+pillow>=8.0.0
+numpy>=1.21.0,<2.0
+
+# AI/ML Libraries
+keras>=2.8.0
+torch>=1.9.0
+torchvision>=0.10.0
+scikit-learn>=1.0.0
+
+# Computer Vision and OCR
+easyocr>=1.6.0
+
+# Barcode Reading
+dynamsoft-barcode-reader-bundle
+
+# Utilities
+psutil>=5.8.0
+
+# GTK (detected in imports) - System package, install separately
+# gi  # This should be installed via system package manager (python3-gi)

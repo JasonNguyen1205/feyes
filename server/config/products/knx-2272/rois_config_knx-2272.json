@@ -1,0 +1,20 @@
+[
+  {
+    "idx": 1,
+    "type": 3,
+    "coords": [
+      3654,
+      3609,
+      4401,
+      4043
+    ],
+    "focus": 350,
+    "exposure": 800,
+    "ai_threshold": 0.8,
+    "feature_method": "mobilenet",
+    "rotation": 270,
+    "device_location": 1,
+    "expected_text": "v0.1.8",
+    "is_device_barcode": true
+  }
+]

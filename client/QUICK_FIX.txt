@@ -1,0 +1,51 @@
+╔════════════════════════════════════════════════════════════════╗
+║         SHARED FOLDER QUICK FIX - Copy & Paste                 ║
+╚════════════════════════════════════════════════════════════════╝
+
+PROBLEM: Server cannot see client's captured images
+
+CAUSE: /mnt/visual-aoi-shared is NOT shared over network
+
+═══════════════════════════════════════════════════════════════════
+
+STEP 1: Configure Server (10.100.27.156)
+─────────────────────────────────────────────────────────────────
+SSH to server with: jason_nguyen / jason_nguyen
+
+Then run these commands:
+
+sudo apt-get update && sudo apt-get install -y nfs-kernel-server
+sudo mkdir -p /mnt/visual-aoi-shared/sessions
+sudo chown -R jason_nguyen:jason_nguyen /mnt/visual-aoi-shared
+echo "/mnt/visual-aoi-shared 10.100.27.0/24(rw,sync,no_subtree_check,no_root_squash)" | sudo tee -a /etc/exports
+sudo exportfs -ra
+sudo systemctl restart nfs-kernel-server
+sudo exportfs -v
+
+Expected: Should show export for 10.100.27.0/24
+
+═══════════════════════════════════════════════════════════════════
+
+STEP 2: Mount on Client (Raspberry Pi)
+─────────────────────────────────────────────────────────────────
+cd /home/pi/visual-aoi-client
+./mount_shared_folder.sh
+
+Expected: "✅ Successfully mounted"
+
+═══════════════════════════════════════════════════════════════════
+
+STEP 3: Verify
+─────────────────────────────────────────────────────────────────
+./check_shared_folder.sh
+
+Expected: "✓ SHARED FOLDER IS PROPERLY MOUNTED"
+
+═══════════════════════════════════════════════════════════════════
+
+TROUBLESHOOTING:
+- Check diagnostics: ./check_shared_folder.sh
+- Full guide: See SHARED_FOLDER_SETUP.md
+- Issue summary: See SHARED_FOLDER_ISSUE.md
+
+═══════════════════════════════════════════════════════════════════

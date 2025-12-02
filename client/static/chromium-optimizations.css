@@ -1,0 +1,501 @@
+/* Chromium Browser Optimizations for Visual AOI Client */
+
+/* =================================================================
+   EMOJI FONT SUPPORT FOR CHROMIUM ON RASPBERRY PI
+   ================================================================= */
+
+/* Ensure emoji fonts are loaded and rendered properly */
+@font-face {
+    font-family: 'Emoji';
+    src: local('Noto Color Emoji'),
+        local('Apple Color Emoji'),
+        local('Segoe UI Emoji'),
+        local('Android Emoji'),
+        local('EmojiSymbols');
+}
+
+/* Force emoji rendering for all text with Titillium Web */
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+button,
+.btn-icon {
+    font-family: 'Titillium Web', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif, 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol' !important;
+}
+
+/* Specific emoji rendering optimizations for Chromium */
+body {
+    font-synthesis: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* =================================================================
+   PERFORMANCE OPTIMIZATIONS FOR CHROMIUM
+   ================================================================= */
+
+/* Enable hardware acceleration for transforms and animations */
+* {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+    perspective: 1000px;
+}
+
+/* Optimize font rendering for Chromium */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1;
+    font-kerning: normal;
+}
+
+/* GPU-accelerated scrolling */
+.section-content,
+.device-card,
+.roi-results,
+.glass-panel {
+    -webkit-overflow-scrolling: touch;
+    overflow: auto;
+    will-change: scroll-position;
+}
+
+/* Optimize animations with Chromium's compositor */
+.glass-button,
+.section-header,
+.device-card,
+.status-indicator,
+.collapse-btn {
+    will-change: transform, opacity;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+/* HOVER REMOVED for weak device performance */
+
+/* =================================================================
+   CHROMIUM-SPECIFIC CSS FEATURES
+   ================================================================= */
+
+/* Use Chromium's advanced backdrop-filter for glass effects */
+.glass-panel,
+.glass-button,
+.section {
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Optimize box-shadow rendering */
+.glass-panel,
+.device-card,
+.section {
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.06),
+        0 1px 2px rgba(0, 0, 0, 0.04);
+    -webkit-box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.06),
+        0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* Use contain for better rendering performance */
+.device-card,
+.section,
+.glass-panel {
+    contain: layout style paint;
+}
+
+/* Grid optimization for Chromium */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+    contain: layout;
+}
+
+/* =================================================================
+   IMAGE LOADING OPTIMIZATIONS (NO LAZY LOADING for weak devices)
+   ================================================================= */
+
+/* Lazy loading REMOVED - adds overhead on Raspberry Pi
+   Browser loads all images immediately for better stability */
+
+/* Optimize image rendering */
+img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+/* Large images get better rendering */
+.roi-image,
+.modal-image {
+    image-rendering: -webkit-optimize-contrast;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+/* =================================================================
+   SCROLLING (NO SMOOTH SCROLL for weak devices)
+   ================================================================= */
+
+html {
+    scroll-behavior: auto;
+    /* Instant scroll for performance */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Optimize scroll containers */
+.section-content,
+.device-results {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: auto;
+    /* Instant scroll for performance */
+}
+
+/* =================================================================
+   CSS CONTAINMENT FOR BETTER PAINT PERFORMANCE
+   ================================================================= */
+
+/* Isolate repaints to specific elements */
+.device-card {
+    contain: layout style paint;
+    content-visibility: auto;
+    contain-intrinsic-size: 300px 400px;
+}
+
+.roi-results {
+    contain: layout paint;
+    content-visibility: auto;
+}
+
+/* =================================================================
+   FLEXBOX OPTIMIZATIONS
+   ================================================================= */
+
+.controls,
+.device-header,
+.roi-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* =================================================================
+   TRANSITIONS - HARDWARE ACCELERATED
+   ================================================================= */
+
+/* Only animate transform and opacity for best performance */
+.glass-button,
+.device-card,
+.section-header {
+    transition:
+        transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* HOVER REMOVED for weak device performance */
+
+/* =================================================================
+   MODAL OPTIMIZATIONS
+   ================================================================= */
+
+/* Modal centering optimization - only when visible */
+.modal[style*="display: flex"],
+.modal[style*="display:flex"] {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    will-change: opacity;
+}
+
+/* Modal content optimization - preserve centering transform */
+.modal-content {
+    max-width: 90vw;
+    max-height: 90vh;
+    will-change: transform;
+    /* Transform handled by professional.css for centering */
+}
+
+/* =================================================================
+   CHROMIUM SCROLLBAR STYLING
+   ================================================================= */
+
+/* Custom scrollbar for Chromium/WebKit */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--glass-bg);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--glass-border);
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+/* HOVER REMOVED for weak device performance */
+
+/* Dark theme scrollbar */
+[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: var(--tertiary-bg);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: var(--glass-highlight);
+}
+
+/* =================================================================
+   SELECTION STYLING
+   ================================================================= */
+
+::selection {
+    background: var(--primary);
+    color: white;
+    -webkit-text-fill-color: white;
+}
+
+::-moz-selection {
+    background: var(--primary);
+    color: white;
+}
+
+/* =================================================================
+   INPUT OPTIMIZATIONS
+   ================================================================= */
+
+input,
+select,
+textarea {
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Remove Chromium's default styling */
+input[type="text"],
+input[type="number"],
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* =================================================================
+   GRID LAYOUT OPTIMIZATIONS
+   ================================================================= */
+
+/* Use CSS Grid with auto-fit for responsive layout */
+.roi-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    contain: layout;
+}
+
+.device-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    contain: layout;
+}
+
+/* =================================================================
+   PRINT OPTIMIZATIONS
+   ================================================================= */
+
+@media print {
+
+    .theme-toggle,
+    .glass-button,
+    .collapse-btn {
+        display: none;
+    }
+
+    .section-content {
+        display: block !important;
+    }
+
+    .device-card {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+}
+
+/* =================================================================
+   REDUCED MOTION SUPPORT
+   ================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* =================================================================
+   HIGH REFRESH RATE DISPLAY OPTIMIZATION (120Hz+)
+   ================================================================= */
+
+@media (min-resolution: 120dpi) {
+
+    .glass-button,
+    .device-card,
+    .section-header {
+        transition-duration: 0.15s;
+    }
+}
+
+/* =================================================================
+   CHROMIUM AUTOFILL STYLING
+   ================================================================= */
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--fg);
+    -webkit-box-shadow: 0 0 0px 1000px var(--input-bg) inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* =================================================================
+   FOCUS VISIBLE (Chromium 86+)
+   ================================================================= */
+
+/* Only show focus ring when using keyboard navigation */
+button:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+select:focus:not(:focus-visible) {
+    outline: none;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* =================================================================
+   CSS CUSTOM PROPERTIES FOR DYNAMIC THEMING
+   ================================================================= */
+
+/* Ensure smooth theme transitions */
+:root,
+[data-theme="dark"] {
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
+
+/* =================================================================
+   CONTENT VISIBILITY (Chromium 85+)
+   ================================================================= */
+
+/* Improve rendering performance for off-screen content */
+.section:not(.active) {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 500px;
+}
+
+.device-card {
+    content-visibility: auto;
+    contain-intrinsic-size: 300px 400px;
+}
+
+/* =================================================================
+   ASPECT RATIO (Chromium 88+)
+   ================================================================= */
+
+.roi-image {
+    aspect-ratio: 4 / 3;
+    object-fit: contain;
+}
+
+/* =================================================================
+   OVERSCROLL BEHAVIOR
+   ================================================================= */
+
+body {
+    overscroll-behavior: none;
+}
+
+.section-content,
+.modal {
+    overscroll-behavior: contain;
+}
+
+/* =================================================================
+   CHROMIUM DEV TOOLS OPTIMIZATION
+   ================================================================= */
+
+/* Mark elements for easier debugging - selector removed (empty ruleset) */
+
+/* =================================================================
+   MEMORY OPTIMIZATIONS
+   ================================================================= */
+
+/* Limit repaint areas */
+.status-indicator {
+    contain: strict;
+    content-visibility: auto;
+}
+
+/* Optimize large lists */
+.device-results>* {
+    contain: layout style;
+}
+
+/* =================================================================
+   CHROMIUM FLAGS RECOMMENDATIONS
+   ================================================================= */
+
+/*
+For best performance, enable these Chromium flags:
+chrome://flags/#enable-gpu-rasterization - Enabled
+chrome://flags/#enable-oop-rasterization - Enabled
+chrome://flags/#enable-zero-copy - Enabled
+chrome://flags/#enable-experimental-web-platform-features - Enabled
+chrome://flags/#smooth-scrolling - Enabled
+chrome://flags/#overlay-scrollbars - Enabled
+*/
+
+/* =================================================================
+   SERVICE WORKER COMPATIBILITY
+   ================================================================= */
+
+/* Ensure offline-first capability */
+html {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Allow selection in specific areas */
+input,
+textarea,
+.roi-details,
+.device-info {
+    -webkit-user-select: text;
+    user-select: text;
+}

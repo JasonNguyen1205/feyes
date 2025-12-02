@@ -1,0 +1,228 @@
+import unittest
+from unittest.mock import patch, MagicMock
+import numpy as np
+import sys
+import os
+
+# Add project root and src directory to path for imports
+project_root = os.path.dirname(os.path.dirname(__file__))
+src_path = os.path.join(project_root, 'src')
+sys.path.insert(0, project_root)
+sys.path.insert(0, src_path)
+
+# Import functions/classes from the src modules
+try:
+    from roi import (
+        normalize_roi, get_next_roi_index, process_compare_roi, 
+        update_best_golden_image, save_golden_roi
+    )
+except ImportError:
+    # Skip all tests if roi module is not available
+    def skip_all_tests(cls):
+        for attr_name in dir(cls):
+            if attr_name.startswith('test_'):
+                setattr(cls, attr_name, lambda self: self.skipTest("roi module not available"))
+        return cls
+    
+    @skip_all_tests
+    class TestVisualAOILogic(unittest.TestCase):
+        pass
+else:
+    class TestVisualAOILogic(unittest.TestCase):
+        def setUp(self):
+            # Setup dummy test data
+            self.test_rois = [
+                (1, 2, (0, 0, 100, 100), 305, 3000, 0.9, "mobilenet"),
+                (2, 1, (10, 10, 50, 50), 305, 3000, None, "opencv"),
+            ]
+            self.dummy_img = np.ones((100, 100, 3), dtype=np.uint8) * 127
+
+        def test_normalize_roi_compare(self):
+            roi = (3, 2, (0, 0, 10, 10), 305, 3000, 0.95, "mobilenet")
+            norm = normalize_roi(roi)
+            self.assertEqual(norm[1], 2)
+            self.assertEqual(norm[5], 0.95)
+            self.assertEqual(norm[6], "mobilenet")
+
+        def test_normalize_roi_barcode(self):
+            roi = (4, 1, (0, 0, 10, 10), 305, 3000, None, "opencv")
+            norm = normalize_roi(roi)
+            self.assertEqual(norm[1], 1)
+            self.assertIsNone(norm[5])
+            self.assertEqual(norm[6], "opencv")
+
+        @patch('src.roi.ROIS')
+        def test_get_next_roi_index(self, mock_rois):
+        mock_rois.__getitem__ = lambda self, i: [
+            (1, 2, (0, 0, 100, 100), 305, 3000, 0.9, "mobilenet"),
+            (5, 1, (10, 10, 50, 50), 305, 3000, None, "opencv"),
+        ][i]
+        mock_rois.__len__ = lambda self: 2
+        mock_rois.__iter__ = lambda self: iter([
+            (1, 2, (0, 0, 100, 100), 305, 3000, 0.9, "mobilenet"),
+            (5, 1, (10, 10, 50, 50), 305, 3000, None, "opencv"),
+        ])
+        
+        with patch('src.roi.ROIS', mock_rois):
+            self.assertEqual(get_next_roi_index(), 6)
+        
+    @patch("src.roi.os.rename")
+    @patch("src.roi.os.path.exists", return_value=True)
+    @patch("src.roi.glob.glob")
+    @patch("src.roi.cv2.imread")
+    @patch("src.roi.extract_features_from_array")
+    def test_process_compare_roi_best_golden_first(self, mock_extract, mock_imread, mock_glob, mock_exists, mock_rename):
+        # Simulate two golden images, best_golden.jpg and another
+        mock_glob.return_value = ["roi_dir/best_golden.jpg", "roi_dir/other.jpg"]
+        # Both images are valid arrays
+        mock_imread.side_effect = [np.ones((10,10,3), dtype=np.uint8)*100, np.ones((10,10,3), dtype=np.uint8)*120]
+        # Simulate feature extraction and similarity
+        mock_extract.side_effect = [
+            np.ones(32),  # golden1 features
+            np.ones(32),  # input features
+            np.ones(32),  # golden2 features
+        ]
+        # Patch cosine_similarity to return high for best_golden, low for other
+        with patch("src.roi.cosine_similarity", side_effect=[0.98, 0.7]):
+            result = process_compare_roi(
+                np.ones((20,20,3), dtype=np.uint8)*127, 0,0,10,10, 1, ai_threshold=0.95, feature_method="mobilenet"
+            )
+            # Should match best_golden.jpg and not update best
+            self.assertEqual(result[5], "Match")
+            # No update_best_golden_image call expected
+    @patch("src.roi.os.rename")
+    @patch("src.roi.os.path.exists", return_value=True)
+    @patch("src.roi.glob.glob")
+    @patch("src.roi.cv2.imread")
+    @patch("src.roi.extract_features_from_array")
+    @patch("src.roi.update_best_golden_image")
+    def test_process_compare_roi_update_best_on_other_match(self, mock_update, mock_extract, mock_imread, mock_glob, mock_exists, mock_rename):
+        # Simulate two golden images, best_golden.jpg and another
+        mock_glob.return_value = ["roi_dir/best_golden.jpg", "roi_dir/other.jpg"]
+        mock_imread.side_effect = [np.ones((10,10,3), dtype=np.uint8)*100, np.ones((10,10,3), dtype=np.uint8)*120]
+        mock_extract.side_effect = [
+            np.ones(32),  # golden1 features
+            np.ones(32),  # input features
+            np.ones(32),  # golden2 features
+        ]
+        # Patch cosine_similarity to return low for best_golden, high for other
+        with patch("src.roi.cosine_similarity", side_effect=[0.7, 0.98]):
+            result = process_compare_roi(
+                np.ones((20,20,3), dtype=np.uint8)*127, 0,0,10,10, 1, ai_threshold=0.95, feature_method="mobilenet"
+            )
+            # Should match other.jpg and update best
+            self.assertEqual(result[5], "Match")
+            mock_update.assert_called_once()
+
+    def test_sort_fail_first(self):
+        # Simulate result tuples: (idx, type, ..., result_text, ...)
+        results = [
+            (1, 2, None, None, None, "Match", None),
+            (2, 2, None, None, None, "Different", None),
+            (3, 1, None, None, None, "Barcode", ["123"]),
+            (4, 1, None, None, None, "Barcode", None),
+        ]
+        def is_fail(r):
+            if r[1] == 2 and (len(r) > 5 and (not r[5] or "Match" not in str(r[5]))):
+                return 0
+            if r[1] == 1 and (len(r) > 6 and (not r[6])):
+                return 0
+            if len(r) > 5 and isinstance(r[5], str) and r[5].startswith("Error:"):
+                return 0
+            return 1
+        results.sort(key=lambda x: (is_fail(x), x[0]))
+        # Fail results (idx 2, 4) should be first
+        self.assertEqual([r[0] for r in results[:2]], [2, 4])
+    def test_barcode_roi_display_logic(self):
+        # Barcode found
+        roi = (3, 1, None, None, None, "Barcode", ["ABC123"])
+        barcode_result = roi[6] if len(roi) > 6 else None
+        if barcode_result and isinstance(barcode_result, (list, tuple)):
+            barcode_str = ", ".join(str(b) for b in barcode_result if b)
+        else:
+            barcode_str = "No barcode found"
+        self.assertEqual(barcode_str, "ABC123")
+        # Barcode not found
+        roi = (4, 1, None, None, None, "Barcode", None)
+        barcode_result = roi[6] if len(roi) > 6 else None
+        if barcode_result and isinstance(barcode_result, (list, tuple)):
+            barcode_str = ", ".join(str(b) for b in barcode_result if b)
+        else:
+            barcode_str = "No barcode found"
+        self.assertEqual(barcode_str, "No barcode found")
+
+    def test_compare_roi_display_logic(self):
+        # Should show similarity and threshold
+        roi = (1, 2, None, None, None, "Match", "green", 0.97, 0.95)
+        ai_similarity = roi[7] if len(roi) > 7 else None
+        ai_threshold = roi[8] if len(roi) > 8 else None
+        similarity_str = f" (AI sim: {ai_similarity:.3f})" if ai_similarity is not None else ""
+        threshold_str = f" | Threshold: {ai_threshold}" if ai_threshold is not None else ""
+        display_text = f"ROI {roi[0]} | {roi[5]}{similarity_str}{threshold_str}"
+        self.assertIn("AI sim: 0.970", display_text)
+        self.assertIn("Threshold: 0.95", display_text)
+
+    def test_roi_normalization_barcode(self):
+        roi = (10, 1, (1,2,3,4), 100, 200, None, "opencv")
+        norm = normalize_roi(roi)
+        self.assertEqual(norm[1], 1)
+        self.assertIsNone(norm[5])
+        self.assertEqual(norm[6], "opencv")
+
+    def test_roi_normalization_compare(self):
+        roi = (11, 2, (1,2,3,4), 100, 200, 0.9, "mobilenet")
+        norm = normalize_roi(roi)
+        self.assertEqual(norm[1], 2)
+        self.assertEqual(norm[5], 0.9)
+        self.assertEqual(norm[6], "mobilenet")
+
+    @patch('src.roi.ROIS', [])
+    def test_get_next_roi_index_empty(self):
+        self.assertEqual(get_next_roi_index(), 1)
+
+    @patch('src.roi.ROIS')
+    def test_get_next_roi_index_increment(self, mock_rois):
+        mock_rois.__iter__ = lambda self: iter([
+            (1, 2, (0, 0, 10, 10), 100, 200, 0.9, "mobilenet"),
+            (2, 1, (0, 0, 10, 10), 100, 200, None, "opencv"),
+            (3, 2, (0, 0, 10, 10), 100, 200, 0.95, "mobilenet"),
+        ])
+        self.assertEqual(get_next_roi_index(), 4)
+
+    def test_sort_group_dict_default_first(self):
+        # Simulate group_dict with 3 groups, default is (100, 200)
+        group_dict = {
+            (100, 200): ["roi1"],
+            (150, 250): ["roi2"],
+            (50, 100): ["roi3"]
+        }
+        default_focus, default_exposure = 100, 200
+        sorted_keys = sorted(
+            group_dict.keys(),
+            key=lambda k: (k != (default_focus, default_exposure),) + k
+        )
+        self.assertEqual(sorted_keys[0], (100, 200))
+
+    def test_is_fail_logic(self):
+        # Image compare fail
+        r = (2, 2, None, None, None, "Different", None)
+        self.assertEqual(
+            (lambda r: 0 if r[1] == 2 and (len(r) > 5 and (not r[5] or "Match" not in str(r[5]))) else 1)(r), 0
+        )
+        # Barcode fail
+        r = (4, 1, None, None, None, "Barcode", None)
+        self.assertEqual(
+            (lambda r: 0 if r[1] == 1 and (len(r) > 6 and (not r[6])) else 1)(r), 0
+        )
+        # Barcode pass
+        r = (3, 1, None, None, None, "Barcode", ["123"])
+        self.assertEqual(
+            (lambda r: 0 if r[1] == 1 and (len(r) > 6 and (not r[6])) else 1)(r), 1
+        )
+        # Image compare pass
+        r = (1, 2, None, None, None, "Match", None)
+        self.assertEqual(
+            (lambda r: 0 if r[1] == 2 and (len(r) > 5 and (not r[5] or "Match" not in str(r[5]))) else 1)(r), 1
+        )
+if __name__ == "__main__":
+    unittest.main(exit=False)

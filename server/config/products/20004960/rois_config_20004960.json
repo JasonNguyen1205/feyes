@@ -1,0 +1,110 @@
+[
+  {
+    "idx": 1,
+    "type": 2,
+    "coords": [
+      2242,
+      1785,
+      2388,
+      1944
+    ],
+    "focus": 400,
+    "exposure": 700,
+    "ai_threshold": 0.9,
+    "feature_method": "mobilenet",
+    "rotation": 0,
+    "device_location": 1,
+    "expected_text": null,
+    "is_device_barcode": true
+  },
+  {
+    "idx": 2,
+    "type": 2,
+    "coords": [
+      2088,
+      2607,
+      2287,
+      2725
+    ],
+    "focus": 400,
+    "exposure": 700,
+    "ai_threshold": 0.9,
+    "feature_method": "mobilenet",
+    "rotation": 0,
+    "device_location": 1,
+    "expected_text": null,
+    "is_device_barcode": true
+  },
+  {
+    "idx": 3,
+    "type": 2,
+    "coords": [
+      5582,
+      2026,
+      5710,
+      2158
+    ],
+    "focus": 400,
+    "exposure": 700,
+    "ai_threshold": 0.9,
+    "feature_method": "mobilenet",
+    "rotation": 0,
+    "device_location": 1,
+    "expected_text": null,
+    "is_device_barcode": true
+  },
+  {
+    "idx": 4,
+    "type": 2,
+    "coords": [
+      2436,
+      4220,
+      2568,
+      4281
+    ],
+    "focus": 400,
+    "exposure": 700,
+    "ai_threshold": 0.9,
+    "feature_method": "mobilenet",
+    "rotation": 0,
+    "device_location": 1,
+    "expected_text": null,
+    "is_device_barcode": true
+  },
+  {
+    "idx": 5,
+    "type": 2,
+    "coords": [
+      4971,
+      3968,
+      5112,
+      4097
+    ],
+    "focus": 400,
+    "exposure": 700,
+    "ai_threshold": 0.9,
+    "feature_method": "mobilenet",
+    "rotation": 0,
+    "device_location": 1,
+    "expected_text": null,
+    "is_device_barcode": true
+  },
+  {
+    "idx": 6,
+    "type": 3,
+    "coords": [
+      5379,
+      3807,
+      5551,
+      4238
+    ],
+    "focus": 400,
+    "exposure": 700,
+    "ai_threshold": 0.9,
+    "feature_method": "mobilenet",
+    "rotation": 270,
+    "device_location": 1,
+    "expected_text": null,
+    "is_device_barcode": null
+  }
+]

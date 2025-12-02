@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ROI Configuration Editor - Visual AOI</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='professional.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='roi_editor.css') }}" />
+</head>
+
+<body class="light-theme">
+  <!-- Header -->
+  <header class="glass-header">
+    <div class="header-content">
+      <h1>🎯 ROI Configuration Editor</h1>
+      <div class="header-actions">
+        <button onclick="window.location.href='/'" class="glass-button secondary">
+          ← Back to Main
+        </button>
+        <button onclick="toggleTheme()" class="glass-button secondary">
+          🌓 Theme
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="editor-container">
+    <!-- Left Panel - Tools & Product Selection -->
+    <aside class="left-panel glass-panel">
+      <section class="panel-section">
+        <h3>🔌 Server Connection</h3>
+        <div class="form-group">
+          <label>Server URL:</label>
+          <input type="text" id="serverUrl" value="http://10.100.27.156:5000" class="glass-input" />
+        </div>
+        <button onclick="connectToServer()" class="glass-button primary full-width">
+          Connect
+        </button>
+        <div id="connectionStatus" class="status-indicator"></div>
+      </section>
+
+      <section class="panel-section">
+        <h3>📦 Product Selection</h3>
+        <div class="form-group">
+          <label>Product:</label>
+          <select id="productSelect" class="glass-input" onchange="onProductChange()">
+            <option value="">-- Select Product --</option>
+          </select>
+        </div>
+        <button onclick="createNewProduct()" class="glass-button success full-width">
+          ➕ Create New Product
+        </button>
+        <button onclick="loadProductConfig()" class="glass-button primary full-width">
+          Load Configuration
+        </button>
+        <button onclick="createNewConfig()" class="glass-button secondary full-width">
+          New Configuration
+        </button>
+      </section>
+
+      <section class="panel-section">
+        <h3>� Camera Settings</h3>
+        <div id="roiGroupsList" class="roi-groups-list">
+          <p class="info-text">Load a product to see ROI groups</p>
+        </div>
+        <div class="form-group">
+          <label>Focus:</label>
+          <input type="number" id="customFocus" class="glass-input" placeholder="e.g. 305" min="0" max="1000" />
+        </div>
+        <div class="form-group">
+          <label>Exposure:</label>
+          <input type="number" id="customExposure" class="glass-input" placeholder="e.g. 1200" min="50" max="30000" />
+        </div>
+        <button onclick="clearCustomSettings()" class="glass-button secondary full-width">
+          🔄 Clear Custom Settings
+        </button>
+      </section>
+
+      <section class="panel-section">
+        <h3>�🖼️ Reference Image</h3>
+        <button onclick="captureImage()" class="glass-button primary full-width">
+          📷 Capture from Camera
+        </button>
+        <button onclick="document.getElementById('imageUpload').click()" class="glass-button secondary full-width">
+          📁 Upload Image
+        </button>
+        <input type="file" id="imageUpload" accept="image/*" style="display: none" onchange="loadImageFile(event)" />
+        <div id="imageInfo" class="info-text"></div>
+      </section>
+
+      <section class="panel-section">
+        <h3>🎨 Drawing Tools</h3>
+        <div class="tool-buttons">
+          <button onclick="setTool('select')" class="tool-btn active" data-tool="select" title="Select/Move ROI">
+            ☝️ Select
+          </button>
+          <button onclick="setTool('draw')" class="tool-btn" data-tool="draw" title="Draw new ROI">
+            ✏️ Draw
+          </button>
+          <button onclick="setTool('pan')" class="tool-btn" data-tool="pan" title="Pan image">
+            ✋ Pan
+          </button>
+          <button onclick="setTool('zoom')" class="tool-btn" data-tool="zoom" title="Zoom in/out">
+            🔍 Zoom
+          </button>
+        </div>
+        <div class="zoom-controls">
+          <button onclick="zoomIn()" class="glass-button small">+</button>
+          <span id="zoomLevel">100%</span>
+          <button onclick="zoomOut()" class="glass-button small">-</button>
+          <button onclick="fitToScreen()" class="glass-button small">
+            Fit
+          </button>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h3>📋 ROI List</h3>
+        <div id="roiList" class="roi-list">
+          <p class="empty-state">No ROIs defined</p>
+        </div>
+        <button onclick="deleteSelectedROI()" class="glass-button danger full-width">
+          🗑️ Delete Selected
+        </button>
+      </section>
+    </aside>
+
+    <!-- Center Panel - Canvas -->
+    <main class="center-panel">
+      <div class="canvas-container">
+        <canvas id="roiCanvas"></canvas>
+        <div id="canvasOverlay" class="canvas-overlay">
+          <p>Load or capture an image to start defining ROIs</p>
+        </div>
+      </div>
+      <div class="canvas-info">
+        <span id="mouseCoords">X: 0, Y: 0</span>
+        <span id="canvasSize">0 x 0</span>
+      </div>
+    </main>
+
+    <!-- Right Panel - ROI Properties -->
+    <aside class="right-panel glass-panel">
+      <section class="panel-section">
+        <h3>⚙️ ROI Properties</h3>
+        <div id="propertiesPanel">
+          <p class="empty-state">Select an ROI to edit properties</p>
+        </div>
+      </section>
+
+      <section class="panel-section">
+        <h3>💾 Configuration</h3>
+        <div class="form-group">
+          <label>Total ROIs:</label>
+          <span id="roiCount" class="info-value">0</span>
+        </div>
+        <div class="form-group">
+          <label>Devices:</label>
+          <span id="deviceCount" class="info-value">0</span>
+        </div>
+        <button onclick="validateConfiguration()" class="glass-button secondary full-width">
+          ✅ Validate
+        </button>
+        <button onclick="saveConfiguration()" class="glass-button success full-width">
+          💾 Save to Server
+        </button>
+        <button onclick="exportConfiguration()" class="glass-button secondary full-width">
+          📥 Export JSON
+        </button>
+      </section>
+
+      <section class="panel-section">
+        <h3>📊 Summary</h3>
+        <div id="configSummary" class="config-summary">
+          <p class="empty-state">No configuration loaded</p>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- ROI Properties Form Template (Hidden) -->
+  <template id="roiPropertiesTemplate">
+    <div class="roi-properties-form">
+      <div class="form-group">
+        <label>ROI ID:</label>
+        <input type="number" id="roiId" class="glass-input" min="1"
+          onchange="updateROIProperty('roi_id', parseInt(this.value))" />
+      </div>
+
+      <div class="form-group">
+        <label>ROI Type:</label>
+        <select id="roiType" class="glass-input"
+          onchange="updateROIProperty('roi_type_name', this.value); updateTypeSpecificFields()">
+          <option value="barcode">Barcode</option>
+          <option value="ocr">OCR (Text Recognition)</option>
+          <option value="compare">Compare (Visual Match)</option>
+          <option value="color">Color Checking</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Device ID:</label>
+        <select id="deviceId" class="glass-input" onchange="updateROIProperty('device_id', parseInt(this.value))">
+          <option value="1">Device 1</option>
+          <option value="2">Device 2</option>
+          <option value="3">Device 3</option>
+          <option value="4">Device 4</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Coordinates:</label>
+        <div class="coords-grid">
+          <input type="number" id="x1" class="glass-input small" placeholder="X1" onchange="updateCoordinates()" />
+          <input type="number" id="y1" class="glass-input small" placeholder="Y1" onchange="updateCoordinates()" />
+          <input type="number" id="x2" class="glass-input small" placeholder="X2" onchange="updateCoordinates()" />
+          <input type="number" id="y2" class="glass-input small" placeholder="Y2" onchange="updateCoordinates()" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>AI Threshold:</label>
+        <input type="number" id="aiThreshold" class="glass-input" min="0" max="1" step="0.01" value="0.8"
+          onchange="updateROIProperty('ai_threshold', parseFloat(this.value))" />
+        <small>Similarity threshold (0.0 - 1.0)</small>
+      </div>
+
+      <div class="form-group">
+        <label>Focus:</label>
+        <input type="number" id="focus" class="glass-input" min="0" max="1000" step="1" value="305"
+          onchange="updateROIProperty('focus', parseInt(this.value))" />
+        <small>Camera focus value (0 - 1000)</small>
+      </div>
+
+      <div class="form-group">
+        <label>Exposure:</label>
+        <input type="number" id="exposure" class="glass-input" min="0" max="10000" step="10" value="1200"
+          onchange="updateROIProperty('exposure', parseInt(this.value))" />
+        <small>Camera exposure time (μs)</small>
+      </div>
+
+      <!-- Type-specific fields -->
+      <div id="typeSpecificFields"></div>
+
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="enabled" onchange="updateROIProperty('enabled', this.checked)" />
+          Enabled
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>Notes:</label>
+        <textarea id="notes" class="glass-input" rows="3" placeholder="Optional notes about this ROI"
+          onchange="updateROIProperty('notes', this.value)"></textarea>
+      </div>
+    </div>
+  </template>
+
+  <!-- Type-specific fields templates -->
+  <template id="barcodeFieldsTemplate">
+    <div class="form-group">
+      <label>Expected Barcode Pattern:</label>
+      <input type="text" id="expectedPattern" class="glass-input" placeholder="e.g., ^\d{12}$"
+        onchange="updateROIProperty('expected_pattern', this.value)" />
+      <small>Regex pattern (optional)</small>
+    </div>
+    <div class="form-group">
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+        <input type="checkbox" id="isDeviceBarcode" onchange="updateROIProperty('is_device_barcode', this.checked)"
+          style="cursor: pointer; width: 18px; height: 18px;" />
+        <span>
+          <strong>Device Barcode</strong>
+          <small style="display: block; color: var(--tertiary-fg); margin-top: 4px;">
+            Mark this as the primary barcode for device identification.
+            This barcode will be used for linking to external systems (Priority 0).
+          </small>
+        </span>
+      </label>
+    </div>
+  </template>
+
+  <template id="ocrFieldsTemplate">
+    <div class="form-group">
+      <label>Expected Text:</label>
+      <input type="text" id="expectedText" class="glass-input" placeholder="Expected OCR text"
+        onchange="updateROIProperty('expected_text', this.value)" />
+    </div>
+    <div class="form-group">
+      <label>Rotation Angle:</label>
+      <select id="ocrRotation" class="glass-input" onchange="updateROIProperty('rotation', parseInt(this.value))">
+        <option value="0">0° (No Rotation)</option>
+        <option value="90">90° (Clockwise)</option>
+        <option value="180">180° (Upside Down)</option>
+        <option value="270">270° (Counter-Clockwise)</option>
+      </select>
+      <small>Rotate image before OCR processing</small>
+    </div>
+    <div class="form-group">
+      <label>Case Sensitive:</label>
+      <input type="checkbox" id="caseSensitive" onchange="updateROIProperty('case_sensitive', this.checked)" />
+    </div>
+  </template>
+
+  <template id="compareFieldsTemplate">
+    <div class="form-group">
+      <label>Detection Method:</label>
+      <select id="detectionMethod" class="glass-input" onchange="updateROIProperty('detection_method', this.value)">
+        <option value="mobilenet">MobileNet (AI Deep Learning)</option>
+        <option value="opencv">OpenCV (Traditional CV)</option>
+        <option value="histogram">Histogram Comparison</option>
+        <option value="structural">Structural Similarity (SSIM)</option>
+      </select>
+      <small>AI model for feature extraction</small>
+    </div>
+    <div class="form-group">
+      <label>Golden Sample:</label>
+      <button onclick="captureGoldenSample()" class="glass-button secondary full-width">
+        📸 Capture Golden Sample
+      </button>
+    </div>
+  </template>
+
+  <template id="colorFieldsTemplate">
+    <div class="form-group">
+      <label>Expected Color:</label>
+      <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+        <input type="color" id="expectedColorPicker" class="glass-input"
+          style="width: 60px; height: 40px; padding: 4px; cursor: pointer;"
+          onchange="updateColorFromPicker(this.value)" />
+        <input type="text" id="expectedColor" class="glass-input" style="flex: 1; min-width: 150px;"
+          placeholder="Hex code (e.g., #FF0000)" readonly style="cursor: pointer;" onclick="this.select()" />
+      </div>
+      <small>Pick a color - will be sent to server as RGB array [r, g, b]</small>
+    </div>
+    <div class="form-group">
+      <label>Common Colors:</label>
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px;">
+        <button type="button" class="color-preset-btn" data-color="#FF0000" data-name="Red"
+          onclick="selectPresetColor('#FF0000', 'Red')">
+          <span style="background: #FF0000;"></span> Red
+        </button>
+        <button type="button" class="color-preset-btn" data-color="#00FF00" data-name="Green"
+          onclick="selectPresetColor('#00FF00', 'Green')">
+          <span style="background: #00FF00;"></span> Green
+        </button>
+        <button type="button" class="color-preset-btn" data-color="#0000FF" data-name="Blue"
+          onclick="selectPresetColor('#0000FF', 'Blue')">
+          <span style="background: #0000FF;"></span> Blue
+        </button>
+        <button type="button" class="color-preset-btn" data-color="#FFFF00" data-name="Yellow"
+          onclick="selectPresetColor('#FFFF00', 'Yellow')">
+          <span style="background: #FFFF00;"></span> Yellow
+        </button>
+        <button type="button" class="color-preset-btn" data-color="#FFA500" data-name="Orange"
+          onclick="selectPresetColor('#FFA500', 'Orange')">
+          <span style="background: #FFA500;"></span> Orange
+        </button>
+        <button type="button" class="color-preset-btn" data-color="#800080" data-name="Purple"
+          onclick="selectPresetColor('#800080', 'Purple')">
+          <span style="background: #800080;"></span> Purple
+        </button>
+        <button type="button" class="color-preset-btn" data-color="#FFC0CB" data-name="Pink"
+          onclick="selectPresetColor('#FFC0CB', 'Pink')">
+          <span style="background: #FFC0CB;"></span> Pink
+        </button>
+        <button type="button" class="color-preset-btn" data-color="#000000" data-name="Black"
+          onclick="selectPresetColor('#000000', 'Black')">
+          <span style="background: #000000;"></span> Black
+        </button>
+        <button type="button" class="color-preset-btn" data-color="#FFFFFF" data-name="White"
+          onclick="selectPresetColor('#FFFFFF', 'White')">
+          <span style="background: #FFFFFF; border: 1px solid #ccc;"></span> White
+        </button>
+        <button type="button" class="color-preset-btn" data-color="#808080" data-name="Gray"
+          onclick="selectPresetColor('#808080', 'Gray')">
+          <span style="background: #808080;"></span> Gray
+        </button>
+        <button type="button" class="color-preset-btn" data-color="#A52A2A" data-name="Brown"
+          onclick="selectPresetColor('#A52A2A', 'Brown')">
+          <span style="background: #A52A2A;"></span> Brown
+        </button>
+        <button type="button" class="color-preset-btn" data-color="#00FFFF" data-name="Cyan"
+          onclick="selectPresetColor('#00FFFF', 'Cyan')">
+          <span style="background: #00FFFF;"></span> Cyan
+        </button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Color Tolerance:</label>
+      <input type="number" id="colorTolerance" class="glass-input" min="0" max="100" step="1" value="10"
+        onchange="updateROIProperty('color_tolerance', parseInt(this.value))" />
+      <small>Color matching tolerance (0-100)</small>
+    </div>
+    <div class="form-group">
+      <label>Min Pixel Percentage:</label>
+      <input type="number" id="minPixelPercentage" class="glass-input" min="0" max="100" step="0.1" value="5.0"
+        onchange="updateROIProperty('min_pixel_percentage', parseFloat(this.value))" />
+      <small>Minimum percentage of pixels that must match (%)</small>
+    </div>
+  </template>
+
+  <!-- Notification Container -->
+  <div id="toasts" class="notification-container"></div>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='roi_editor.js') }}"></script>
+</body>
+
+</html>
