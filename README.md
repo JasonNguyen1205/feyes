@@ -1,5 +1,7 @@
 # Friwo Eyes - Visual AOI System
 
+An application for product quality inspection using camera and AI vision.
+
 This is a combined repository containing both the client and server components of the Visual AOI (Automated Optical Inspection) system.
 
 ## Project Structure
