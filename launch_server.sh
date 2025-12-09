@@ -174,6 +174,12 @@ if [ ! -d "$SHARED_FOLDER" ]; then
     echo -e "${GREEN}✓ Shared folder created at $SHARED_FOLDER${NC}"
 fi
 
+# Ensure shared folder has proper permissions for client access
+if [ -d "$SHARED_FOLDER" ]; then
+    chmod 755 "$SHARED_FOLDER"
+    echo -e "${GREEN}✓ Shared folder permissions configured${NC}"
+fi
+
 # Check server script exists
 SERVER_SCRIPT="$SERVER_DIR/server/simple_api_server.py"
 if [ ! -f "$SERVER_SCRIPT" ]; then
