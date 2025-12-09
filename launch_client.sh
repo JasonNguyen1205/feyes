@@ -188,14 +188,34 @@ except:
     fi
 fi
 
-# Check for shared folder mount
+# Check for shared folder mount and verify it points to correct server
 SHARED_FOLDER="/mnt/visual-aoi-shared"
 if [ -d "$SHARED_FOLDER" ]; then
-    echo -e "${GREEN}✓ Shared folder available at $SHARED_FOLDER${NC}"
+    # Check if mounted and extract server IP
+    MOUNT_INFO=$(mount | grep "$SHARED_FOLDER" || true)
+    if [ -n "$MOUNT_INFO" ]; then
+        MOUNTED_SERVER=$(echo "$MOUNT_INFO" | grep -oP '//\K[0-9.]+' || true)
+        # Extract IP from SERVER_URL (format: http://IP:PORT)
+        TARGET_SERVER=$(echo "$SERVER_URL" | grep -oP '://\K[^:]+' || echo "")
+        
+        if [ -n "$MOUNTED_SERVER" ] && [ -n "$TARGET_SERVER" ] && [ "$MOUNTED_SERVER" != "$TARGET_SERVER" ]; then
+            echo -e "${RED}❌ Shared folder mounted to wrong server!${NC}"
+            echo -e "${YELLOW}   Currently mounted: $MOUNTED_SERVER${NC}"
+            echo -e "${YELLOW}   Should be mounted: $TARGET_SERVER${NC}"
+            echo -e "${YELLOW}   Run: cd client && ./mount_shared_folder_dynamic.sh $TARGET_SERVER${NC}"
+            echo -e "${YELLOW}   Or press Enter to continue without remounting${NC}"
+            read -t 10 -p "   " || true
+        else
+            echo -e "${GREEN}✓ Shared folder available at $SHARED_FOLDER (mounted to $MOUNTED_SERVER)${NC}"
+        fi
+    else
+        echo -e "${YELLOW}⚠ Shared folder exists but not mounted${NC}"
+        echo -e "${YELLOW}   Run: cd client && ./mount_shared_folder_dynamic.sh${NC}"
+    fi
 else
     echo -e "${YELLOW}Warning: Shared folder not found at $SHARED_FOLDER${NC}"
     echo -e "${YELLOW}Image transfer may use Base64 encoding (slower)${NC}"
-    echo -e "${YELLOW}Run ./setup_shared_folder.sh to configure CIFS mount${NC}"
+    echo -e "${YELLOW}Run: cd client && ./mount_shared_folder_dynamic.sh${NC}"
 fi
 
 # Check client script exists
@@ -218,6 +238,12 @@ echo ""
 # Set environment variables
 export SERVER_URL="$SERVER_URL"
 export FLASK_APP="app.py"
+
+# Bypass proxy for local network connections (avoids 403 Forbidden errors)
+export NO_PROXY="localhost,127.0.0.1,10.100.27.32,10.100.0.0/16"
+export no_proxy="localhost,127.0.0.1,10.100.27.32,10.100.0.0/16"
+echo -e "${CYAN}Proxy bypass configured for local network${NC}"
+
 if [ "$DEBUG" = true ]; then
     export FLASK_DEBUG=1
 fi
