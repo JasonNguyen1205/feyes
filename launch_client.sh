@@ -188,53 +188,68 @@ except:
     fi
 fi
 
-# Check for shared folder mount/symlink
+# Setup shared folder - dynamically map based on server configuration
+echo -e "${YELLOW}Configuring shared folder...${NC}"
 SHARED_FOLDER="/mnt/visual-aoi-shared"
-SERVER_SHARED="/home/jason_nguyen/visual-aoi-server/shared"
+TARGET_SERVER=$(echo "$SERVER_URL" | grep -oP '://\K[^:]+' || echo "localhost")
 
-if [ -L "$SHARED_FOLDER" ] && [ -e "$SHARED_FOLDER" ]; then
-    # Symlink exists and is valid (localhost setup)
-    echo -e "${GREEN}✓ Shared folder symlink at $SHARED_FOLDER${NC}"
-elif [ -d "$SHARED_FOLDER" ] && [ ! -L "$SHARED_FOLDER" ]; then
-    # Directory exists - check if it's a network mount or local directory
-    MOUNT_INFO=$(mount | grep "$SHARED_FOLDER" || true)
-    if [ -n "$MOUNT_INFO" ]; then
-        # Network mount detected - verify server
-        MOUNTED_SERVER=$(echo "$MOUNT_INFO" | grep -oP '//\K[0-9.]+' || true)
-        TARGET_SERVER=$(echo "$SERVER_URL" | grep -oP '://\K[^:]+' || echo "")
-        
-        if [ -n "$MOUNTED_SERVER" ] && [ -n "$TARGET_SERVER" ] && [ "$MOUNTED_SERVER" != "$TARGET_SERVER" ]; then
-            echo -e "${RED}❌ Shared folder mounted to wrong server!${NC}"
-            echo -e "${YELLOW}   Currently mounted: $MOUNTED_SERVER${NC}"
-            echo -e "${YELLOW}   Should be mounted: $TARGET_SERVER${NC}"
-            echo -e "${YELLOW}   Run: cd client && ./mount_shared_folder_dynamic.sh $TARGET_SERVER${NC}"
-            echo -e "${YELLOW}   Or press Enter to continue without remounting${NC}"
-            read -t 10 -p "   " || true
+# Check if server is localhost or remote
+if [ "$TARGET_SERVER" = "localhost" ] || [ "$TARGET_SERVER" = "127.0.0.1" ]; then
+    # Localhost setup - use symlink to server's shared folder
+    SERVER_SHARED="$SCRIPT_DIR/server/shared"
+    
+    if [ -L "$SHARED_FOLDER" ]; then
+        CURRENT_TARGET=$(readlink "$SHARED_FOLDER")
+        if [ "$CURRENT_TARGET" = "$SERVER_SHARED" ]; then
+            echo -e "${GREEN}✓ Shared folder symlink configured for localhost${NC}"
         else
-            echo -e "${GREEN}✓ Shared folder available at $SHARED_FOLDER (mounted to $MOUNTED_SERVER)${NC}"
+            echo -e "${YELLOW}Updating symlink for localhost setup${NC}"
+            sudo rm "$SHARED_FOLDER"
+            sudo ln -s "$SERVER_SHARED" "$SHARED_FOLDER"
+            echo -e "${GREEN}✓ Symlink updated: $SHARED_FOLDER → $SERVER_SHARED${NC}"
         fi
-    elif [ -d "$SERVER_SHARED" ]; then
-        # Local directory but server folder exists - offer to convert to symlink
-        echo -e "${YELLOW}Warning: $SHARED_FOLDER is a local directory${NC}"
-        echo -e "${YELLOW}Converting to symlink for localhost setup...${NC}"
-        sudo rmdir "$SHARED_FOLDER" 2>/dev/null || echo -e "${RED}Failed to remove directory (not empty?)${NC}"
-        if [ ! -e "$SHARED_FOLDER" ]; then
+    elif [ -d "$SHARED_FOLDER" ] && [ ! -L "$SHARED_FOLDER" ]; then
+        MOUNT_INFO=$(mount | grep "$SHARED_FOLDER" || true)
+        if [ -z "$MOUNT_INFO" ] && [ -z "$(ls -A $SHARED_FOLDER)" ]; then
+            echo -e "${YELLOW}Converting to symlink for localhost${NC}"
+            sudo rmdir "$SHARED_FOLDER"
             sudo ln -s "$SERVER_SHARED" "$SHARED_FOLDER"
             echo -e "${GREEN}✓ Created symlink: $SHARED_FOLDER → $SERVER_SHARED${NC}"
+        else
+            echo -e "${YELLOW}⚠ $SHARED_FOLDER exists but isn't symlink${NC}"
         fi
-    else
-        echo -e "${YELLOW}⚠ Shared folder exists but not mounted${NC}"
-        echo -e "${YELLOW}   Run: cd client && ./mount_shared_folder_dynamic.sh${NC}"
-    fi
-elif [ ! -e "$SHARED_FOLDER" ]; then
-    # Doesn't exist - create symlink if server folder exists (localhost setup)
-    if [ -d "$SERVER_SHARED" ]; then
-        echo -e "${YELLOW}Creating shared folder symlink for localhost setup...${NC}"
+    elif [ ! -e "$SHARED_FOLDER" ]; then
+        echo -e "${YELLOW}Creating symlink for localhost setup${NC}"
         sudo ln -s "$SERVER_SHARED" "$SHARED_FOLDER"
         echo -e "${GREEN}✓ Created symlink: $SHARED_FOLDER → $SERVER_SHARED${NC}"
+    fi
+else
+    # Remote server - check network mount
+    if [ -L "$SHARED_FOLDER" ]; then
+        echo -e "${YELLOW}Warning: Symlink detected but server is remote${NC}"
+        echo -e "${YELLOW}Consider removing symlink and mounting network share${NC}"
+        echo -e "${YELLOW}Run: sudo rm $SHARED_FOLDER && cd $CLIENT_DIR && ./mount_shared_folder_dynamic.sh $TARGET_SERVER${NC}"
+    elif [ -d "$SHARED_FOLDER" ]; then
+        MOUNT_INFO=$(mount | grep "$SHARED_FOLDER" || true)
+        if [ -n "$MOUNT_INFO" ]; then
+            # Network mount detected - verify server
+            MOUNTED_SERVER=$(echo "$MOUNT_INFO" | grep -oP '//\K[0-9.]+' || true)
+            
+            if [ -n "$MOUNTED_SERVER" ] && [ "$MOUNTED_SERVER" != "$TARGET_SERVER" ]; then
+                echo -e "${RED}❌ Shared folder mounted to wrong server!${NC}"
+                echo -e "${YELLOW}   Currently: $MOUNTED_SERVER | Target: $TARGET_SERVER${NC}"
+                echo -e "${YELLOW}   Fix: cd $CLIENT_DIR && ./mount_shared_folder_dynamic.sh $TARGET_SERVER${NC}"
+                read -t 10 -p "   Press Enter to continue or wait 10s..." || true
+            else
+                echo -e "${GREEN}✓ Shared folder mounted from server $MOUNTED_SERVER${NC}"
+            fi
+        else
+            echo -e "${YELLOW}⚠ Local directory but server is remote${NC}"
+            echo -e "${YELLOW}   Run: cd $CLIENT_DIR && ./mount_shared_folder_dynamic.sh $TARGET_SERVER${NC}"
+        fi
     else
-        echo -e "${YELLOW}Warning: Shared folder not found at $SHARED_FOLDER${NC}"
-        echo -e "${YELLOW}Run: cd client && ./mount_shared_folder_dynamic.sh${NC}"
+        echo -e "${YELLOW}⚠ Shared folder not found${NC}"
+        echo -e "${YELLOW}   Run: cd $CLIENT_DIR && ./mount_shared_folder_dynamic.sh $TARGET_SERVER${NC}"
     fi
 fi
 

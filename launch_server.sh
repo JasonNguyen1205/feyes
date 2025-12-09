@@ -149,30 +149,51 @@ else
     echo -e "${YELLOW}⚠ No supported firewall found (ufw/firewalld/iptables)${NC}"
 fi
 
-# Fix permissions for shared mount point  
-echo -e "${YELLOW}Setting up shared folder...${NC}"
-if [ -d "/mnt/visual-aoi-shared" ]; then
-    echo "1" | sudo -S chown -R pi:pi /mnt/visual-aoi-shared 2>/dev/null
-    echo "1" | sudo -S mkdir -p /mnt/visual-aoi-shared/sessions 2>/dev/null
-    echo "1" | sudo -S chown -R pi:pi /mnt/visual-aoi-shared/sessions 2>/dev/null
-    if [ $? -eq 0 ]; then
-        echo -e "${GREEN}✓ Shared mount permissions fixed${NC}"
-    else
-        echo -e "${YELLOW}⚠ Could not fix shared mount permissions${NC}"
-    fi
-else
-    echo -e "${YELLOW}Creating /mnt/visual-aoi-shared...${NC}"
-    echo "1" | sudo -S mkdir -p /mnt/visual-aoi-shared/sessions 2>/dev/null
-    echo "1" | sudo -S chown -R pi:pi /mnt/visual-aoi-shared 2>/dev/null
+# Setup shared folder - map /mnt/visual-aoi-shared to server's shared directory
+echo -e "${YELLOW}Setting up shared folder mapping...${NC}"
+SHARED_FOLDER="$SERVER_DIR/shared"
+MOUNT_POINT="/mnt/visual-aoi-shared"
+
+# Ensure server's shared folder exists
+if [ ! -d "$SHARED_FOLDER" ]; then
+    mkdir -p "$SHARED_FOLDER/sessions"
+    echo -e "${GREEN}✓ Created server shared folder at $SHARED_FOLDER${NC}"
 fi
 
-# Check for shared folder
-SHARED_FOLDER="$SERVER_DIR/shared"
-if [ ! -d "$SHARED_FOLDER" ]; then
-    echo -e "${YELLOW}Creating shared folder...${NC}"
-    mkdir -p "$SHARED_FOLDER"
-    echo -e "${GREEN}✓ Shared folder created at $SHARED_FOLDER${NC}"
+# Map /mnt/visual-aoi-shared to server's shared folder
+if [ -L "$MOUNT_POINT" ]; then
+    # Symlink exists - verify it points to correct location
+    CURRENT_TARGET=$(readlink "$MOUNT_POINT")
+    if [ "$CURRENT_TARGET" != "$SHARED_FOLDER" ]; then
+        echo -e "${YELLOW}Updating symlink to point to $SHARED_FOLDER${NC}"
+        echo "1" | sudo -S rm "$MOUNT_POINT"
+        echo "1" | sudo -S ln -s "$SHARED_FOLDER" "$MOUNT_POINT"
+        echo -e "${GREEN}✓ Symlink updated${NC}"
+    else
+        echo -e "${GREEN}✓ Shared folder symlink already configured${NC}"
+    fi
+elif [ -d "$MOUNT_POINT" ]; then
+    # Directory exists - check if it's empty and safe to replace
+    if [ -z "$(ls -A $MOUNT_POINT)" ]; then
+        echo -e "${YELLOW}Replacing empty directory with symlink${NC}"
+        echo "1" | sudo -S rmdir "$MOUNT_POINT"
+        echo "1" | sudo -S ln -s "$SHARED_FOLDER" "$MOUNT_POINT"
+        echo -e "${GREEN}✓ Created symlink: $MOUNT_POINT → $SHARED_FOLDER${NC}"
+    else
+        echo -e "${YELLOW}⚠ $MOUNT_POINT is not empty, keeping as-is${NC}"
+        echo -e "${YELLOW}  Manual action: sudo rm -rf $MOUNT_POINT && sudo ln -s $SHARED_FOLDER $MOUNT_POINT${NC}"
+    fi
+else
+    # Doesn't exist - create symlink
+    echo -e "${YELLOW}Creating shared folder symlink...${NC}"
+    echo "1" | sudo -S ln -s "$SHARED_FOLDER" "$MOUNT_POINT"
+    echo -e "${GREEN}✓ Created symlink: $MOUNT_POINT → $SHARED_FOLDER${NC}"
 fi
+
+# Ensure proper permissions
+echo "1" | sudo -S chown -R $(whoami):$(whoami) "$SHARED_FOLDER" 2>/dev/null
+echo "1" | sudo -S chmod -R 775 "$SHARED_FOLDER" 2>/dev/null
+echo -e "${GREEN}✓ Shared folder permissions configured${NC}"
 
 # Ensure shared folder has proper permissions for client access
 if [ -d "$SHARED_FOLDER" ]; then
