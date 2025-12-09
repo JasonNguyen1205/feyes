@@ -12,17 +12,23 @@
 
 ### Server Connection Strategy (Nov 2025)
 **Intelligent auto-connection with fallback**:
-1. On client startup, automatically tests `http://localhost:5000` (3s timeout)
+1. On client startup, automatically tests `http://localhost:5000` (3s timeout) as a convenience feature
 2. If localhost server is reachable → auto-connects silently
-3. If localhost unreachable → prompts user to manually enter server IP
+3. If localhost unreachable → prompts user to manually enter server IP (this is the primary use case)
 4. Uses `/api/server/test` endpoint to check reachability without full connection
 5. `test_server_reachable()` helper in `client/app.py` validates server health
 
+**Primary deployment model**: Client and server run on **different machines**
+- Client: Raspberry Pi with TIS industrial camera
+- Server: Separate machine with GPU for AI processing (e.g., RTX 5080)
+- Localhost auto-check is a convenience feature for development/testing
+
 **Implementation**:
 - Client `AOIState.server_url` defaults to empty string (not hardcoded)
-- Frontend `DOMContentLoaded` checks localhost first, then manual config
+- Frontend `DOMContentLoaded` checks localhost first, then prompts for remote server IP
 - Server URL input shows "Auto-checking localhost:5000..." placeholder initially
-- Graceful degradation: if check fails, assumes localhost unavailable
+- Client launcher sets `NO_PROXY` to bypass proxy for local network (10.100.0.0/16)
+- Graceful degradation: if localhost check fails, proceeds to manual configuration
 
 ### Session-Based Workflow
 Every inspection follows this lifecycle:
@@ -54,6 +60,15 @@ Uses CIFS/SMB shared folder to avoid Base64 overhead:
 - API **automatically converts** client paths to server paths
 - Responses return file paths (NOT Base64): `roi_image_path`, `golden_image_path`
 - Result: 99% smaller payloads, 195x faster transmission
+
+**CRITICAL: Shared folder MUST match connected server**:
+- Client mount MUST point to the same server IP that the application connects to
+- If client connects to `10.100.27.32:5000`, shared folder must mount from `//10.100.27.32/visual-aoi-shared`
+- Mismatch causes inspection failures (client saves images to wrong server)
+- Launcher auto-detects mismatches and warns user
+- Use `client/mount_shared_folder_dynamic.sh <server_ip>` to remount to correct server
+- Check with: `mount | grep visual-aoi-shared` shows mounted server IP
+- Fixed mount scripts (`mount_shared_folder.sh`) with hardcoded IPs are deprecated
 
 ### ROI Processing Pipeline
 ```
@@ -157,15 +172,18 @@ pytest tests/test_ai.py -k "mobilenet"
 
 ## Common Gotchas
 
-1. **Server connection**: Client auto-checks `localhost:5000` on startup; manual IP entry required if localhost unavailable
-2. **Path conversions**: Client sends `/mnt/visual-aoi-shared/...`, server uses `/home/jason_nguyen/visual-aoi-server/shared/...` - API handles conversion
-3. **Field naming**: Always use `exposure` (NOT `exposure_time`) in configs and code
-4. **Device barcodes format**: Accepts both dict `{'1': 'barcode'}` and list `[{'device_id': 1, 'barcode': '...'}]` via `normalize_device_barcodes()`
-5. **RTX 5080 compatibility**: Use PyTorch (not TensorFlow) - better GPU support
-6. **ROI normalization**: ALWAYS call `normalize_roi()` when loading configs to handle legacy formats
-7. **Parallel processing safety**: Use `golden_update_lock` in `src/roi.py` when modifying golden samples
-8. **Session state**: Never use global variables for request state - always use session objects
-9. **Color ROI validation**: Server validates Color ROIs on save, adds defaults (color_tolerance=50, min_pixel_percentage=70.0)
+1. **Server connection**: Client auto-checks `localhost:5000` on startup as convenience; primary use case is remote server connection via manual IP entry
+2. **Network proxy**: Client sets `NO_PROXY` environment variable to bypass proxy for local network (10.100.0.0/16) - required for corporate networks
+3. **Shared folder mismatch**: Client mount MUST point to same server IP as connected server (see File Exchange Architecture) - launcher auto-detects mismatches
+4. **Path conversions**: Client sends `/mnt/visual-aoi-shared/...`, server uses `/home/jason_nguyen/visual-aoi-server/shared/...` - API handles conversion
+5. **Field naming**: Always use `exposure` (NOT `exposure_time`) in configs and code
+6. **Device barcodes format**: Accepts both dict `{'1': 'barcode'}` and list `[{'device_id': 1, 'barcode': '...'}]` via `normalize_device_barcodes()`
+7. **RTX 5080 compatibility**: Use PyTorch (not TensorFlow) - better GPU support
+8. **ROI normalization**: ALWAYS call `normalize_roi()` when loading configs to handle legacy formats
+9. **Parallel processing safety**: Use `golden_update_lock` in `src/roi.py` when modifying golden samples
+10. **Session state**: Never use global variables for request state - always use session objects
+11. **Color ROI validation**: Server validates Color ROIs on save, adds defaults (color_tolerance=50, min_pixel_percentage=70.0)
+12. **Firewall configuration**: Server launcher automatically configures local firewall (ufw/firewalld/iptables) to allow the configured port
 
 ## UI/UX Patterns (Client)
 
@@ -248,7 +266,10 @@ server/
 
 ## Version-Specific Notes
 
-- **Server connection** (Nov 2025): Auto-check localhost:5000 with fallback to manual IP entry
+- **Server connection** (Nov 2025): Auto-check localhost:5000 as convenience; primary deployment uses remote server with manual IP configuration
+- **Network proxy bypass** (Nov 2025): Client launcher sets NO_PROXY for local network to avoid corporate proxy 403 errors
+- **Shared folder validation** (Nov 2025): Launcher auto-detects if mount points to wrong server IP; use `mount_shared_folder_dynamic.sh` to remount to correct server
+- **Firewall auto-config** (Nov 2025): Server launcher automatically opens required port on local firewall (ufw/firewalld/iptables)
 - **ROI v3.0** (Oct 2025): Added `is_device_barcode` field (field 10) for device barcode priority
 - **ROI v3.2** (Nov 2025): Added Color detection (type 4) with `color_config` field (field 11)
 - **Result v2.0** (Oct 2025): Device-grouped results with `device_summaries` structure
