@@ -1799,8 +1799,10 @@ def create_session():
         # Create fresh session directories
         input_dir = os.path.join(session_dir, "input")
         output_dir = os.path.join(session_dir, "output")
+        captures_dir = os.path.join(session_dir, "captures")
         os.makedirs(input_dir, exist_ok=True)
         os.makedirs(output_dir, exist_ok=True)
+        os.makedirs(captures_dir, exist_ok=True)
         logger.info(f"Created fresh session directories for {session_id}")
         
         # Create session
