@@ -3,9 +3,9 @@
 # Mounts /mnt/visual-aoi-shared from the server the client is connected to
 #
 # Usage:
-#   ./mount_shared_folder_dynamic.sh <server_ip>
-#   OR
-#   ./mount_shared_folder_dynamic.sh (will prompt for IP)
+#   ./mount_shared_folder_dynamic.sh <server_ip> [username] [password]
+#   ./mount_shared_folder_dynamic.sh <server_ip>  # Will use defaults or prompt
+#   ./mount_shared_folder_dynamic.sh              # Will prompt for all
 
 set -e
 
@@ -20,6 +20,8 @@ NC='\033[0m' # No Color
 
 # Parse arguments
 SERVER_IP="$1"
+USERNAME="$2"
+PASSWORD="$3"
 
 # If no IP provided, prompt user
 if [ -z "$SERVER_IP" ]; then
@@ -55,14 +57,18 @@ if mountpoint -q "$MOUNT_POINT"; then
 fi
 
 # Set credentials (default: jason_nguyen / 1)
-echo -e "${YELLOW}Enter server username (default: jason_nguyen):${NC}"
-read -r USERNAME
-USERNAME=${USERNAME:-jason_nguyen}
+if [ -z "$USERNAME" ]; then
+    echo -e "${YELLOW}Enter server username (default: jason_nguyen):${NC}"
+    read -r USERNAME
+    USERNAME=${USERNAME:-jason_nguyen}
+fi
 
-echo -e "${YELLOW}Enter server password (default: 1):${NC}"
-read -rs PASSWORD
-echo  # New line after password input
-PASSWORD=${PASSWORD:-1}
+if [ -z "$PASSWORD" ]; then
+    echo -e "${YELLOW}Enter server password (default: 1):${NC}"
+    read -rs PASSWORD
+    echo  # New line after password input
+    PASSWORD=${PASSWORD:-1}
+fi
 
 # Mount the CIFS share
 echo -e "${GREEN}Mounting CIFS share...${NC}"

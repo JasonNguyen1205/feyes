@@ -179,46 +179,36 @@ if [ -d "$SHARED_FOLDER" ]; then
     echo -e "${GREEN}✓ Shared folder permissions configured${NC}"
 fi
 
-# Setup Samba server for network access (skip for localhost-only)
-echo -e "${YELLOW}Configuring Samba server...${NC}"
-if command -v smbd &> /dev/null; then
-    # Check if Samba config exists
-    if [ -f /etc/samba/smb.conf ]; then
-        # Check if visual-aoi-shared share exists
-        if ! grep -q "\[visual-aoi-shared\]" /etc/samba/smb.conf; then
-            echo -e "${YELLOW}Adding visual-aoi-shared to Samba configuration...${NC}"
-            sudo tee -a /etc/samba/smb.conf > /dev/null << EOF
+# Setup Samba server for network access
+echo -e "${YELLOW}Configuring Samba server for network access...${NC}"
+SAMBA_SETUP_SCRIPT="$SERVER_DIR/setup_samba_server.sh"
 
-[visual-aoi-shared]
-   comment = Visual AOI Shared Folder
-   path = $SHARED_FOLDER
-   browseable = yes
-   read only = no
-   guest ok = no
-   valid users = jason_nguyen
-   create mask = 0755
-   directory mask = 0755
-   force user = $(whoami)
-   force group = $(id -gn)
-EOF
-            echo -e "${GREEN}✓ Samba share configured${NC}"
-            
-            # Set Samba password for jason_nguyen (password: 1)
-            echo -e "${YELLOW}Setting Samba password for user jason_nguyen...${NC}"
-            (echo "1"; echo "1") | sudo smbpasswd -a jason_nguyen 2>/dev/null || echo -e "${YELLOW}⚠ Could not set Samba password (user may need to be created)${NC}"
-            
-            # Restart Samba
-            sudo systemctl restart smbd 2>/dev/null || sudo service smbd restart 2>/dev/null || echo -e "${YELLOW}⚠ Could not restart Samba${NC}"
-            echo -e "${GREEN}✓ Samba server restarted${NC}"
+if [ -f "$SAMBA_SETUP_SCRIPT" ]; then
+    # Check if Samba share is already configured
+    if ! grep -q "\[visual-aoi-shared\]" /etc/samba/smb.conf 2>/dev/null; then
+        echo -e "${YELLOW}Running automated Samba setup...${NC}"
+        echo -e "${CYAN}This will configure network sharing (user: jason_nguyen, password: 1)${NC}"
+        
+        # Run setup script (non-interactive mode)
+        bash "$SAMBA_SETUP_SCRIPT" 2>&1 | grep -E "(✓|✅|❌|⚠)" || true
+        
+        if grep -q "\[visual-aoi-shared\]" /etc/samba/smb.conf 2>/dev/null; then
+            echo -e "${GREEN}✓ Samba server configured successfully${NC}"
+            SERVER_IP=$(hostname -I | awk '{print $1}')
+            echo -e "${CYAN}   Network clients can connect to: //$SERVER_IP/visual-aoi-shared${NC}"
         else
-            echo -e "${GREEN}✓ Samba share already configured${NC}"
+            echo -e "${YELLOW}⚠ Samba setup incomplete (run manually: $SAMBA_SETUP_SCRIPT)${NC}"
         fi
     else
-        echo -e "${YELLOW}⚠ Samba not configured (install with: sudo apt install samba)${NC}"
+        echo -e "${GREEN}✓ Samba share already configured${NC}"
+        # Ensure Samba is running
+        if command -v systemctl &> /dev/null; then
+            sudo systemctl start smbd 2>/dev/null || true
+        fi
     fi
 else
-    echo -e "${YELLOW}⚠ Samba not installed (install with: sudo apt install samba)${NC}"
-    echo -e "${YELLOW}   For network access, clients will need Samba server running${NC}"
+    echo -e "${YELLOW}⚠ Samba setup script not found at $SAMBA_SETUP_SCRIPT${NC}"
+    echo -e "${YELLOW}   For network access, run: cd server && ./setup_samba_server.sh${NC}"
 fi
 
 # Check server script exists

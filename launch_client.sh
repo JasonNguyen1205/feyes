@@ -224,32 +224,58 @@ if [ "$TARGET_SERVER" = "localhost" ] || [ "$TARGET_SERVER" = "127.0.0.1" ]; the
         echo -e "${GREEN}✓ Created symlink: $SHARED_FOLDER → $SERVER_SHARED${NC}"
     fi
 else
-    # Remote server - check network mount
+    # Remote server - setup network mount
+    MOUNT_SCRIPT="$CLIENT_DIR/mount_shared_folder_dynamic.sh"
+    
     if [ -L "$SHARED_FOLDER" ]; then
-        echo -e "${YELLOW}Warning: Symlink detected but server is remote${NC}"
-        echo -e "${YELLOW}Consider removing symlink and mounting network share${NC}"
-        echo -e "${YELLOW}Run: sudo rm $SHARED_FOLDER && cd $CLIENT_DIR && ./mount_shared_folder_dynamic.sh $TARGET_SERVER${NC}"
-    elif [ -d "$SHARED_FOLDER" ]; then
-        MOUNT_INFO=$(mount | grep "$SHARED_FOLDER" || true)
-        if [ -n "$MOUNT_INFO" ]; then
-            # Network mount detected - verify server
-            MOUNTED_SERVER=$(echo "$MOUNT_INFO" | grep -oP '//\K[0-9.]+' || true)
+        # Symlink exists but server is remote - need to switch to network mount
+        echo -e "${YELLOW}Converting from symlink to network mount...${NC}"
+        sudo rm "$SHARED_FOLDER"
+        echo -e "${GREEN}✓ Removed symlink${NC}"
+    fi
+    
+    # Check if already mounted
+    MOUNT_INFO=$(mount | grep "$SHARED_FOLDER" || true)
+    if [ -n "$MOUNT_INFO" ]; then
+        # Network mount detected - verify server
+        MOUNTED_SERVER=$(echo "$MOUNT_INFO" | grep -oP '//\K[0-9.]+' || true)
+        
+        if [ -n "$MOUNTED_SERVER" ] && [ "$MOUNTED_SERVER" != "$TARGET_SERVER" ]; then
+            echo -e "${RED}❌ Shared folder mounted to wrong server!${NC}"
+            echo -e "${YELLOW}   Currently: $MOUNTED_SERVER | Target: $TARGET_SERVER${NC}"
+            echo -e "${YELLOW}   Remounting to correct server...${NC}"
             
-            if [ -n "$MOUNTED_SERVER" ] && [ "$MOUNTED_SERVER" != "$TARGET_SERVER" ]; then
-                echo -e "${RED}❌ Shared folder mounted to wrong server!${NC}"
-                echo -e "${YELLOW}   Currently: $MOUNTED_SERVER | Target: $TARGET_SERVER${NC}"
-                echo -e "${YELLOW}   Fix: cd $CLIENT_DIR && ./mount_shared_folder_dynamic.sh $TARGET_SERVER${NC}"
-                read -t 10 -p "   Press Enter to continue or wait 10s..." || true
-            else
-                echo -e "${GREEN}✓ Shared folder mounted from server $MOUNTED_SERVER${NC}"
+            # Unmount and remount to correct server
+            sudo umount "$SHARED_FOLDER" 2>/dev/null || sudo umount -f "$SHARED_FOLDER" 2>/dev/null || true
+            
+            if [ -f "$MOUNT_SCRIPT" ]; then
+                echo -e "${CYAN}Mounting shared folder from $TARGET_SERVER...${NC}"
+                bash "$MOUNT_SCRIPT" "$TARGET_SERVER" || echo -e "${YELLOW}⚠ Auto-mount failed, you may need to run manually${NC}"
             fi
         else
-            echo -e "${YELLOW}⚠ Local directory but server is remote${NC}"
-            echo -e "${YELLOW}   Run: cd $CLIENT_DIR && ./mount_shared_folder_dynamic.sh $TARGET_SERVER${NC}"
+            echo -e "${GREEN}✓ Shared folder mounted from server $MOUNTED_SERVER${NC}"
         fi
     else
-        echo -e "${YELLOW}⚠ Shared folder not found${NC}"
-        echo -e "${YELLOW}   Run: cd $CLIENT_DIR && ./mount_shared_folder_dynamic.sh $TARGET_SERVER${NC}"
+        # Not mounted - attempt to mount if script exists
+        if [ -f "$MOUNT_SCRIPT" ]; then
+            echo -e "${YELLOW}Network mount not found, setting up automatically...${NC}"
+            echo -e "${CYAN}Mounting shared folder from $TARGET_SERVER...${NC}"
+            echo -e "${CYAN}(using default credentials: jason_nguyen / 1)${NC}"
+            
+            # Run mount script with server IP and default credentials (non-interactive)
+            bash "$MOUNT_SCRIPT" "$TARGET_SERVER" "jason_nguyen" "1" 2>&1 | grep -E "(✓|✅|❌|⚠|Mounting|Successfully)" || true
+            
+            # Check if mount succeeded
+            if mountpoint -q "$SHARED_FOLDER" 2>/dev/null; then
+                echo -e "${GREEN}✓ Shared folder mounted successfully${NC}"
+            else
+                echo -e "${YELLOW}⚠ Auto-mount incomplete${NC}"
+                echo -e "${YELLOW}   Run manually: cd $CLIENT_DIR && ./mount_shared_folder_dynamic.sh $TARGET_SERVER${NC}"
+            fi
+        else
+            echo -e "${YELLOW}⚠ Mount script not found at $MOUNT_SCRIPT${NC}"
+            echo -e "${YELLOW}   Shared folder must be mounted manually${NC}"
+        fi
     fi
 fi
 
