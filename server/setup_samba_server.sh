@@ -18,9 +18,16 @@ echo "Visual AOI - Samba Server Setup"
 echo "========================================"
 echo -e "${NC}"
 
-# Get script directory
+# Get script directory and shared folder path
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SHARED_FOLDER="$SCRIPT_DIR/shared"
+
+# Resolve absolute path (handles symlinks)
+SHARED_FOLDER_ABS="$(cd "$SCRIPT_DIR" && pwd)/shared"
+
+echo -e "${CYAN}Detected paths:${NC}"
+echo -e "  Script directory: $SCRIPT_DIR"
+echo -e "  Shared folder: $SHARED_FOLDER_ABS"
 
 # Check if running as root
 if [ "$EUID" -eq 0 ]; then 
@@ -52,17 +59,41 @@ if [ ! -f /etc/samba/smb.conf.backup ]; then
     echo -e "${GREEN}✓ Backup created: /etc/samba/smb.conf.backup${NC}"
 fi
 
-# Check if share already exists
+# Check if share already exists and verify path
 if grep -q "\[visual-aoi-shared\]" /etc/samba/smb.conf; then
     echo -e "${YELLOW}visual-aoi-shared share already exists in configuration${NC}"
-    echo -e "${YELLOW}Remove it manually from /etc/samba/smb.conf if you want to recreate${NC}"
+    
+    # Extract current path from smb.conf
+    CURRENT_PATH=$(grep -A 10 '\[visual-aoi-shared\]' /etc/samba/smb.conf | grep 'path =' | head -1 | sed 's/.*path = //' | xargs)
+    
+    if [ "$CURRENT_PATH" != "$SHARED_FOLDER_ABS" ]; then
+        echo -e "${RED}⚠ Path mismatch detected!${NC}"
+        echo -e "  Current: $CURRENT_PATH"
+        echo -e "  Should be: $SHARED_FOLDER_ABS"
+        echo -e "${YELLOW}Updating Samba configuration path...${NC}"
+        
+        # Escape paths for sed
+        ESCAPED_OLD=$(echo "$CURRENT_PATH" | sed 's/[]\\/\$*.^[]/\\&/g')
+        ESCAPED_NEW=$(echo "$SHARED_FOLDER_ABS" | sed 's/[]\\/\$*.^[]/\\&/g')
+        
+        # Update the path
+        sudo sed -i "s|path = $ESCAPED_OLD|path = $ESCAPED_NEW|" /etc/samba/smb.conf
+        echo -e "${GREEN}✓ Path updated successfully${NC}"
+        
+        # Restart Samba
+        echo -e "${YELLOW}Restarting Samba service...${NC}"
+        sudo systemctl restart smbd
+        echo -e "${GREEN}✓ Samba restarted${NC}"
+    else
+        echo -e "${GREEN}✓ Path is correct: $CURRENT_PATH${NC}"
+    fi
 else
     echo -e "${YELLOW}Adding visual-aoi-shared share to Samba configuration...${NC}"
     sudo tee -a /etc/samba/smb.conf > /dev/null << EOF
 
 [visual-aoi-shared]
    comment = Visual AOI Shared Folder
-   path = $SHARED_FOLDER
+   path = $SHARED_FOLDER_ABS
    browseable = yes
    read only = no
    guest ok = no

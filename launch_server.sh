@@ -200,7 +200,21 @@ if [ -f "$SAMBA_SETUP_SCRIPT" ]; then
             echo -e "${YELLOW}⚠ Samba setup incomplete (run manually: $SAMBA_SETUP_SCRIPT)${NC}"
         fi
     else
-        echo -e "${GREEN}✓ Samba share already configured${NC}"
+        # Verify Samba path is correct
+        SHARED_FOLDER_ABS="$(cd "$SERVER_DIR" && pwd)/shared"
+        CURRENT_PATH=$(grep -A 10 '\[visual-aoi-shared\]' /etc/samba/smb.conf 2>/dev/null | grep 'path =' | head -1 | sed 's/.*path = //' | xargs)
+        
+        if [ -n "$CURRENT_PATH" ] && [ "$CURRENT_PATH" != "$SHARED_FOLDER_ABS" ]; then
+            echo -e "${RED}⚠ Samba path mismatch detected!${NC}"
+            echo -e "${CYAN}  Current: $CURRENT_PATH${NC}"
+            echo -e "${CYAN}  Should be: $SHARED_FOLDER_ABS${NC}"
+            echo -e "${YELLOW}Running automatic fix...${NC}"
+            bash "$SAMBA_SETUP_SCRIPT" 2>&1 | grep -E "(✓|✅|❌|⚠)" || true
+        else
+            echo -e "${GREEN}✓ Samba share already configured${NC}"
+            echo -e "${CYAN}   Share path: $CURRENT_PATH${NC}"
+        fi
+        
         # Ensure Samba is running
         if command -v systemctl &> /dev/null; then
             sudo systemctl start smbd 2>/dev/null || true
