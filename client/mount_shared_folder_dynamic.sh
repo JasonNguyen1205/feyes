@@ -54,13 +54,14 @@ if mountpoint -q "$MOUNT_POINT"; then
     }
 fi
 
-# Prompt for credentials
+# Set credentials (default: jason_nguyen / 1)
 echo -e "${YELLOW}Enter server username (default: jason_nguyen):${NC}"
 read -r USERNAME
 USERNAME=${USERNAME:-jason_nguyen}
 
-echo -e "${YELLOW}Enter server password:${NC}"
+echo -e "${YELLOW}Enter server password (default: 1):${NC}"
 read -rs PASSWORD
+echo  # New line after password input
 PASSWORD=${PASSWORD:-1}
 
 # Mount the CIFS share
@@ -106,4 +107,5 @@ fi
 echo ""
 echo -e "${GREEN}✅ Shared folder setup complete!${NC}"
 echo -e "${GREEN}Client can now save/read files via $MOUNT_POINT${NC}"
-echo -e "${GREEN}Server will access files at /home/jason_nguyen/visual-aoi-server/shared/${NC}"
+echo -e "${GREEN}Server will access files at its own shared/ directory${NC}"
+echo -e "${CYAN}Network mount: //$SERVER_IP/$SHARE_NAME${NC}"

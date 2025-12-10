@@ -179,6 +179,48 @@ if [ -d "$SHARED_FOLDER" ]; then
     echo -e "${GREEN}✓ Shared folder permissions configured${NC}"
 fi
 
+# Setup Samba server for network access (skip for localhost-only)
+echo -e "${YELLOW}Configuring Samba server...${NC}"
+if command -v smbd &> /dev/null; then
+    # Check if Samba config exists
+    if [ -f /etc/samba/smb.conf ]; then
+        # Check if visual-aoi-shared share exists
+        if ! grep -q "\[visual-aoi-shared\]" /etc/samba/smb.conf; then
+            echo -e "${YELLOW}Adding visual-aoi-shared to Samba configuration...${NC}"
+            sudo tee -a /etc/samba/smb.conf > /dev/null << EOF
+
+[visual-aoi-shared]
+   comment = Visual AOI Shared Folder
+   path = $SHARED_FOLDER
+   browseable = yes
+   read only = no
+   guest ok = no
+   valid users = jason_nguyen
+   create mask = 0755
+   directory mask = 0755
+   force user = $(whoami)
+   force group = $(id -gn)
+EOF
+            echo -e "${GREEN}✓ Samba share configured${NC}"
+            
+            # Set Samba password for jason_nguyen (password: 1)
+            echo -e "${YELLOW}Setting Samba password for user jason_nguyen...${NC}"
+            (echo "1"; echo "1") | sudo smbpasswd -a jason_nguyen 2>/dev/null || echo -e "${YELLOW}⚠ Could not set Samba password (user may need to be created)${NC}"
+            
+            # Restart Samba
+            sudo systemctl restart smbd 2>/dev/null || sudo service smbd restart 2>/dev/null || echo -e "${YELLOW}⚠ Could not restart Samba${NC}"
+            echo -e "${GREEN}✓ Samba server restarted${NC}"
+        else
+            echo -e "${GREEN}✓ Samba share already configured${NC}"
+        fi
+    else
+        echo -e "${YELLOW}⚠ Samba not configured (install with: sudo apt install samba)${NC}"
+    fi
+else
+    echo -e "${YELLOW}⚠ Samba not installed (install with: sudo apt install samba)${NC}"
+    echo -e "${YELLOW}   For network access, clients will need Samba server running${NC}"
+fi
+
 # Check server script exists
 SERVER_SCRIPT="$SERVER_DIR/server/simple_api_server.py"
 if [ ! -f "$SERVER_SCRIPT" ]; then
