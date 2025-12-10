@@ -60,6 +60,12 @@ except ImportError as e:
 app = Flask(__name__)
 # CORS(app)  # Enable CORS for cross-origin requests - commented out
 
+# Configure shared folder path dynamically based on where server is running
+SERVER_BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+SHARED_FOLDER_PATH = os.path.join(SERVER_BASE_DIR, 'shared')
+logger.info(f"Server base directory: {SERVER_BASE_DIR}")
+logger.info(f"Shared folder path: {SHARED_FOLDER_PATH}")
+
 def validate_and_normalize_roi_for_save(roi):
     """
     Validate and normalize ROI configuration before saving to ensure correct v3.2 format.
@@ -364,7 +370,7 @@ def load_image_from_request(data: dict, session_id: str) -> Tuple[np.ndarray, st
         image_filename = data['image_filename']
         
         # Construct path to shared input directory
-        session_dir = f"/home/jason_nguyen/visual-aoi-server/shared/sessions/{session_id}"
+        session_dir = os.path.join(SHARED_FOLDER_PATH, "sessions", session_id)
         input_dir = os.path.join(session_dir, "input")
         image_path = os.path.join(input_dir, image_filename)
         
@@ -769,7 +775,7 @@ def run_real_inspection(image: np.ndarray, product_name: Optional[str] = None, d
                         if roi_img is not None and session_id:
                             try:
                                 # Save the EXACT captured ROI image used for comparison
-                                session_dir = f"/home/jason_nguyen/visual-aoi-server/shared/sessions/{session_id}"
+                                session_dir = os.path.join(SHARED_FOLDER_PATH, "sessions", session_id)
                                 output_dir = os.path.join(session_dir, "output")
                                 os.makedirs(output_dir, exist_ok=True)
                                 
@@ -1377,9 +1383,9 @@ def api_documentation():
             }
         },
         "shared_folder": {
-            "server_path": "/home/jason_nguyen/visual-aoi-server/shared/",
+            "server_path": f"{SHARED_FOLDER_PATH}/",
             "client_mount": "/mnt/visual-aoi-shared/",
-            "note": "Client accesses via CIFS mount"
+            "note": "Client accesses via CIFS mount or symlink (localhost)"
         },
         "links": {
             "swagger_ui": "http://{server_ip}:5000/apidocs/",
@@ -1782,7 +1788,7 @@ def create_session():
         session_id = str(uuid.uuid4())
         
         # Clean up old session directories if they exist
-        session_dir = f"/home/jason_nguyen/visual-aoi-server/shared/sessions/{session_id}"
+        session_dir = os.path.join(SHARED_FOLDER_PATH, "sessions", session_id)
         if os.path.exists(session_dir):
             try:
                 shutil.rmtree(session_dir)
@@ -2099,7 +2105,7 @@ def close_session(session_id):
         del server_state['sessions'][session_id]
         
         # Clean up session directory
-        session_dir = f"/home/jason_nguyen/visual-aoi-server/shared/sessions/{session_id}"
+        session_dir = os.path.join(SHARED_FOLDER_PATH, "sessions", session_id)
         if os.path.exists(session_dir):
             try:
                 shutil.rmtree(session_dir)
@@ -2466,7 +2472,7 @@ def process_grouped_inspection():
                 rois = group_data['rois']
 
                 # Construct paths
-                session_dir = f"/home/jason_nguyen/visual-aoi-server/shared/sessions/{session_id}"
+                session_dir = os.path.join(SHARED_FOLDER_PATH, "sessions", session_id)
                 input_dir = os.path.join(session_dir, "input")
                 output_dir = os.path.join(session_dir, "output")
                 
@@ -2480,10 +2486,10 @@ def process_grouped_inspection():
                     
                     # Convert client mount path to server path if needed
                     # Client sends: /mnt/visual-aoi-shared/sessions/{uuid}/captures/image.jpg
-                    # Server needs: /home/jason_nguyen/visual-aoi-server/shared/sessions/{uuid}/captures/image.jpg
+                    # Server needs: {SHARED_FOLDER_PATH}/sessions/{uuid}/captures/image.jpg
                     if image_path.startswith('/mnt/visual-aoi-shared/'):
                         # Convert client mount path to server path
-                        server_path = image_path.replace('/mnt/visual-aoi-shared/', '/home/jason_nguyen/visual-aoi-server/shared/')
+                        server_path = image_path.replace('/mnt/visual-aoi-shared/', f'{SHARED_FOLDER_PATH}/')
                         logger.debug(f"Converted client path to server path: {image_path} → {server_path}")
                         image_path = server_path
                     
@@ -2825,7 +2831,7 @@ def cleanup_expired_sessions():
             del server_state['sessions'][session_id]
             
             # Clean up session directory
-            session_dir = f"/home/jason_nguyen/visual-aoi-server/shared/sessions/{session_id}"
+            session_dir = os.path.join(SHARED_FOLDER_PATH, "sessions", session_id)
             if os.path.exists(session_dir):
                 try:
                     shutil.rmtree(session_dir)
