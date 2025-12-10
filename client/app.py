@@ -1811,8 +1811,11 @@ def save_golden_sample():
         if 'golden_image' not in files:
             return jsonify({"error": "golden_image file is required"}), 400
         
-        # Get server URL from config or environment
-        server_url = os.environ.get('AOI_SERVER_URL', 'http://10.100.27.156:5000')
+        # Get server URL from connected state
+        if not state.server_url:
+            return jsonify({"error": "Not connected to server. Please connect first."}), 503
+        
+        server_url = state.server_url
         
         # Forward the request to the actual server
         golden_image = files['golden_image']
