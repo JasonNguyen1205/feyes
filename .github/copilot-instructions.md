@@ -8,6 +8,8 @@
 
 **Critical separation**: Client handles ALL camera operations; server is 100% camera-agnostic and processes only.
 
+**Samba path management**: Server launchers automatically detect and fix path mismatches (see SAMBA_PATH_MANAGEMENT.md).
+
 ## Architecture Deep Dive
 
 ### Server Connection Strategy (Nov 2025)
