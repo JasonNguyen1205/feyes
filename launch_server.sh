@@ -149,6 +149,23 @@ else
     echo -e "${YELLOW}⚠ No supported firewall found (ufw/firewalld/iptables)${NC}"
 fi
 
+# Fix permissions for shared mount point  
+echo -e "${YELLOW}Setting up shared folder...${NC}"
+if [ -d "/mnt/visual-aoi-shared" ]; then
+    echo "1" | sudo -S chown -R pi:pi /mnt/visual-aoi-shared 2>/dev/null
+    echo "1" | sudo -S mkdir -p /mnt/visual-aoi-shared/sessions 2>/dev/null
+    echo "1" | sudo -S chown -R pi:pi /mnt/visual-aoi-shared/sessions 2>/dev/null
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}✓ Shared mount permissions fixed${NC}"
+    else
+        echo -e "${YELLOW}⚠ Could not fix shared mount permissions${NC}"
+    fi
+else
+    echo -e "${YELLOW}Creating /mnt/visual-aoi-shared...${NC}"
+    echo "1" | sudo -S mkdir -p /mnt/visual-aoi-shared/sessions 2>/dev/null
+    echo "1" | sudo -S chown -R pi:pi /mnt/visual-aoi-shared 2>/dev/null
+fi
+
 # Check for shared folder
 SHARED_FOLDER="$SERVER_DIR/shared"
 if [ ! -d "$SHARED_FOLDER" ]; then

@@ -193,18 +193,38 @@ SHARED_FOLDER="/mnt/visual-aoi-shared"
 SERVER_SHARED="/home/jason_nguyen/visual-aoi-server/shared"
 
 if [ -L "$SHARED_FOLDER" ] && [ -e "$SHARED_FOLDER" ]; then
-    # Symlink exists and is valid
+    # Symlink exists and is valid (localhost setup)
     echo -e "${GREEN}✓ Shared folder symlink at $SHARED_FOLDER${NC}"
 elif [ -d "$SHARED_FOLDER" ] && [ ! -L "$SHARED_FOLDER" ]; then
-    # Directory exists but is not a symlink - warn user
-    echo -e "${YELLOW}Warning: $SHARED_FOLDER is a directory (not symlink)${NC}"
-    if [ -d "$SERVER_SHARED" ]; then
+    # Directory exists - check if it's a network mount or local directory
+    MOUNT_INFO=$(mount | grep "$SHARED_FOLDER" || true)
+    if [ -n "$MOUNT_INFO" ]; then
+        # Network mount detected - verify server
+        MOUNTED_SERVER=$(echo "$MOUNT_INFO" | grep -oP '//\K[0-9.]+' || true)
+        TARGET_SERVER=$(echo "$SERVER_URL" | grep -oP '://\K[^:]+' || echo "")
+        
+        if [ -n "$MOUNTED_SERVER" ] && [ -n "$TARGET_SERVER" ] && [ "$MOUNTED_SERVER" != "$TARGET_SERVER" ]; then
+            echo -e "${RED}❌ Shared folder mounted to wrong server!${NC}"
+            echo -e "${YELLOW}   Currently mounted: $MOUNTED_SERVER${NC}"
+            echo -e "${YELLOW}   Should be mounted: $TARGET_SERVER${NC}"
+            echo -e "${YELLOW}   Run: cd client && ./mount_shared_folder_dynamic.sh $TARGET_SERVER${NC}"
+            echo -e "${YELLOW}   Or press Enter to continue without remounting${NC}"
+            read -t 10 -p "   " || true
+        else
+            echo -e "${GREEN}✓ Shared folder available at $SHARED_FOLDER (mounted to $MOUNTED_SERVER)${NC}"
+        fi
+    elif [ -d "$SERVER_SHARED" ]; then
+        # Local directory but server folder exists - offer to convert to symlink
+        echo -e "${YELLOW}Warning: $SHARED_FOLDER is a local directory${NC}"
         echo -e "${YELLOW}Converting to symlink for localhost setup...${NC}"
         sudo rmdir "$SHARED_FOLDER" 2>/dev/null || echo -e "${RED}Failed to remove directory (not empty?)${NC}"
         if [ ! -e "$SHARED_FOLDER" ]; then
             sudo ln -s "$SERVER_SHARED" "$SHARED_FOLDER"
             echo -e "${GREEN}✓ Created symlink: $SHARED_FOLDER → $SERVER_SHARED${NC}"
         fi
+    else
+        echo -e "${YELLOW}⚠ Shared folder exists but not mounted${NC}"
+        echo -e "${YELLOW}   Run: cd client && ./mount_shared_folder_dynamic.sh${NC}"
     fi
 elif [ ! -e "$SHARED_FOLDER" ]; then
     # Doesn't exist - create symlink if server folder exists (localhost setup)
@@ -214,7 +234,7 @@ elif [ ! -e "$SHARED_FOLDER" ]; then
         echo -e "${GREEN}✓ Created symlink: $SHARED_FOLDER → $SERVER_SHARED${NC}"
     else
         echo -e "${YELLOW}Warning: Shared folder not found at $SHARED_FOLDER${NC}"
-        echo -e "${YELLOW}For remote server: Run ./setup_shared_folder.sh to configure CIFS mount${NC}"
+        echo -e "${YELLOW}Run: cd client && ./mount_shared_folder_dynamic.sh${NC}"
     fi
 fi
 
@@ -238,6 +258,12 @@ echo ""
 # Set environment variables
 export SERVER_URL="$SERVER_URL"
 export FLASK_APP="app.py"
+
+# Bypass proxy for local network connections (avoids 403 Forbidden errors)
+export NO_PROXY="localhost,127.0.0.1,10.100.27.32,10.100.0.0/16"
+export no_proxy="localhost,127.0.0.1,10.100.27.32,10.100.0.0/16"
+echo -e "${CYAN}Proxy bypass configured for local network${NC}"
+
 if [ "$DEBUG" = true ]; then
     export FLASK_DEBUG=1
 fi
