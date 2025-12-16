@@ -188,14 +188,34 @@ except:
     fi
 fi
 
-# Check for shared folder mount
+# Check for shared folder mount/symlink
 SHARED_FOLDER="/mnt/visual-aoi-shared"
-if [ -d "$SHARED_FOLDER" ]; then
-    echo -e "${GREEN}✓ Shared folder available at $SHARED_FOLDER${NC}"
-else
-    echo -e "${YELLOW}Warning: Shared folder not found at $SHARED_FOLDER${NC}"
-    echo -e "${YELLOW}Image transfer may use Base64 encoding (slower)${NC}"
-    echo -e "${YELLOW}Run ./setup_shared_folder.sh to configure CIFS mount${NC}"
+SERVER_SHARED="/home/jason_nguyen/visual-aoi-server/shared"
+
+if [ -L "$SHARED_FOLDER" ] && [ -e "$SHARED_FOLDER" ]; then
+    # Symlink exists and is valid
+    echo -e "${GREEN}✓ Shared folder symlink at $SHARED_FOLDER${NC}"
+elif [ -d "$SHARED_FOLDER" ] && [ ! -L "$SHARED_FOLDER" ]; then
+    # Directory exists but is not a symlink - warn user
+    echo -e "${YELLOW}Warning: $SHARED_FOLDER is a directory (not symlink)${NC}"
+    if [ -d "$SERVER_SHARED" ]; then
+        echo -e "${YELLOW}Converting to symlink for localhost setup...${NC}"
+        sudo rmdir "$SHARED_FOLDER" 2>/dev/null || echo -e "${RED}Failed to remove directory (not empty?)${NC}"
+        if [ ! -e "$SHARED_FOLDER" ]; then
+            sudo ln -s "$SERVER_SHARED" "$SHARED_FOLDER"
+            echo -e "${GREEN}✓ Created symlink: $SHARED_FOLDER → $SERVER_SHARED${NC}"
+        fi
+    fi
+elif [ ! -e "$SHARED_FOLDER" ]; then
+    # Doesn't exist - create symlink if server folder exists (localhost setup)
+    if [ -d "$SERVER_SHARED" ]; then
+        echo -e "${YELLOW}Creating shared folder symlink for localhost setup...${NC}"
+        sudo ln -s "$SERVER_SHARED" "$SHARED_FOLDER"
+        echo -e "${GREEN}✓ Created symlink: $SHARED_FOLDER → $SERVER_SHARED${NC}"
+    else
+        echo -e "${YELLOW}Warning: Shared folder not found at $SHARED_FOLDER${NC}"
+        echo -e "${YELLOW}For remote server: Run ./setup_shared_folder.sh to configure CIFS mount${NC}"
+    fi
 fi
 
 # Check client script exists
