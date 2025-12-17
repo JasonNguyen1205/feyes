@@ -149,21 +149,20 @@ else
     echo -e "${YELLOW}⚠ No supported firewall found (ufw/firewalld/iptables)${NC}"
 fi
 
-# Fix permissions for shared mount point  
-echo -e "${YELLOW}Setting up shared folder...${NC}"
-if [ -d "/mnt/visual-aoi-shared" ]; then
-    echo "1" | sudo -S chown -R pi:pi /mnt/visual-aoi-shared 2>/dev/null
-    echo "1" | sudo -S mkdir -p /mnt/visual-aoi-shared/sessions 2>/dev/null
-    echo "1" | sudo -S chown -R pi:pi /mnt/visual-aoi-shared/sessions 2>/dev/null
-    if [ $? -eq 0 ]; then
-        echo -e "${GREEN}✓ Shared mount permissions fixed${NC}"
+# Setup shared mount point if needed (skip for localhost with symlink)
+if [ -d "/mnt/visual-aoi-shared" ] && [ ! -L "/mnt/visual-aoi-shared" ]; then
+    echo -e "${YELLOW}Setting up shared mount permissions...${NC}"
+    # Only try to fix permissions if not a symlink and mount point exists
+    if [ -w "/mnt/visual-aoi-shared" ]; then
+        mkdir -p /mnt/visual-aoi-shared/sessions 2>/dev/null
+        echo -e "${GREEN}✓ Shared mount accessible${NC}"
     else
-        echo -e "${YELLOW}⚠ Could not fix shared mount permissions${NC}"
+        echo -e "${YELLOW}⚠ Shared mount exists but not writable (may need sudo)${NC}"
     fi
+elif [ -L "/mnt/visual-aoi-shared" ]; then
+    echo -e "${GREEN}✓ Shared folder symlink detected (localhost setup)${NC}"
 else
-    echo -e "${YELLOW}Creating /mnt/visual-aoi-shared...${NC}"
-    echo "1" | sudo -S mkdir -p /mnt/visual-aoi-shared/sessions 2>/dev/null
-    echo "1" | sudo -S chown -R pi:pi /mnt/visual-aoi-shared 2>/dev/null
+    echo -e "${YELLOW}Note: /mnt/visual-aoi-shared not found (will be set up by client)${NC}"
 fi
 
 # Check for shared folder
