@@ -21,6 +21,10 @@ CAMERA_CONFIG_FILE = "config/system/camera.json"
 # Camera configuration - loaded from config file
 _camera_config = None
 
+# Camera type constants
+CAMERA_TYPE_TIS = "TIS"
+CAMERA_TYPE_RASPI = "RASPI"
+
 def load_camera_config():
     """Load camera configuration from JSON file."""
     global _camera_config
@@ -32,6 +36,7 @@ def load_camera_config():
             else:
                 # Fallback to default values if config file doesn't exist
                 _camera_config = {
+                    "camera_type": "TIS",
                     "camera_hardware": {
                         "serial": "30320436",
                         "width": 7716,
@@ -54,16 +59,27 @@ def load_camera_config():
                         "focus_settle_delay": 3.0,
                         "enable_fast_capture": True,
                         "max_threads": 16
+                    },
+                    "raspi_camera": {
+                        "enabled": False,
+                        "width": 1920,
+                        "height": 1080,
+                        "skip_focus_adjust": True,
+                        "skip_brightness_adjust": True,
+                        "auto_focus": False,
+                        "auto_exposure": True
                     }
                 }
         except Exception as e:
             print(f"Error loading camera config: {e}")
             # Use default fallback configuration
             _camera_config = {
+                "camera_type": "TIS",
                 "camera_hardware": {"serial": "30320436", "width": 7716, "height": 5360, "fps": "7/1", "format": "BGRA"},
                 "camera_defaults": {"focus": 305, "exposure": 3000},
                 "camera_validation": {"retry_attempts": 3, "retry_delay": 1.0, "image_min_brightness": 10, "image_max_brightness": 245, "image_min_contrast": 5},
-                "camera_performance": {"focus_settle_delay": 3.0, "enable_fast_capture": True, "max_threads": 16}
+                "camera_performance": {"focus_settle_delay": 3.0, "enable_fast_capture": True, "max_threads": 16},
+                "raspi_camera": {"enabled": False, "width": 1920, "height": 1080, "skip_focus_adjust": True, "skip_brightness_adjust": True, "auto_focus": False, "auto_exposure": True}
             }
     return _camera_config
 
@@ -126,6 +142,42 @@ def get_enable_fast_capture():
 
 def get_max_threads():
     return get_camera_config("camera_performance", "max_threads")
+
+# Camera type detection
+def get_camera_type():
+    """Get the configured camera type (TIS or RASPI)."""
+    camera_type = get_camera_config("camera_type")
+    return camera_type if camera_type else CAMERA_TYPE_TIS
+
+def is_raspi_camera():
+    """Check if Raspi Camera is configured."""
+    return get_camera_type().upper() == CAMERA_TYPE_RASPI
+
+def is_tis_camera():
+    """Check if TIS Camera is configured."""
+    return get_camera_type().upper() == CAMERA_TYPE_TIS
+
+# Raspi Camera settings
+def get_raspi_camera_config(key=None):
+    """Get Raspi Camera configuration."""
+    raspi_config = get_camera_config("raspi_camera")
+    if raspi_config is None:
+        return None
+    if key is None:
+        return raspi_config
+    return raspi_config.get(key)
+
+def should_skip_focus_adjust():
+    """Check if focus adjustment should be skipped (for Raspi Camera)."""
+    if is_raspi_camera():
+        return get_raspi_camera_config("skip_focus_adjust") or True
+    return False
+
+def should_skip_brightness_adjust():
+    """Check if brightness adjustment should be skipped (for Raspi Camera)."""
+    if is_raspi_camera():
+        return get_raspi_camera_config("skip_brightness_adjust") or True
+    return False
 
 def save_camera_config(config):
     """Save camera configuration to JSON file."""

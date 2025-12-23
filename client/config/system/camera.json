@@ -1,4 +1,5 @@
 {
+  "camera_type": "RASPI",
   "camera_hardware": {
     "serial": "30320436",
     "width": 7716,
@@ -9,6 +10,15 @@
   "camera_defaults": {
     "focus": 305,
     "exposure": 15000
+  },
+  "raspi_camera": {
+    "enabled": true,
+    "width": 1920,
+    "height": 1080,
+    "skip_focus_adjust": true,
+    "skip_brightness_adjust": true,
+    "auto_focus": false,
+    "auto_exposure": true
   },
   "camera_validation": {
     "retry_attempts": 3,

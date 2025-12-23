@@ -134,8 +134,8 @@ if [ "$NO_VENV" = false ]; then
     VENV_PATH="$CLIENT_DIR/.venv"
     
     if [ ! -d "$VENV_PATH" ]; then
-        echo -e "${YELLOW}Creating virtual environment...${NC}"
-        python3 -m venv .venv
+        echo -e "${YELLOW}Creating virtual environment with system site packages...${NC}"
+        python3 -m venv --system-site-packages .venv
         if [ $? -ne 0 ]; then
             echo -e "${RED}Error: Failed to create virtual environment${NC}"
             exit 1

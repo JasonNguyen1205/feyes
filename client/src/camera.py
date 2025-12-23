@@ -17,53 +17,189 @@ try:
     from gi.repository import Gst
     Gst.init(None)
     print("GStreamer initialized successfully")
-except ImportError:
-    print("Warning: GStreamer not available")
+except (ImportError, ValueError) as e:
+    print(f"Warning: GStreamer not available ({e})")
     Gst = None
+    gi = None
 
 # Import TIS module - robust import with fallback
 try:
     from . import TIS
     print("TIS module imported successfully")
-except ImportError:
+except (ImportError, ValueError) as e:
     try:
         import TIS
         print("TIS module imported as standalone")
-    except ImportError:
-        print("Warning: TIS module not available")
+    except (ImportError, ValueError) as e:
+        print(f"Warning: TIS module not available ({e})")
         TIS = None
+
+# Try to import Picamera2 for Raspberry Pi Camera support
+try:
+    from picamera2 import Picamera2
+    print("Picamera2 module imported successfully")
+    PICAMERA2_AVAILABLE = True
+except ImportError:
+    print("Warning: Picamera2 module not available")
+    Picamera2 = None
+    PICAMERA2_AVAILABLE = False
 
 # Import configuration values - use deprecated constants for compatibility
 try:
-    from config import (DEFAULT_FOCUS, DEFAULT_EXPOSURE, FOCUS_SETTLE_DELAY, ENABLE_FAST_CAPTURE,
+    from .config import (DEFAULT_FOCUS, DEFAULT_EXPOSURE, FOCUS_SETTLE_DELAY, ENABLE_FAST_CAPTURE,
                        CAMERA_SERIAL, CAMERA_WIDTH, CAMERA_HEIGHT, CAMERA_FPS, CAMERA_FORMAT,
                        CAMERA_RETRY_ATTEMPTS, CAMERA_RETRY_DELAY,
-                       IMAGE_MIN_BRIGHTNESS, IMAGE_MAX_BRIGHTNESS, IMAGE_MIN_CONTRAST)
+                       IMAGE_MIN_BRIGHTNESS, IMAGE_MAX_BRIGHTNESS, IMAGE_MIN_CONTRAST,
+                       get_camera_type, is_raspi_camera, is_tis_camera, 
+                       should_skip_focus_adjust, should_skip_brightness_adjust,
+                       get_raspi_camera_config)
 except ImportError:
-    # Fallback values if config import fails
-    DEFAULT_FOCUS = 305
-    DEFAULT_EXPOSURE = 3000
-    FOCUS_SETTLE_DELAY = 3.0
-    ENABLE_FAST_CAPTURE = True
-    CAMERA_SERIAL = "30320436"
-    CAMERA_WIDTH = 7716
-    CAMERA_HEIGHT = 5360
-    CAMERA_FPS = "7/1"
-    CAMERA_FORMAT = "BGRA"
-    CAMERA_RETRY_ATTEMPTS = 3
-    CAMERA_RETRY_DELAY = 1.0
-    IMAGE_MIN_BRIGHTNESS = 10
-    IMAGE_MAX_BRIGHTNESS = 245
-    IMAGE_MIN_CONTRAST = 5
+    try:
+        from src.config import (DEFAULT_FOCUS, DEFAULT_EXPOSURE, FOCUS_SETTLE_DELAY, ENABLE_FAST_CAPTURE,
+                           CAMERA_SERIAL, CAMERA_WIDTH, CAMERA_HEIGHT, CAMERA_FPS, CAMERA_FORMAT,
+                           CAMERA_RETRY_ATTEMPTS, CAMERA_RETRY_DELAY,
+                           IMAGE_MIN_BRIGHTNESS, IMAGE_MAX_BRIGHTNESS, IMAGE_MIN_CONTRAST,
+                           get_camera_type, is_raspi_camera, is_tis_camera, 
+                           should_skip_focus_adjust, should_skip_brightness_adjust,
+                           get_raspi_camera_config)
+    except ImportError:
+        # Fallback values if config import fails
+        DEFAULT_FOCUS = 305
+        DEFAULT_EXPOSURE = 3000
+        FOCUS_SETTLE_DELAY = 3.0
+        ENABLE_FAST_CAPTURE = True
+        CAMERA_SERIAL = "30320436"
+        CAMERA_WIDTH = 7716
+        CAMERA_HEIGHT = 5360
+        CAMERA_FPS = "7/1"
+        CAMERA_FORMAT = "BGRA"
+        CAMERA_RETRY_ATTEMPTS = 3
+        CAMERA_RETRY_DELAY = 1.0
+        IMAGE_MIN_BRIGHTNESS = 10
+        IMAGE_MAX_BRIGHTNESS = 245
+        IMAGE_MIN_CONTRAST = 5
+        
+        # Fallback camera type functions
+        def get_camera_type():
+            return "TIS"
+        def is_raspi_camera():
+            return False
+        def is_tis_camera():
+            return True
+        def should_skip_focus_adjust():
+            return False
+        def should_skip_brightness_adjust():
+            return False
+        def get_raspi_camera_config(key=None):
+            return None
 
-# Global camera instance
-Tis = None
+# Global camera instances
+Tis = None  # TIS camera instance
+PiCam = None  # Raspberry Pi camera instance
 
 # Cache for discovered exposure property name
 _exposure_property_name = None
 
+def list_available_raspi_cameras():
+    """List available Raspberry Pi cameras.
+    
+    Returns:
+        list: List of camera info dictionaries with keys:
+            - id: Camera ID (0, 1, 2, etc.)
+            - model: Camera model name
+            - type: Camera type (raspi)
+            - display_name: Human-readable name
+    """
+    if not PICAMERA2_AVAILABLE or Picamera2 is None:
+        print("Picamera2 module not available")
+        return []
+    
+    try:
+        cameras = []
+        
+        # Try to get camera list using Picamera2.global_camera_info()
+        try:
+            camera_list = Picamera2.global_camera_info()
+            
+            if camera_list:
+                for idx, cam_info in enumerate(camera_list):
+                    # Parse camera info
+                    model = cam_info.get('Model', 'Unknown')
+                    location = cam_info.get('Location', '')
+                    rotation = cam_info.get('Rotation', 0)
+                    
+                    camera_info = {
+                        'id': idx,
+                        'model': model,
+                        'type': 'raspi',
+                        'location': location,
+                        'rotation': rotation,
+                        'display_name': f"Raspberry Pi Camera {idx}: {model}"
+                    }
+                    cameras.append(camera_info)
+                    print(f"Found Raspberry Pi camera: {camera_info['display_name']}")
+            else:
+                print("No Raspberry Pi cameras found via global_camera_info()")
+                
+        except AttributeError:
+            # Fallback: Try to create a Picamera2 instance to test if camera exists
+            print("Using fallback method to detect Raspberry Pi camera...")
+            try:
+                test_cam = Picamera2()
+                camera_info = {
+                    'id': 0,
+                    'model': 'Raspberry Pi Camera',
+                    'type': 'raspi',
+                    'location': 'embedded',
+                    'rotation': 0,
+                    'display_name': 'Raspberry Pi Camera 0'
+                }
+                cameras.append(camera_info)
+                print(f"Found Raspberry Pi camera: {camera_info['display_name']}")
+                test_cam.close()
+            except Exception as e:
+                print(f"No Raspberry Pi camera detected: {e}")
+        
+        if not cameras:
+            print("No Raspberry Pi cameras found")
+            
+        return cameras
+        
+    except Exception as e:
+        print(f"Error listing Raspberry Pi cameras: {e}")
+        import traceback
+        traceback.print_exc()
+        return []
+
+
 def list_available_cameras():
-    """List available TIS cameras."""
+    """List available cameras (both TIS and Raspberry Pi).
+    
+    Returns cameras based on configured camera type, or all cameras if not specified.
+    """
+    all_cameras = []
+    
+    # Check configured camera type
+    try:
+        camera_type = get_camera_type()
+    except:
+        camera_type = None
+    
+    if camera_type == "RASPI" or camera_type is None:
+        # List Raspberry Pi cameras
+        raspi_cameras = list_available_raspi_cameras()
+        all_cameras.extend(raspi_cameras)
+    
+    if camera_type == "TIS" or camera_type is None:
+        # List TIS cameras
+        tis_cameras = list_available_tis_cameras()
+        all_cameras.extend(tis_cameras)
+    
+    return all_cameras
+
+
+def list_available_tis_cameras():
+    """List available TIS industrial cameras."""
     if TIS is None or Gst is None:
         print("TIS module or GStreamer not available")
         return []
@@ -136,6 +272,34 @@ def validate_image(img):
 
 def initialize_camera(serial="", width=CAMERA_WIDTH, height=CAMERA_HEIGHT, fps=CAMERA_FPS, format_type="BGRA", color=False, initial_focus=None, initial_exposure=None):
     """Initialize camera with optional initial settings for optimal fast capture.
+    
+    Automatically detects camera type from config and initializes the appropriate camera.
+    
+    Args:
+        serial: Camera serial number (TIS only)
+        width: Image width
+        height: Image height  
+        fps: Frames per second (TIS only)
+        format_type: Image format ("BGRA", "BGRX", "GRAY8", "GRAY16_LE") - TIS only
+        color: Color mode
+        initial_focus: Initial focus value (if provided, sets camera to this value during init) - TIS only
+        initial_exposure: Initial exposure value (if provided, sets camera to this value during init) - TIS only
+        
+    Returns:
+        True if successful, False otherwise
+    """
+    # Detect camera type from config
+    camera_type = get_camera_type()
+    print(f"Initializing camera type: {camera_type}")
+    
+    if is_raspi_camera():
+        return initialize_raspi_camera(width, height)
+    else:
+        return initialize_tis_camera(serial, width, height, fps, format_type, color, initial_focus, initial_exposure)
+
+
+def initialize_tis_camera(serial="", width=CAMERA_WIDTH, height=CAMERA_HEIGHT, fps=CAMERA_FPS, format_type="BGRA", color=False, initial_focus=None, initial_exposure=None):
+    """Initialize TIS industrial camera with optional initial settings for optimal fast capture.
     
     Args:
         serial: Camera serial number
@@ -249,6 +413,89 @@ def initialize_camera(serial="", width=CAMERA_WIDTH, height=CAMERA_HEIGHT, fps=C
         Tis = None
         raise RuntimeError(f"{error_msg}: {str(e)}")
 
+
+def initialize_raspi_camera(width=1920, height=1080):
+    """Initialize Raspberry Pi Camera.
+    
+    The Raspi Camera does NOT need focus and brightness adjustment steps,
+    so they are automatically skipped based on config.
+    
+    Args:
+        width: Image width (default: 1920)
+        height: Image height (default: 1080)
+        
+    Returns:
+        True if successful, False otherwise
+    """
+    global PiCam
+    
+    try:
+        if not PICAMERA2_AVAILABLE or Picamera2 is None:
+            error_msg = "❌ CAMERA ERROR: Picamera2 module not available. Please install: sudo apt install -y python3-picamera2"
+            print(error_msg)
+            raise RuntimeError(error_msg)
+        
+        print("Initializing Raspberry Pi Camera...")
+        
+        # Clean up existing camera instance if present
+        if PiCam is not None:
+            print("Cleaning up existing Raspberry Pi Camera instance...")
+            try:
+                PiCam.stop()
+            except Exception:
+                pass
+            try:
+                PiCam.close()
+            except Exception:
+                pass
+            PiCam = None
+            time.sleep(0.5)  # Brief wait for camera release
+        
+        # Get Raspi Camera configuration
+        raspi_config = get_raspi_camera_config()
+        if raspi_config:
+            width = raspi_config.get('width', width)
+            height = raspi_config.get('height', height)
+        
+        # Create Picamera2 instance
+        PiCam = Picamera2()
+        
+        # Configure camera
+        config = PiCam.create_still_configuration(
+            main={"size": (width, height), "format": "RGB888"}
+        )
+        PiCam.configure(config)
+        
+        # Start camera
+        PiCam.start()
+        
+        # Brief wait for camera to stabilize
+        time.sleep(1)
+        
+        print(f"✅ Raspberry Pi Camera initialized successfully ({width}x{height})")
+        print("   NOTE: Focus and brightness adjustments are SKIPPED for Raspi Camera (per config)")
+        
+        return True
+        
+    except Exception as e:
+        error_msg = f"❌ RASPI CAMERA INITIALIZATION ERROR: {str(e)}"
+        print(error_msg)
+        print("   Troubleshooting:")
+        print("   1. Check if camera is enabled: sudo raspi-config")
+        print("   2. Verify camera is connected properly")
+        print("   3. Ensure picamera2 is installed: sudo apt install -y python3-picamera2")
+        print("   4. Check camera permissions")
+        import traceback
+        traceback.print_exc()
+        PiCam = None
+        raise RuntimeError(f"{error_msg}: {str(e)}")
+        print("   2. Verify all camera SDK dependencies are installed")
+        print("   3. Try power-cycling the camera")
+        import traceback
+        traceback.print_exc()
+        Tis = None
+        raise RuntimeError(f"{error_msg}: {str(e)}")
+
 def capture_image_fast(camera=None):
     """Fast capture using current camera settings (no property changes or delays).
     
@@ -256,10 +503,14 @@ def capture_image_fast(camera=None):
     focus and exposure settings. It performs an immediate capture without
     applying any settings changes or settle delays.
     
+    For Raspi Camera: Always uses fast capture as no focus/brightness adjustments needed.
+    For TIS Camera: Uses fast capture only when camera already at desired settings.
+    
     Use this when:
     - Camera was just initialized with desired settings
     - Capturing first ROI group (camera already at those settings)
     - Need fastest possible capture time
+    - Using Raspi Camera (always fast)
     
     Args:
         camera: Camera instance (for compatibility, not used currently)
@@ -267,36 +518,52 @@ def capture_image_fast(camera=None):
     Returns:
         Captured image or None
     """
-    global Tis
-    
-    print("Fast capture: using current camera settings (no changes, no delay)")
-    
-    # Direct fast capture without any settings changes
-    return capture_tis_image_fast()
+    if is_raspi_camera():
+        print("Fast capture: Raspi Camera (no focus/brightness adjustments needed)")
+        return capture_raspi_image()
+    else:
+        print("Fast capture: using current TIS camera settings (no changes, no delay)")
+        return capture_tis_image_fast()
 
 def capture_image(camera=None, focus=None, exposure_time=None):
     """Standard capture wrapper that applies specified or config settings.
     
+    For Raspi Camera: Focus and exposure parameters are IGNORED (per config).
+    For TIS Camera: Applies focus and exposure settings before capture.
+    
     Args:
         camera: Camera instance (for compatibility)
-        focus: Focus value to use (defaults to config)
-        exposure_time: Exposure time to use (defaults to config)
+        focus: Focus value to use (TIS only, defaults to config)
+        exposure_time: Exposure time to use (TIS only, defaults to config)
         
     Returns:
         Captured image or None
     """
-    global Tis
-    
-    # Use config defaults if not specified
-    focus = focus or DEFAULT_FOCUS
-    exposure_time = exposure_time or DEFAULT_EXPOSURE
-    
-    print(f"Applying camera settings before capture:")
-    print(f"  Focus: {focus}")
-    print(f"  Exposure: {exposure_time}")
-    
-    # Set camera properties
-    success = set_camera_properties(focus=focus, exposure_time=exposure_time, skip_settle_delay=False)
+    if is_raspi_camera():
+        # Raspi Camera: Ignore focus/exposure parameters
+        if focus is not None or exposure_time is not None:
+            print("Note: Focus and exposure parameters ignored for Raspi Camera (per config)")
+        return capture_raspi_image()
+    else:
+        # TIS Camera: Apply settings
+        global Tis
+        
+        # Use config defaults if not specified
+        focus = focus or DEFAULT_FOCUS
+        exposure_time = exposure_time or DEFAULT_EXPOSURE
+        
+        print(f"Applying TIS camera settings before capture:")
+        print(f"  Focus: {focus}")
+        print(f"  Exposure: {exposure_time}")
+        
+        # Set camera properties (skip settle delay based on config)
+        skip_delay = should_skip_focus_adjust()
+        success = set_camera_properties(focus=focus, exposure_time=exposure_time, skip_settle_delay=skip_delay)
+        if not success:
+            print("Warning: Some camera properties failed to apply")
+        
+        # Capture image
+        return capture_tis_image()
     if not success:
         print("Warning: Failed to set some camera properties, continuing with capture...")
     
@@ -468,6 +735,64 @@ def capture_tis_image():
                 return None
     
     return None
+
+def capture_raspi_image():
+    """Capture an image from the Raspberry Pi Camera.
+    
+    NOTE: Raspi Camera does NOT require focus/brightness adjustments.
+    These steps are automatically skipped based on config settings.
+    
+    Returns:
+        Captured image in BGR format or None if capture fails
+    """
+    global PiCam
+    
+    if PiCam is None:
+        error_msg = "❌ CAPTURE ERROR: Raspberry Pi Camera not initialized. Please initialize the camera first."
+        print(error_msg)
+        raise RuntimeError(error_msg)
+    
+    try:
+        print("Capturing image from Raspberry Pi Camera...")
+        
+        # Capture image from Picamera2
+        # capture_array returns RGB format
+        img_rgb = PiCam.capture_array()
+        
+        if img_rgb is None:
+            error_msg = "❌ CAPTURE ERROR: Raspberry Pi Camera returned None"
+            print(error_msg)
+            raise RuntimeError(error_msg)
+        
+        # Convert RGB to BGR for OpenCV compatibility
+        img = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2BGR)
+        
+        # Validate image quality
+        is_valid, validation_msg = validate_image(img)
+        if not is_valid:
+            error_msg = f"❌ IMAGE VALIDATION ERROR: {validation_msg}"
+            print(error_msg)
+            print("   Possible causes:")
+            print("   1. Lighting conditions may be poor")
+            print("   2. Camera lens may be obstructed or dirty")
+            print("   3. Camera may need reconfiguration")
+            raise RuntimeError(error_msg)
+        
+        print(f"✓ Raspi Camera capture successful: {validation_msg}")
+        print("   NOTE: Focus and brightness adjustments were SKIPPED (per config)")
+        return img
+        
+    except RuntimeError as e:
+        # Re-raise RuntimeError with our informative messages
+        raise
+    except Exception as e:
+        error_msg = f"❌ RASPI CAPTURE ERROR: Unexpected error during image capture"
+        print(error_msg)
+        print(f"   Error details: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise RuntimeError(f"{error_msg}: {str(e)}")
+
 
 def discover_exposure_property_name():
     """Discover the correct exposure property name for this camera.
@@ -709,11 +1034,21 @@ def disable_exposure_auto():
 def set_camera_properties(focus=None, exposure_time=None, skip_settle_delay=False):
     """Set camera focus and exposure properties.
     
+    For Raspi Camera: This function is a no-op (properties are ignored).
+    For TIS Camera: Sets focus and exposure with optional settle delay.
+    
     Args:
-        focus: Focus value to set
-        exposure_time: Exposure time to set  
+        focus: Focus value to set (TIS only)
+        exposure_time: Exposure time to set (TIS only)
         skip_settle_delay: If True, skip the settle delay for faster operation
     """
+    # Skip for Raspi Camera
+    if is_raspi_camera():
+        if focus is not None or exposure_time is not None:
+            print("Note: Camera property setting skipped for Raspi Camera (per config)")
+        return True
+    
+    # TIS Camera property setting
     if Tis is None:
         return False
         
@@ -773,10 +1108,11 @@ def set_camera_properties(focus=None, exposure_time=None, skip_settle_delay=Fals
         
         # Add delay after camera settings change to ensure camera works properly
         # Skip delay if requested (e.g., when using default values on first capture)
-        if settings_changed and not skip_settle_delay:
+        # OR if config says to skip focus adjust (for Raspi Camera compatibility mode)
+        if settings_changed and not skip_settle_delay and not should_skip_focus_adjust():
             print(f"Waiting {FOCUS_SETTLE_DELAY}s for camera to settle after settings change...")
             time.sleep(FOCUS_SETTLE_DELAY)
-        elif settings_changed and skip_settle_delay:
+        elif settings_changed and (skip_settle_delay or should_skip_focus_adjust()):
             print("Skipping settle delay for faster operation...")
                 
         return success
@@ -785,22 +1121,32 @@ def set_camera_properties(focus=None, exposure_time=None, skip_settle_delay=Fals
         return False
 
 def get_camera_instance():
-    """Get the global camera instance."""
-    return Tis
+    """Get the global camera instance (TIS or Raspi based on config)."""
+    if is_raspi_camera():
+        return PiCam
+    else:
+        return Tis
 
 
 def start_live_view():
-    """Start live view mode for camera."""
-    global Tis
+    """Start live view mode for camera (TIS or Raspi)."""
     try:
-        if Tis is None:
-            print("Error: Camera not initialized")
-            return False
-            
-        # For TIS cameras, live view is typically managed by the streaming pipeline
-        # The camera is already in "live" mode when initialized with streaming
-        print("Live view mode activated")
-        return True
+        if is_raspi_camera():
+            global PiCam
+            if PiCam is None:
+                print("Error: Raspi Camera not initialized")
+                return False
+            print("Live view mode activated (Raspi Camera)")
+            return True
+        else:
+            global Tis
+            if Tis is None:
+                print("Error: TIS Camera not initialized")
+                return False
+            # For TIS cameras, live view is typically managed by the streaming pipeline
+            # The camera is already in "live" mode when initialized with streaming
+            print("Live view mode activated (TIS Camera)")
+            return True
         
     except Exception as e:
         print(f"Error starting live view: {e}")
@@ -808,17 +1154,24 @@ def start_live_view():
 
 
 def stop_live_view():
-    """Stop live view mode for camera."""
-    global Tis
+    """Stop live view mode for camera (TIS or Raspi)."""
     try:
-        if Tis is None:
-            print("Warning: Camera not initialized")
+        if is_raspi_camera():
+            global PiCam
+            if PiCam is None:
+                print("Warning: Raspi Camera not initialized")
+                return True
+            print("Live view mode deactivated (Raspi Camera)")
             return True
-            
-        # For TIS cameras, we don't typically stop the streaming pipeline
-        # unless we're shutting down the camera completely
-        print("Live view mode deactivated")
-        return True
+        else:
+            global Tis
+            if Tis is None:
+                print("Warning: TIS Camera not initialized")
+                return True
+            # For TIS cameras, we don't typically stop the streaming pipeline
+            # unless we're shutting down the camera completely
+            print("Live view mode deactivated (TIS Camera)")
+            return True
         
     except Exception as e:
         print(f"Error stopping live view: {e}")
@@ -828,69 +1181,92 @@ def stop_live_view():
 def get_camera_status():
     """Get current camera and pipeline status.
     
+    Works for both TIS and Raspi cameras.
+    
     Returns:
         dict: Status information including:
             - initialized: bool
-            - pipeline_active: bool
-            - pipeline_state: str
-            - serial: str or None
+            - camera_type: str (TIS or RASPI)
+            - pipeline_active: bool (TIS only)
+            - pipeline_state: str (TIS only)
+            - serial: str or None (TIS only)
     """
-    global Tis
-    
     status = {
         'initialized': False,
+        'camera_type': get_camera_type(),
         'pipeline_active': False,
         'pipeline_state': 'NONE',
         'serial': None
     }
     
-    if Tis is None:
-        print("📷 Camera status check: No camera initialized")
-        return status
+    if is_raspi_camera():
+        global PiCam
+        if PiCam is None:
+            print("📷 Camera status check: No Raspi Camera initialized")
+            return status
+        
+        try:
+            status['initialized'] = True
+            # Raspi Camera doesn't have pipeline concept
+            status['pipeline_active'] = True
+            status['pipeline_state'] = 'RUNNING'
+            print("📷 Raspi Camera status: Initialized and running")
+            return status
+        except Exception as e:
+            print(f"Error getting Raspi Camera status: {e}")
+            return status
     
-    try:
-        status['initialized'] = True
+    else:
+        # TIS Camera status check
+        global Tis
         
-        # Check if pipeline exists and get its state
-        if hasattr(Tis, 'pipeline') and Tis.pipeline is not None:
-            try:
-                ret, current_state, pending = Tis.pipeline.get_state(1000000000)  # 1 second timeout
-                status['pipeline_active'] = True
-                
-                # Convert GStreamer state to readable string
-                state_names = {
-                    1: 'NULL',
-                    2: 'READY',
-                    3: 'PAUSED',
-                    4: 'PLAYING'
-                }
-                status['pipeline_state'] = state_names.get(int(current_state), 'UNKNOWN')
-                
-                # Add warning if pipeline state is not optimal
-                if int(current_state) != 4:  # Not PLAYING
-                    print(f"⚠️  Warning: Pipeline state is {status['pipeline_state']}, expected PLAYING")
-                    print("   This may cause capture issues. Try re-initializing the camera.")
-                    
-            except Exception as e:
-                error_msg = f"❌ PIPELINE STATE ERROR: Failed to get pipeline state: {e}"
-                print(error_msg)
-                print("   Possible causes:")
-                print("   1. Pipeline may have crashed")
-                print("   2. GStreamer internal error")
-                print("   Suggestion: Re-initialize the camera")
-                status['pipeline_state'] = 'ERROR'
-        else:
-            print("⚠️  Warning: Camera initialized but no pipeline found")
+        if Tis is None:
+            print("📷 Camera status check: No TIS Camera initialized")
+            return status
         
-        # Try to get serial from device
-        if hasattr(Tis, 'serialnumber'):
-            status['serial'] = Tis.serialnumber
+        try:
+            status['initialized'] = True
             
-    except Exception as e:
-        error_msg = f"❌ STATUS CHECK ERROR: Error getting camera status"
-        print(error_msg)
-        print(f"   Error details: {str(e)}")
-        status['pipeline_state'] = 'ERROR'
+            # Check if pipeline exists and get its state
+            if hasattr(Tis, 'pipeline') and Tis.pipeline is not None:
+                try:
+                    ret, current_state, pending = Tis.pipeline.get_state(1000000000)  # 1 second timeout
+                    status['pipeline_active'] = True
+                    
+                    # Convert GStreamer state to readable string
+                    state_names = {
+                        1: 'NULL',
+                        2: 'READY',
+                        3: 'PAUSED',
+                        4: 'PLAYING'
+                    }
+                    status['pipeline_state'] = state_names.get(int(current_state), 'UNKNOWN')
+                    
+                    # Add warning if pipeline state is not optimal
+                    if int(current_state) != 4:  # Not PLAYING
+                        print(f"⚠️  Warning: Pipeline state is {status['pipeline_state']}, expected PLAYING")
+                        print("   This may cause capture issues. Try re-initializing the camera.")
+                        
+                except Exception as e:
+                    error_msg = f"❌ PIPELINE STATE ERROR: Failed to get pipeline state: {e}"
+                    print(error_msg)
+                    print("   Possible causes:")
+                    print("   1. Pipeline may have crashed")
+                    print("   2. GStreamer internal error")
+                    print("   Suggestion: Re-initialize the camera")
+                    status['pipeline_state'] = 'ERROR'
+            else:
+                print("⚠️  Warning: TIS Camera initialized but no pipeline found")
+            
+            # Try to get serial from device
+            if hasattr(Tis, 'serialnumber'):
+                status['serial'] = Tis.serialnumber
+                
+        except Exception as e:
+            error_msg = f"❌ STATUS CHECK ERROR: Error getting camera status"
+            print(error_msg)
+            print(f"   Error details: {str(e)}")
+            status['pipeline_state'] = 'ERROR'
     
     return status
 
@@ -899,15 +1275,20 @@ def stop_camera_pipeline():
     """Stop camera pipeline gracefully without clearing the camera instance.
     
     This is useful for temporarily stopping the pipeline before applying new settings.
+    For Raspi Camera: This is a no-op.
     
     Returns:
         bool: True if successful, False otherwise
     """
+    if is_raspi_camera():
+        print("📷 Stop pipeline: No-op for Raspi Camera")
+        return True
+    
     global Tis
     
     try:
         if Tis is None:
-            print("📷 No camera to stop (camera not initialized)")
+            print("📷 No TIS camera to stop (camera not initialized)")
             return True
         
         print("⏸️  Stopping camera pipeline...")
@@ -1069,14 +1450,31 @@ def reset_camera_pipeline():
 
 
 def cleanup():
-    """Clean up camera resources on shutdown."""
-    global Tis
+    """Clean up camera resources on shutdown (TIS or Raspi)."""
+    global Tis, PiCam
     try:
+        if is_raspi_camera():
+            if PiCam is None:
+                print("Camera cleanup: No Raspi camera to clean up")
+                return True
+            try:
+                PiCam.stop()
+            except Exception:
+                pass
+            try:
+                PiCam.close()
+            except Exception:
+                pass
+            PiCam = None
+            print("✓ Raspi camera cleanup completed successfully")
+            return True
+
+        # TIS camera cleanup
         if Tis is None:
-            print("Camera cleanup: No camera to clean up")
+            print("Camera cleanup: No TIS camera to clean up")
             return True
         
-        print("Camera cleanup: Stopping pipeline...")
+        print("Camera cleanup: Stopping TIS pipeline...")
         Tis.stop_pipeline()
         
         # Clear the global Tis reference

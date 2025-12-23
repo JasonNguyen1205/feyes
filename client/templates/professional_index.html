@@ -3501,10 +3501,14 @@
 
                 cameras.forEach(camera => {
                     const option = document.createElement('option');
-                    const cameraSerial = typeof camera === 'string' ? camera : (camera.serial || camera.serial_number || camera.id);
+
+                    // Support both TIS and Raspi camera payloads
+                    const cameraId = typeof camera === 'string' ? null : (camera.id ?? camera.serial ?? camera.serial_number);
+                    const cameraSerial = typeof camera === 'string' ? camera : (camera.serial ?? camera.serial_number ?? (cameraId !== null ? String(cameraId) : null));
                     const cameraName = typeof camera === 'string' ? camera : (camera.name || camera.display_name || cameraSerial || 'Unknown Camera');
 
-                    option.value = cameraSerial;
+                    option.value = cameraSerial || '';
+                    option.dataset.cameraType = typeof camera === 'string' ? 'tis' : (camera.type || 'tis');
                     option.textContent = cameraName;
                     select.appendChild(option);
                 });

@@ -867,16 +867,22 @@ def perform_grouped_capture(product_name: str, roi_groups: Dict[str, Any]) -> Di
         exposure = int(getattr(group_info, "exposure", None) or group_key.split(",")[1])
         rois = getattr(group_info, "rois", [])
 
-        app.logger.info("Capturing group %s/%s (focus=%s, exposure=%s)", index, len(roi_groups), focus, exposure)
-        
-        # For first group, use fast capture since camera is already initialized with these settings
-        if is_first_group:
-            app.logger.info("First group: using fast capture (camera already at these settings)")
+        # For Raspi Camera, skip focus/exposure logging and always use fast capture
+        if tis_camera.is_raspi_camera():
+            app.logger.info("Capturing group %s/%s (Raspi Camera - using same config for all groups)", index, len(roi_groups))
             image = tis_camera.capture_image_fast()
-            is_first_group = False
         else:
-            # For subsequent groups, apply new settings and capture
-            image = tis_camera.capture_image(focus=focus, exposure_time=exposure)
+            # TIS Camera: log focus/exposure and switch settings between groups
+            app.logger.info("Capturing group %s/%s (focus=%s, exposure=%s)", index, len(roi_groups), focus, exposure)
+            
+            # For first group, use fast capture since camera is already initialized with these settings
+            if is_first_group:
+                app.logger.info("First group: using fast capture (camera already at these settings)")
+                image = tis_camera.capture_image_fast()
+                is_first_group = False
+            else:
+                # For subsequent groups, apply new settings and capture
+                image = tis_camera.capture_image(focus=focus, exposure_time=exposure)
         
         if image is None:
             raise RuntimeError(f"Failed to capture image for group {group_key}")
@@ -1182,17 +1188,27 @@ def close_session():
 @app.route("/api/cameras", methods=["GET"])
 def get_cameras():
     cameras = tis_camera.list_available_cameras()
-    formatted = [
-        {
-            "name": camera_info.get("display_name") or camera_info.get("model") or "TIS Camera",
-            "serial": camera_info.get("serial"),
-            "type": camera_info.get("type", "tis"),
-        }
-        for camera_info in cameras
-    ]
+
+    formatted = []
+    for cam in cameras:
+        display_name = cam.get("display_name") or cam.get("model") or "Camera"
+        serial = cam.get("serial")
+        cam_id = cam.get("id")
+        cam_type = cam.get("type", "tis")
+
+        # For Raspberry Pi camera, serial may be missing; use id as fallback
+        serial_or_id = serial or (str(cam_id) if cam_id is not None else None)
+
+        formatted.append({
+            "name": display_name,
+            "display_name": display_name,
+            "serial": serial_or_id,
+            "id": cam_id,
+            "type": cam_type,
+        })
 
     if not formatted:
-        app.logger.warning("No TIS cameras detected")
+        app.logger.warning("No cameras detected")
 
     return jsonify(formatted), 200
 
@@ -1217,8 +1233,26 @@ def get_camera_status():
 def reset_camera():
     """Reset camera pipeline - stop existing pipeline and prepare for reinitialization."""
     try:
-        logger.info("Resetting camera pipeline...")
-        
+        logger.info("Resetting camera...")
+
+        # Raspi: cleanup without pipeline operations
+        is_raspi = False
+        try:
+            is_raspi = tis_camera.is_raspi_camera()
+        except Exception:
+            is_raspi = False
+
+        if is_raspi:
+            tis_camera.cleanup()
+            state.camera_initialized = False
+            state.camera_serial = None
+            state.live_view_active = False
+            logger.info("✓ Raspi camera reset successfully")
+            return jsonify({
+                "status": "reset",
+                "message": "Raspi camera reset successfully"
+            }), 200
+
         success = tis_camera.reset_camera_pipeline()
         
         if success:
@@ -1256,11 +1290,18 @@ def init_camera():
     """
     data = request.get_json(silent=True) or {}
     serial = data.get("serial")
+    is_raspi = False
+    try:
+        is_raspi = tis_camera.is_raspi_camera()
+    except Exception:
+        is_raspi = False
     product_name = data.get("product_name")  # Optional: for product-specific initialization
     force_reset = data.get("force_reset", True)  # Default to True for webpage refresh
     
-    if not serial:
+    if not serial and not is_raspi:
         return jsonify({"error": "serial is required"}), 400
+    if is_raspi and not serial:
+        serial = "raspi"
 
     try:
         # Step 1: Check existing camera status
@@ -1272,6 +1313,27 @@ def init_camera():
         
         current_status = tis_camera.get_camera_status()
         logger.info(f"  Current Status: {current_status}")
+
+        # Raspi camera: skip all TIS pipeline steps and just initialize
+        if is_raspi:
+            logger.info("Raspberry Pi camera mode detected - skipping TIS pipeline logic")
+
+            initialized = tis_camera.initialize_camera(serial=serial)
+            if not initialized:
+                state.camera_initialized = False
+                logger.error("❌ Camera initialization failed (Raspi)")
+                return jsonify({"error": "Failed to initialize camera"}), 500
+
+            state.camera_serial = serial
+            state.camera_initialized = True
+
+            return jsonify({
+                "status": "initialized",
+                "serial": serial,
+                "product": product_name,
+                "camera_type": "raspi",
+                "pipeline_state": "RUNNING"
+            }), 200
         
         # Step 2: Handle existing pipeline
         pipeline_state = current_status.get('pipeline_state', 'NONE')
@@ -1680,8 +1742,13 @@ def initialize_camera_for_product(product_name: str, roi_groups: Dict[str, Any])
         if not roi_groups:
             logger.warning("No ROI groups found, using default camera settings")
             return True
+        
+        # For Raspi Camera, skip focus/exposure initialization
+        if tis_camera.is_raspi_camera():
+            logger.info("Raspi Camera detected - skipping focus/exposure initialization (using same config for all groups)")
+            return True
             
-        # Get first ROI group settings for optimal initialization
+        # Get first ROI group settings for optimal initialization (TIS camera only)
         first_group_key = next(iter(roi_groups.keys()))
         first_group = roi_groups[first_group_key]
         focus, exposure = first_group_key.split(',')
@@ -1774,6 +1841,11 @@ def revert_camera_to_first_roi_group() -> None:
     This runs asynchronously in background to not block inspection results.
     """
     try:
+        # Skip for Raspi Camera (no need to revert - uses same config for all groups)
+        if tis_camera.is_raspi_camera():
+            logger.info("Raspi Camera detected - skipping camera revert (uses same config for all groups)")
+            return
+        
         if not state.first_roi_group_settings:
             logger.info("No first ROI group settings stored, skipping camera revert")
             return
