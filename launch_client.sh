@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 # Default values
 PORT=5100
 HOST="0.0.0.0"
-SERVER_URL="http://10.100.27.75:5000"
+SERVER_URL="http://10.100.27.156:5000"
 DEBUG=false
 NO_VENV=false
 CHECK_CAMERA=false
@@ -118,7 +118,7 @@ if lsof -Pi :$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
         kill -9 $PID 2>/dev/null || true
     done
     sleep 1
-    
+
     # Verify port is free
     if lsof -Pi :$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
         echo -e "${RED}Error: Could not free port $PORT${NC}"
@@ -132,7 +132,7 @@ fi
 # Virtual environment management
 if [ "$NO_VENV" = false ]; then
     VENV_PATH="$CLIENT_DIR/.venv"
-    
+
     if [ ! -d "$VENV_PATH" ]; then
         echo -e "${YELLOW}Creating virtual environment...${NC}"
         python3 -m venv .venv
@@ -142,7 +142,7 @@ if [ "$NO_VENV" = false ]; then
         fi
         echo -e "${GREEN}✓ Virtual environment created${NC}"
     fi
-    
+
     # Activate virtual environment
     echo -e "${YELLOW}Activating virtual environment...${NC}"
     source "$VENV_PATH/bin/activate"
@@ -151,7 +151,7 @@ if [ "$NO_VENV" = false ]; then
     else
         echo -e "${YELLOW}Warning: Could not activate virtual environment${NC}"
     fi
-    
+
     # Install/Update dependencies
     REQUIREMENTS_FILE="$CLIENT_DIR/requirements.txt"
     if [ -f "$REQUIREMENTS_FILE" ]; then
@@ -197,7 +197,7 @@ TARGET_SERVER=$(echo "$SERVER_URL" | grep -oP '://\K[^:]+' || echo "localhost")
 if [ "$TARGET_SERVER" = "localhost" ] || [ "$TARGET_SERVER" = "127.0.0.1" ]; then
     # Localhost setup - use symlink to server's shared folder
     SERVER_SHARED="$SCRIPT_DIR/server/shared"
-    
+
     if [ -L "$SHARED_FOLDER" ]; then
         CURRENT_TARGET=$(readlink "$SHARED_FOLDER")
         if [ "$CURRENT_TARGET" = "$SERVER_SHARED" ]; then
@@ -226,28 +226,28 @@ if [ "$TARGET_SERVER" = "localhost" ] || [ "$TARGET_SERVER" = "127.0.0.1" ]; the
 else
     # Remote server - setup network mount
     MOUNT_SCRIPT="$CLIENT_DIR/mount_shared_folder_dynamic.sh"
-    
+
     if [ -L "$SHARED_FOLDER" ]; then
         # Symlink exists but server is remote - need to switch to network mount
         echo -e "${YELLOW}Converting from symlink to network mount...${NC}"
         sudo rm "$SHARED_FOLDER"
         echo -e "${GREEN}✓ Removed symlink${NC}"
     fi
-    
+
     # Check if already mounted
     MOUNT_INFO=$(mount | grep "$SHARED_FOLDER" || true)
     if [ -n "$MOUNT_INFO" ]; then
         # Network mount detected - verify server
         MOUNTED_SERVER=$(echo "$MOUNT_INFO" | grep -oP '//\K[0-9.]+' || true)
-        
+
         if [ -n "$MOUNTED_SERVER" ] && [ "$MOUNTED_SERVER" != "$TARGET_SERVER" ]; then
             echo -e "${RED}❌ Shared folder mounted to wrong server!${NC}"
             echo -e "${YELLOW}   Currently: $MOUNTED_SERVER | Target: $TARGET_SERVER${NC}"
             echo -e "${YELLOW}   Remounting to correct server...${NC}"
-            
+
             # Unmount and remount to correct server
             sudo umount "$SHARED_FOLDER" 2>/dev/null || sudo umount -f "$SHARED_FOLDER" 2>/dev/null || true
-            
+
             if [ -f "$MOUNT_SCRIPT" ]; then
                 echo -e "${CYAN}Mounting shared folder from $TARGET_SERVER...${NC}"
                 bash "$MOUNT_SCRIPT" "$TARGET_SERVER" || echo -e "${YELLOW}⚠ Auto-mount failed, you may need to run manually${NC}"
@@ -261,10 +261,10 @@ else
             echo -e "${YELLOW}Network mount not found, setting up automatically...${NC}"
             echo -e "${CYAN}Mounting shared folder from $TARGET_SERVER...${NC}"
             echo -e "${CYAN}(using default credentials: jason_nguyen / 1)${NC}"
-            
+
             # Run mount script with server IP and default credentials (non-interactive)
             bash "$MOUNT_SCRIPT" "$TARGET_SERVER" "jason_nguyen" "1" 2>&1 | grep -E "(✓|✅|❌|⚠|Mounting|Successfully)" || true
-            
+
             # Check if mount succeeded
             if mountpoint -q "$SHARED_FOLDER" 2>/dev/null; then
                 echo -e "${GREEN}✓ Shared folder mounted successfully${NC}"
