@@ -8,7 +8,7 @@ CAUSE: /mnt/visual-aoi-shared is NOT shared over network
 
 ═══════════════════════════════════════════════════════════════════
 
-STEP 1: Configure Server (10.100.27.156)
+STEP 1: Configure Server (10.100.10.156)
 ─────────────────────────────────────────────────────────────────
 SSH to server with: jason_nguyen / jason_nguyen
 

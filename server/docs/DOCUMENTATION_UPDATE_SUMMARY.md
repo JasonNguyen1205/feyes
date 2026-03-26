@@ -24,7 +24,7 @@ Updated all related instruction and reference documents to include information a
 **Added Sections:**
 - **API Documentation** - Enhanced with network access URLs
   - Local access: `http://localhost:5000/apidocs/`
-  - Network access: `http://10.100.27.156:5000/apidocs/`
+  - Network access: `http://10.100.10.156:5000/apidocs/`
   - Dynamic hostname feature
   
 - **Shared Folder Configuration** - New section

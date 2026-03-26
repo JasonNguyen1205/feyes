@@ -578,9 +578,9 @@ if roi_image_path:
 
 - Client Application: `client/client_app_simple.py`
 - Shared Folder Manager: `client/shared_folder_manager.py`
-- Server API Documentation: http://10.100.27.156:5000/apidocs/
-- ROI Schema: http://10.100.27.156:5000/api/schema/roi
-- Result Schema: http://10.100.27.156:5000/api/schema/result
+- Server API Documentation: http://10.100.10.156:5000/apidocs/
+- ROI Schema: http://10.100.10.156:5000/api/schema/roi
+- Result Schema: http://10.100.10.156:5000/api/schema/result
 
 ## Change Log
 

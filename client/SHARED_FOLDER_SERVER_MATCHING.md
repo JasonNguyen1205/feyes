@@ -15,8 +15,8 @@ The Visual AOI system uses a CIFS/SMB shared folder for high-performance image e
 6. **Client reads results** from `/mnt/visual-aoi-shared/sessions/{uuid}/output/`
 
 ### The Problem
-If the client is connected to `10.100.27.32:5000` but the shared folder is mounted from `10.100.27.156`, then:
-- Client saves images to Server B (`10.100.27.156`)
+If the client is connected to `10.100.27.32:5000` but the shared folder is mounted from `10.100.10.156`, then:
+- Client saves images to Server B (`10.100.10.156`)
 - Server A (`10.100.27.32`) cannot find the images
 - Inspection fails with "file not found" errors
 
@@ -31,7 +31,7 @@ The `launch_client.sh` script now **automatically detects** mismatches:
 Output example:
 ```
 ❌ Shared folder mounted to wrong server!
-   Currently mounted: 10.100.27.156
+   Currently mounted: 10.100.10.156
    Should be mounted: 10.100.27.32
    Run: cd client && ./mount_shared_folder_dynamic.sh 10.100.27.32
 ```
@@ -42,10 +42,10 @@ Output example:
 mount | grep visual-aoi-shared
 
 # Example output:
-//10.100.27.156/visual-aoi-shared on /mnt/visual-aoi-shared type cifs (...)
+//10.100.10.156/visual-aoi-shared on /mnt/visual-aoi-shared type cifs (...)
 ```
 
-Extract the server IP (`10.100.27.156` in this case) and compare with your application's server URL.
+Extract the server IP (`10.100.10.156` in this case) and compare with your application's server URL.
 
 ## Solution
 
@@ -96,7 +96,7 @@ df -h /mnt/visual-aoi-shared/
 ## Best Practices
 
 ### 1. Always Use Dynamic Mount Script
-The old `mount_shared_folder.sh` has a **hardcoded IP** (`10.100.27.156`) and is now deprecated. Always use:
+The old `mount_shared_folder.sh` has a **hardcoded IP** (`10.100.10.156`) and is now deprecated. Always use:
 ```bash
 ./mount_shared_folder_dynamic.sh <server_ip>
 ```
@@ -121,7 +121,7 @@ The system can only work with **one server at a time**. If you need to switch se
 
 ### 4. Document Your Server IP
 Keep track of which server you're using:
-- Development server: `10.100.27.156`
+- Development server: `10.100.10.156`
 - Production server: `10.100.27.32`
 - Local testing: `localhost` (no shared folder needed)
 

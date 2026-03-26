@@ -142,4 +142,4 @@ for device_id_str, manual_barcode in normalized_barcodes.items():
 ---
 
 **Server restarted**: October 3, 2025, 22:21 UTC  
-**Status**: ✅ Running successfully at http://10.100.27.156:5000
+**Status**: ✅ Running successfully at http://10.100.10.156:5000

@@ -124,7 +124,7 @@ for device_id in device_summaries:
 **Request**:
 
 ```bash
-curl -X POST "http://10.100.27.156:5000/api/session/SESSION_ID/inspect" \
+curl -X POST "http://10.100.10.156:5000/api/session/SESSION_ID/inspect" \
   -H "Content-Type: application/json" \
   -d '{
     "image_filename": "test.jpg",
@@ -153,7 +153,7 @@ curl -X POST "http://10.100.27.156:5000/api/session/SESSION_ID/inspect" \
 **Request**:
 
 ```bash
-curl -X POST "http://10.100.27.156:5000/api/session/SESSION_ID/inspect" \
+curl -X POST "http://10.100.10.156:5000/api/session/SESSION_ID/inspect" \
   -H "Content-Type: application/json" \
   -d '{
     "image_filename": "test.jpg",
@@ -180,7 +180,7 @@ curl -X POST "http://10.100.27.156:5000/api/session/SESSION_ID/inspect" \
 **Request**:
 
 ```bash
-curl -X POST "http://10.100.27.156:5000/api/session/SESSION_ID/inspect" \
+curl -X POST "http://10.100.10.156:5000/api/session/SESSION_ID/inspect" \
   -H "Content-Type: application/json" \
   -d '{
     "image_filename": "test.jpg",

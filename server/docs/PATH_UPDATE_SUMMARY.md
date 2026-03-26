@@ -111,7 +111,7 @@ sudo systemctl restart smbd
 ### 4. Remount CIFS Share
 ```bash
 sudo umount /mnt/visual-aoi-shared
-sudo mount -t cifs //10.100.27.156/visual-aoi-shared /mnt/visual-aoi-shared \
+sudo mount -t cifs //10.100.10.156/visual-aoi-shared /mnt/visual-aoi-shared \
   -o credentials=/etc/samba/visual-aoi-credentials,uid=1000,gid=1000
 ```
 
@@ -180,7 +180,7 @@ All code, documentation, and infrastructure updates are complete and verified!
 
 ### Mount Status:
 ```
-//10.100.27.156/visual-aoi-shared on /mnt/visual-aoi-shared type cifs
+//10.100.10.156/visual-aoi-shared on /mnt/visual-aoi-shared type cifs
 - Protocol: SMB 3.1.1
 - Permissions: uid=1000, gid=1000, file_mode=0664, dir_mode=0775
 - Status: Active and verified

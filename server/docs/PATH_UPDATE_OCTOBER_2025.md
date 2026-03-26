@@ -96,7 +96,7 @@ Client Mount: /mnt/visual-aoi-shared/
 - [ ] **Remount the CIFS share** (if needed):
   ```bash
   sudo umount /mnt/visual-aoi-shared
-  sudo mount -t cifs //10.100.27.156/visual-aoi-shared /mnt/visual-aoi-shared \
+  sudo mount -t cifs //10.100.10.156/visual-aoi-shared /mnt/visual-aoi-shared \
     -o credentials=/etc/samba/visual-aoi-credentials,uid=1000,gid=1000
   ```
 

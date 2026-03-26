@@ -159,7 +159,7 @@ image = cv2.imread(image_path)
 from smb.SMBConnection import SMBConnection
 
 conn = SMBConnection('username', 'password', 'client', 'server')
-conn.connect('10.100.27.156', 445)
+conn.connect('10.100.10.156', 445)
 
 # Download file
 with open('local_roi_1.jpg', 'wb') as f:

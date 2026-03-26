@@ -439,10 +439,10 @@ if (performance.memory) {
 **HTML Implementation:**
 ```html
 <!-- DNS prefetch for external resources -->
-<link rel="dns-prefetch" href="//10.100.27.156">
+<link rel="dns-prefetch" href="//10.100.10.156">
 
 <!-- Preconnect to API server -->
-<link rel="preconnect" href="http://10.100.27.156:5000">
+<link rel="preconnect" href="http://10.100.10.156:5000">
 
 <!-- Preload critical assets -->
 <link rel="preload" href="/static/professional.css" as="style">

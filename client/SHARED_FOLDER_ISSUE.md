@@ -16,7 +16,7 @@ The `/mnt/visual-aoi-shared` folder is **NOT shared via network (NFS)**. Both ma
 Current (BROKEN):
 ┌─────────────────────┐     ┌─────────────────────┐
 │ Server              │     │ Client (Pi)         │
-│ 10.100.27.156       │     │ 10.100.27.XXX       │
+│ 10.100.10.156       │     │ 10.100.27.XXX       │
 │                     │     │                     │
 │ /mnt/visual-aoi-    │ ✗   │ /mnt/visual-aoi-    │
 │     shared/         │     │     shared/         │
@@ -32,7 +32,7 @@ Set up **NFS (Network File System)** so both machines access the same folder:
 Fixed (with NFS):
 ┌─────────────────────┐     ┌─────────────────────┐
 │ Server              │     │ Client (Pi)         │
-│ 10.100.27.156       │────▶│ 10.100.27.XXX       │
+│ 10.100.10.156       │────▶│ 10.100.27.XXX       │
 │                     │ NFS │                     │
 │ /mnt/visual-aoi-    │◀────│ /mnt/visual-aoi-    │
 │     shared/         │     │     shared/ (mount) │
@@ -43,7 +43,7 @@ Fixed (with NFS):
 
 ## Quick Start
 
-### On Server (10.100.27.156)
+### On Server (10.100.10.156)
 
 Login credentials: `jason_nguyen` / `jason_nguyen`
 
@@ -129,7 +129,7 @@ cat /mnt/visual-aoi-shared/test2.txt
 ```
 ✓ Folder is mounted via NFS
 ✓ Write access OK
-✓ Server 10.100.27.156 is reachable
+✓ Server 10.100.10.156 is reachable
 ✓ NFS port 2049 is open on server
 ✓ SHARED FOLDER IS PROPERLY MOUNTED
 ```

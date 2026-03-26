@@ -2,7 +2,7 @@
 
 **Date:** October 3, 2025  
 **Purpose:** Compare server API schema with client implementation and update accordingly  
-**Server API:** http://10.100.27.156:5000/apidocs/
+**Server API:** http://10.100.10.156:5000/apidocs/
 
 ## Current Schema Analysis
 
@@ -224,12 +224,12 @@ Based on typical inspection systems, check if server provides:
 To verify actual schema, check:
 
 ```bash
-curl -X GET http://10.100.27.156:5000/api/schema/result
+curl -X GET http://10.100.10.156:5000/api/schema/result
 ```
 
 Or visit:
 ```
-http://10.100.27.156:5000/apidocs/
+http://10.100.10.156:5000/apidocs/
 ```
 
 Look for `/api/schema/result` endpoint.
@@ -391,7 +391,7 @@ After updates, test with:
 **Current Status:** ✅ Client implementation matches documented server schema
 
 **Action Items:**
-1. Verify actual server API at http://10.100.27.156:5000/apidocs/
+1. Verify actual server API at http://10.100.10.156:5000/apidocs/
 2. Add validation function for robustness
 3. Enhance error handling
 4. Test with edge cases

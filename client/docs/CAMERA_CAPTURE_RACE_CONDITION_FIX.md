@@ -97,7 +97,7 @@ def capture_single_image():
 
 ```javascript
 const editorState = {
-    serverUrl: 'http://10.100.27.156:5000',
+    serverUrl: 'http://10.100.10.156:5000',
     connected: false,
     currentProduct: null,
     currentTool: 'select',

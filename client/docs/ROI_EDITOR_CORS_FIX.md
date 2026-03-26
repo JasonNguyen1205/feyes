@@ -23,7 +23,7 @@ fetch(`/api/products`)
 ```
 Browser (http://127.0.0.1:5100)
     ↓
-    Trying to call Server directly (http://10.100.27.156:5000)
+    Trying to call Server directly (http://10.100.10.156:5000)
     ↓
 ❌ BLOCKED by browser (different origin)
 ```
@@ -83,7 +83,7 @@ Client Flask App (http://127.0.0.1:5100)
     ↓ [Same origin - no CORS]
 Client Proxy Route (/api/products/*/config)
     ↓ [Server-to-server - no CORS]
-Server API (http://10.100.27.156:5000)
+Server API (http://10.100.10.156:5000)
     ↓
 Response flows back
 ```
@@ -148,7 +148,7 @@ def save_product_config(product_name: str):
 ### Before Fix
 ```javascript
 Console Errors:
-❌ Access to fetch at 'http://10.100.27.156:5000/api/products' 
+❌ Access to fetch at 'http://10.100.10.156:5000/api/products' 
    from origin 'http://127.0.0.1:5100' has been blocked by CORS policy
 ❌ Failed to connect: Connection failed
 ```
@@ -194,7 +194,7 @@ Console Output:
 ```
 GET /api/products
   ↓ (client proxy)
-GET http://10.100.27.156:5000/api/products
+GET http://10.100.10.156:5000/api/products
   ↓
 Response: { products: [...] }
 ```
@@ -203,7 +203,7 @@ Response: { products: [...] }
 ```
 GET /api/products/20003548/config
   ↓ (client proxy)
-GET http://10.100.27.156:5000/api/products/20003548/config
+GET http://10.100.10.156:5000/api/products/20003548/config
   ↓
 Response: { rois: [...] }
 ```
@@ -212,7 +212,7 @@ Response: { rois: [...] }
 ```
 POST /api/products/20003548/config
   ↓ (client proxy)
-POST http://10.100.27.156:5000/api/products/20003548/config
+POST http://10.100.10.156:5000/api/products/20003548/config
   ↓
 Response: { success: true, message: "..." }
 ```

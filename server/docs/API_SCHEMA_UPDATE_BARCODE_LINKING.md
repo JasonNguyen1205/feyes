@@ -295,7 +295,7 @@ print(f"Device Barcode: {original_barcode}")
 2. Open browser to:
 
    ```
-   http://10.100.27.156:5000/apidocs/
+   http://10.100.10.156:5000/apidocs/
    ```
 
 3. Find the endpoint:
@@ -315,7 +315,7 @@ print(f"Device Barcode: {original_barcode}")
 Download the complete API specification:
 
 ```bash
-curl http://10.100.27.156:5000/apispec_1.json > visual-aoi-api.json
+curl http://10.100.10.156:5000/apispec_1.json > visual-aoi-api.json
 ```
 
 Use with:
@@ -376,12 +376,12 @@ If the external linking API fails (timeout, connection error, returns "null"):
 
 ```bash
 # Create session
-SESSION_ID=$(curl -X POST "http://10.100.27.156:5000/api/session/create" \
+SESSION_ID=$(curl -X POST "http://10.100.10.156:5000/api/session/create" \
   -H "Content-Type: application/json" \
   -d '{"product_name": "20003548"}' | jq -r '.session_id')
 
 # Run inspection with barcode
-curl -X POST "http://10.100.27.156:5000/api/session/$SESSION_ID/inspect" \
+curl -X POST "http://10.100.10.156:5000/api/session/$SESSION_ID/inspect" \
   -H "Content-Type: application/json" \
   -d '{
     "image_filename": "test.jpg",
@@ -400,14 +400,14 @@ import requests
 
 # Create session
 response = requests.post(
-    'http://10.100.27.156:5000/api/session/create',
+    'http://10.100.10.156:5000/api/session/create',
     json={'product_name': '20003548'}
 )
 session_id = response.json()['session_id']
 
 # Run inspection
 response = requests.post(
-    f'http://10.100.27.156:5000/api/session/{session_id}/inspect',
+    f'http://10.100.10.156:5000/api/session/{session_id}/inspect',
     json={
         'image_filename': 'test.jpg',
         'device_barcodes': {
@@ -475,4 +475,4 @@ print(f"Linked Barcode: {linked_barcode}")
 ✅ **Added**: Clear guidance on which field to use  
 ✅ **Result**: Client developers now have complete documentation on barcode linking
 
-**Next Steps**: Review the updated API documentation at `http://10.100.27.156:5000/apidocs/` and update client code accordingly.
+**Next Steps**: Review the updated API documentation at `http://10.100.10.156:5000/apidocs/` and update client code accordingly.

@@ -3,7 +3,7 @@
 ## Pre-Testing Setup
 
 - [ ] Flask server running on port 5100
-- [ ] Server accessible at http://10.100.27.156:5000
+- [ ] Server accessible at http://10.100.10.156:5000
 - [ ] Chromium browser open
 - [ ] Developer console open (F12) for debugging
 
@@ -38,7 +38,7 @@
 - [ ] State persists after page reload
 
 ### Status Updates - Server Connection
-- [ ] Enter server URL: http://10.100.27.156:5000
+- [ ] Enter server URL: http://10.100.10.156:5000
 - [ ] Click "Connect" button
 - [ ] Wait for connection success
 - [ ] Status updates to "(Server ✓)" in amber

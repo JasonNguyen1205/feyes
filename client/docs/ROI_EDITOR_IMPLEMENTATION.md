@@ -192,7 +192,7 @@ Editor    (CORS-free)       Database
 ### State Management
 ```javascript
 const editorState = {
-    serverUrl: 'http://10.100.27.156:5000',
+    serverUrl: 'http://10.100.10.156:5000',
     connected: false,
     currentProduct: null,
     currentTool: 'select',
@@ -309,7 +309,7 @@ Flask debug mode enabled - changes auto-reload:
 ### Example Session
 ```javascript
 // 1. Connect
-serverUrl: "http://10.100.27.156:5000" → Connect
+serverUrl: "http://10.100.10.156:5000" → Connect
 Status: ✓ Connected
 
 // 2. Select Product

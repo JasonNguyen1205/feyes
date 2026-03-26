@@ -140,7 +140,7 @@ Connect → Select Product → Load Image → Draw ROIs → Set Properties → V
 ## Support
 
 📚 Full Documentation: `docs/ROI_EDITOR.md`  
-🔧 Server API: `http://10.100.27.156:5000/apidocs/`  
+🔧 Server API: `http://10.100.10.156:5000/apidocs/`  
 💬 Check console logs (F12) for errors
 
 ---

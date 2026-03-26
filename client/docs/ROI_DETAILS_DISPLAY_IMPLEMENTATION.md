@@ -208,7 +208,7 @@ Device 1: FAIL
 ## Related Documentation
 - `docs/CLIENT_SERVER_SCHEMA_FIX.md` - Device-level schema alignment
 - `.github/copilot-instructions.md` - Complete schema reference
-- Server API: `http://10.100.27.156:5000/apidocs/`
+- Server API: `http://10.100.10.156:5000/apidocs/`
 
 ## Notes
 - Implementation follows existing code style (ES5/ES6 compatible)

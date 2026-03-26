@@ -117,7 +117,7 @@ Programmatic access to structure specifications:
 Interactive API documentation is available via Swagger UI:
 
 - **Swagger UI (Local):** <http://localhost:5000/apidocs/>
-- **Swagger UI (Network):** <http://10.100.27.156:5000/apidocs/>
+- **Swagger UI (Network):** <http://10.100.10.156:5000/apidocs/>
 - **OpenAPI Spec (JSON):** <http://localhost:5000/apispec_1.json>
 
 **Features:**

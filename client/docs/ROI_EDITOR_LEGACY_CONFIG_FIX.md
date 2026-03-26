@@ -126,7 +126,7 @@ roi_type_map = {
 
 **Client and Server on Same Machine:**
 - Client: `http://localhost:5100` (Flask)
-- Server: `http://10.100.27.156:5000` (AOI Server)
+- Server: `http://10.100.10.156:5000` (AOI Server)
 - Both access: `/home/jason_nguyen/visual-aoi-server/config/products/`
 
 **Config File Pattern:**

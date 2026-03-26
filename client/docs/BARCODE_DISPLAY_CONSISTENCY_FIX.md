@@ -397,7 +397,7 @@ Device 2: FAIL
 
 - **Barcode System:** `docs/LINKED_BARCODE_SYSTEM.md`
 - **Dual Display:** `docs/DUAL_BARCODE_DISPLAY.md`
-- **API Schema:** http://10.100.27.156:5000/apispec_1.json
+- **API Schema:** http://10.100.10.156:5000/apispec_1.json
 - **Device Barcode Checkbox:** `docs/DEVICE_BARCODE_CHECKBOX.md`
 
 ## Future Enhancements

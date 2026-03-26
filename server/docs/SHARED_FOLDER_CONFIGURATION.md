@@ -2,7 +2,7 @@
 
 **Date:** October 3, 2025  
 **Status:** ✅ Active CIFS/SMB Mount  
-**Server IP:** 10.100.27.156  
+**Server IP:** 10.100.10.156  
 **Mount Point:** /mnt/visual-aoi-shared
 
 ---
@@ -18,7 +18,7 @@ The Visual AOI system uses a **shared folder** architecture for file exchange be
 ### Mount Configuration
 
 **Type:** CIFS/SMB Network Share  
-**Source:** `//10.100.27.156/visual-aoi-shared`  
+**Source:** `//10.100.10.156/visual-aoi-shared`  
 **Mount Point:** `/mnt/visual-aoi-shared`  
 **Protocol:** SMB 2.0  
 **User:** jason_nguyen  
@@ -49,7 +49,7 @@ The Visual AOI system uses a **shared folder** architecture for file exchange be
 ### Mount Details
 
 ```bash
-Source:         //10.100.27.156/visual-aoi-shared
+Source:         //10.100.10.156/visual-aoi-shared
 Mount Point:    /mnt/visual-aoi-shared
 Type:           cifs (Common Internet File System / SMB)
 Options:        rw,relatime,vers=2.0,cache=strict
@@ -150,7 +150,7 @@ Filesystem      Size  Used Avail Use% Mounted on
 /dev/nvme0n1p2  937G  129G  762G  15% /
 ```
 
-**Note:** The CIFS share is on the same filesystem, not a separate mount. The share appears to be hosted on the same machine (10.100.27.156 is the server's own IP).
+**Note:** The CIFS share is on the same filesystem, not a separate mount. The share appears to be hosted on the same machine (10.100.10.156 is the server's own IP).
 
 ### Session Folder Sizes
 
@@ -177,7 +177,7 @@ Both paths show the same content (63 identical session folders).
 The server is hosting a SMB/CIFS share of its own local directory:
 
 1. **Local Directory:** `/home/jason_nguyen/visual-aoi-server/shared/` (actual data location)
-2. **SMB Share:** The server shares this directory as `//10.100.27.156/visual-aoi-shared`
+2. **SMB Share:** The server shares this directory as `//10.100.10.156/visual-aoi-shared`
 3. **Mount Point:** The same server mounts it back at `/mnt/visual-aoi-shared/`
 4. **Inode Evidence:** Both paths show inode 58335949 - **same physical directory**
 
@@ -285,7 +285,7 @@ mount | grep visual-aoi-shared
 ```bash
 sudo mount -a
 # Or specific mount:
-sudo mount -t cifs //10.100.27.156/visual-aoi-shared /mnt/visual-aoi-shared \
+sudo mount -t cifs //10.100.10.156/visual-aoi-shared /mnt/visual-aoi-shared \
   -o credentials=/etc/samba/visual-aoi-credentials,uid=1000,gid=1000
 ```
 
@@ -325,7 +325,7 @@ mount | grep visual-aoi-shared | grep -o "vers=[0-9.]*"
 **Try different SMB version:**
 ```bash
 # Try SMB 3.0 for better performance
-sudo mount -t cifs //10.100.27.156/visual-aoi-shared /mnt/visual-aoi-shared \
+sudo mount -t cifs //10.100.10.156/visual-aoi-shared /mnt/visual-aoi-shared \
   -o credentials=/etc/samba/visual-aoi-credentials,uid=1000,gid=1000,vers=3.0
 ```
 
@@ -349,7 +349,7 @@ session_dir = f"/home/jason_nguyen/visual-aoi-server/shared/sessions/{session_id
 - ✅ **Clarity:** Absolute path (not relative like `./shared`)
 
 **Client Access (Also Correct):**
-- Clients mount: `//10.100.27.156/visual-aoi-shared` → `/mnt/visual-aoi-shared/`
+- Clients mount: `//10.100.10.156/visual-aoi-shared` → `/mnt/visual-aoi-shared/`
 - Network protocol provides cross-machine compatibility
 - No code changes needed for client integration
 
@@ -362,7 +362,7 @@ session_dir = f"/home/jason_nguyen/visual-aoi-server/shared/sessions/{session_id
 **Recommendation:** Add to `/etc/fstab` for explicit boot-time mounting:
 ```bash
 # Add to /etc/fstab
-//10.100.27.156/visual-aoi-shared  /mnt/visual-aoi-shared  cifs  \
+//10.100.10.156/visual-aoi-shared  /mnt/visual-aoi-shared  cifs  \
 credentials=/etc/samba/visual-aoi-credentials,uid=1000,gid=1000,\
 file_mode=0664,dir_mode=0775,vers=3.0  0  0
 ```

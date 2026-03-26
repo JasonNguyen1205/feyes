@@ -70,7 +70,7 @@ import json
 
 # Send inspection request
 response = requests.post(
-    'http://10.100.27.156:5000/api/session/SESSION_ID/inspect',
+    'http://10.100.10.156:5000/api/session/SESSION_ID/inspect',
     json={
         'image': 'base64_image_data',
         'product_name': '20003548'
@@ -111,7 +111,7 @@ public class InspectionClient
         };
         
         var response = await _httpClient.PostAsJsonAsync(
-            $"http://10.100.27.156:5000/api/session/{sessionId}/inspect",
+            $"http://10.100.10.156:5000/api/session/{sessionId}/inspect",
             request
         );
         
@@ -158,7 +158,7 @@ interface InspectionResult {
 
 async function inspectDevice(sessionId: string, imageData: string): Promise<string> {
   const response = await fetch(
-    `http://10.100.27.156:5000/api/session/${sessionId}/inspect`,
+    `http://10.100.10.156:5000/api/session/${sessionId}/inspect`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -245,12 +245,12 @@ for device_id in result['device_summaries']:
 
 ```bash
 # Create session
-SESSION_ID=$(curl -X POST "http://10.100.27.156:5000/api/session/create" \
+SESSION_ID=$(curl -X POST "http://10.100.10.156:5000/api/session/create" \
   -H "Content-Type: application/json" \
   -d '{"product_name":"20003548"}' | jq -r '.session_id')
 
 # Run inspection (use actual image or test image)
-curl -X POST "http://10.100.27.156:5000/api/session/$SESSION_ID/inspect" \
+curl -X POST "http://10.100.10.156:5000/api/session/$SESSION_ID/inspect" \
   -H "Content-Type: application/json" \
   -d '{
     "image": "BASE64_IMAGE_DATA",
@@ -264,7 +264,7 @@ curl -X POST "http://10.100.27.156:5000/api/session/$SESSION_ID/inspect" \
 
 ```bash
 # Check server logs for linking activity
-ssh user@10.100.27.156
+ssh user@10.100.10.156
 tail -f /home/jason_nguyen/visual-aoi-server/logs/api_server.log | grep "barcode"
 
 # Expected log entries:
@@ -358,5 +358,5 @@ set_barcode_link_timeout(1)  # 1 second
 
 **Last Updated**: October 20, 2025  
 **Server Version**: 1.1 (with barcode linking)  
-**API Endpoint**: `http://10.100.27.156:5000`  
+**API Endpoint**: `http://10.100.10.156:5000`  
 **Status**: ✅ Production Ready

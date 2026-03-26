@@ -2,7 +2,7 @@
 
 **Date:** October 3, 2025  
 **Status:** ✅ Configured for External Access  
-**Server IP:** 10.100.27.156  
+**Server IP:** 10.100.10.156  
 **Port:** 5000
 
 ---
@@ -21,7 +21,7 @@
 - ✅ **Binding:** `0.0.0.0:5000` (all network interfaces)
 - ✅ **Accessible on:**
   - `http://127.0.0.1:5000` (localhost)
-  - `http://10.100.27.156:5000` (network IP)
+  - `http://10.100.10.156:5000` (network IP)
   - `http://<hostname>:5000` (hostname)
 
 ### Firewall Configuration
@@ -48,9 +48,9 @@ API Endpoints:  http://localhost:5000/api/*
 
 ### For External Access (LAN)
 ```
-Swagger UI:     http://10.100.27.156:5000/apidocs/
-OpenAPI Spec:   http://10.100.27.156:5000/apispec_1.json
-API Endpoints:  http://10.100.27.156:5000/api/*
+Swagger UI:     http://10.100.10.156:5000/apidocs/
+OpenAPI Spec:   http://10.100.10.156:5000/apispec_1.json
+API Endpoints:  http://10.100.10.156:5000/api/*
 ```
 
 ### For External Access (Hostname)
@@ -92,14 +92,14 @@ swagger_template = {
 
 When the `host` field is not set (or set to `null`), Swagger UI automatically:
 
-1. **Detects the current browser URL** (e.g., `http://10.100.27.156:5000/apidocs/`)
-2. **Extracts the hostname and port** (`10.100.27.156:5000`)
+1. **Detects the current browser URL** (e.g., `http://10.100.10.156:5000/apidocs/`)
+2. **Extracts the hostname and port** (`10.100.10.156:5000`)
 3. **Uses that for all API calls** in the "Try it out" feature
 4. **Shows correct URLs** in curl examples
 
 This means:
 - ✅ If accessed via `localhost` → curl shows `localhost`
-- ✅ If accessed via `10.100.27.156` → curl shows `10.100.27.156`
+- ✅ If accessed via `10.100.10.156` → curl shows `10.100.10.156`
 - ✅ If accessed via hostname → curl shows hostname
 - ✅ Works automatically for any access method
 
@@ -128,7 +128,7 @@ curl -s http://localhost:5000/apispec_1.json | jq '.host'
 ### 3. Verify External Access
 ```bash
 # From another machine on the same network
-curl http://10.100.27.156:5000/api/status
+curl http://10.100.10.156:5000/api/status
 
 # Expected: JSON response with server status
 ```
@@ -149,9 +149,9 @@ sudo iptables -L -n | grep 5000
 ### 5. Test Swagger UI from External Machine
 ```
 1. Open browser on another machine
-2. Navigate to: http://10.100.27.156:5000/apidocs/
+2. Navigate to: http://10.100.10.156:5000/apidocs/
 3. Check curl examples in any endpoint
-4. Should show: http://10.100.27.156:5000/api/...
+4. Should show: http://10.100.10.156:5000/api/...
 5. Click "Try it out" and "Execute"
 6. Should work correctly
 ```
@@ -163,7 +163,7 @@ sudo iptables -L -n | grep 5000
 ### Server Network Information
 ```
 Hostname:        FVN-ML-001
-Primary IP:      10.100.27.156
+Primary IP:      10.100.10.156
 Server Port:     5000
 Binding:         0.0.0.0 (all interfaces)
 Firewall:        Inactive (no restrictions)
@@ -176,7 +176,7 @@ ip addr show | grep "inet "
 
 # Output includes:
 # inet 127.0.0.1/8 scope host lo (localhost)
-# inet 10.100.27.156/24 brd 10.100.27.255 scope global (network)
+# inet 10.100.10.156/24 brd 10.100.27.255 scope global (network)
 ```
 
 ---
@@ -256,14 +256,14 @@ sudo iptables -L -n
 **Check 4: Network connectivity**
 ```bash
 # From external machine
-ping 10.100.27.156
+ping 10.100.10.156
 # Should respond
 ```
 
 **Check 5: Test API endpoint**
 ```bash
 # From external machine
-curl http://10.100.27.156:5000/api/status
+curl http://10.100.10.156:5000/api/status
 # Should return JSON
 ```
 
@@ -283,7 +283,7 @@ curl http://10.100.27.156:5000/api/status
 ```
 If Swagger UI is accessed via IP but tries to call localhost:
 1. Ensure you're accessing Swagger UI via the same address
-2. Use http://10.100.27.156:5000/apidocs/ not localhost
+2. Use http://10.100.10.156:5000/apidocs/ not localhost
 3. Check browser console for CORS errors
 ```
 
@@ -304,7 +304,7 @@ If Swagger UI is accessed via IP but tries to call localhost:
 ✅ Removed hardcoded `localhost:5000` from Swagger configuration  
 ✅ Swagger UI now dynamically uses browser's hostname  
 ✅ Works correctly for local access (`localhost`)  
-✅ Works correctly for LAN access (`10.100.27.156`)  
+✅ Works correctly for LAN access (`10.100.10.156`)  
 ✅ Works correctly for hostname access  
 ✅ Curl examples show the correct URL automatically  
 ✅ "Try it out" feature works for external users  
@@ -313,12 +313,12 @@ If Swagger UI is accessed via IP but tries to call localhost:
 ✅ **Server Binding:** 0.0.0.0:5000 (all interfaces)  
 ✅ **Firewall:** No blocking (port 5000 open)  
 ✅ **Swagger Config:** Dynamic host resolution  
-✅ **Network IP:** 10.100.27.156  
+✅ **Network IP:** 10.100.10.156  
 ✅ **External Access:** Fully functional  
 
 ### Access URLs
 - **Local:** http://localhost:5000/apidocs/
-- **LAN:** http://10.100.27.156:5000/apidocs/
+- **LAN:** http://10.100.10.156:5000/apidocs/
 - **Hostname:** http://FVN-ML-001:5000/apidocs/
 
 All URLs will show correct curl examples matching the access method used!

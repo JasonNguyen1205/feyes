@@ -8,7 +8,7 @@
 
 ```
 ┌─────────────────────────────────┐
-│  Server (10.100.27.156)         │
+│  Server (10.100.10.156)         │
 │  - Hosts /mnt/visual-aoi-shared │
 │  - NFS Server (exports folder)  │
 │  - Processes inspection requests│
@@ -25,13 +25,13 @@
 └─────────────────────────────────┘
 ```
 
-## Step 1: Configure Server (10.100.27.156)
+## Step 1: Configure Server (10.100.10.156)
 
 SSH to the server and run:
 
 ```bash
 # SSH to server
-ssh jason_nguyen@10.100.27.156
+ssh jason_nguyen@10.100.10.156
 
 # Install NFS server
 sudo apt-get update
@@ -109,14 +109,14 @@ sudo apt-get install -y nfs-common
 sudo mkdir -p /mnt/visual-aoi-shared
 
 # Test mount
-sudo mount -t nfs -o vers=4,rw,sync 10.100.27.156:/mnt/visual-aoi-shared /mnt/visual-aoi-shared
+sudo mount -t nfs -o vers=4,rw,sync 10.100.10.156:/mnt/visual-aoi-shared /mnt/visual-aoi-shared
 
 # Verify mount
 df -h /mnt/visual-aoi-shared
 ls -la /mnt/visual-aoi-shared
 
 # If successful, add to /etc/fstab for automatic mounting on boot
-echo "10.100.27.156:/mnt/visual-aoi-shared /mnt/visual-aoi-shared nfs vers=4,rw,sync,_netdev 0 0" | sudo tee -a /etc/fstab
+echo "10.100.10.156:/mnt/visual-aoi-shared /mnt/visual-aoi-shared nfs vers=4,rw,sync,_netdev 0 0" | sudo tee -a /etc/fstab
 ```
 
 ## Step 3: Test the Setup
@@ -131,11 +131,11 @@ echo "Test from client" | sudo tee /mnt/visual-aoi-shared/test_client.txt
 ls -la /mnt/visual-aoi-shared/test_client.txt
 ```
 
-### On Server (10.100.27.156):
+### On Server (10.100.10.156):
 
 ```bash
 # SSH to server
-ssh jason_nguyen@10.100.27.156
+ssh jason_nguyen@10.100.10.156
 
 # Check if file is visible
 cat /mnt/visual-aoi-shared/test_client.txt
@@ -169,8 +169,8 @@ sudo rm /mnt/visual-aoi-shared/test_*.txt
 cd /home/pi/visual-aoi-client
 
 # Make sure no_proxy is set
-export no_proxy="localhost,127.0.0.1,10.100.27.156"
-export NO_PROXY="localhost,127.0.0.1,10.100.27.156"
+export no_proxy="localhost,127.0.0.1,10.100.10.156"
+export NO_PROXY="localhost,127.0.0.1,10.100.10.156"
 
 # Start the client
 python3 ./app.py
@@ -189,7 +189,7 @@ python3 ./app.py
 
 ```bash
 # SSH to server
-ssh jason_nguyen@10.100.27.156
+ssh jason_nguyen@10.100.10.156
 
 # Check session folders
 ls -lR /mnt/visual-aoi-shared/sessions/
@@ -258,7 +258,7 @@ sudo systemctl restart nfs-kernel-server
 ```bash
 # On client, remount with sync option
 sudo umount /mnt/visual-aoi-shared
-sudo mount -t nfs -o vers=4,rw,sync 10.100.27.156:/mnt/visual-aoi-shared /mnt/visual-aoi-shared
+sudo mount -t nfs -o vers=4,rw,sync 10.100.10.156:/mnt/visual-aoi-shared /mnt/visual-aoi-shared
 
 # Force sync after writing
 sync
@@ -274,7 +274,7 @@ sync
 cat /etc/fstab | grep visual-aoi-shared
 
 # Should show:
-# 10.100.27.156:/mnt/visual-aoi-shared /mnt/visual-aoi-shared nfs vers=4,rw,sync,_netdev 0 0
+# 10.100.10.156:/mnt/visual-aoi-shared /mnt/visual-aoi-shared nfs vers=4,rw,sync,_netdev 0 0
 
 # The _netdev option ensures mount waits for network
 ```

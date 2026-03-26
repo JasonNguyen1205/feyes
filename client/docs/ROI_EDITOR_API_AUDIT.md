@@ -29,7 +29,7 @@ All endpoints now tested and functional.
 fetch('/api/server/connect', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ server_url: 'http://10.100.27.156:5000' })
+    body: JSON.stringify({ server_url: 'http://10.100.10.156:5000' })
 })
 ```
 
@@ -415,7 +415,7 @@ try {
   ```bash
   curl -X POST http://localhost:5100/api/server/connect \
     -H "Content-Type: application/json" \
-    -d '{"server_url": "http://10.100.27.156:5000"}'
+    -d '{"server_url": "http://10.100.10.156:5000"}'
   # Response: 200 OK with products
   ```
 
@@ -539,7 +539,7 @@ if not full_path.startswith(shared_base):
 
 **Successful Connection:**
 ```
-roi_editor.js:71 Connecting to server: http://10.100.27.156:5000
+roi_editor.js:71 Connecting to server: http://10.100.10.156:5000
 roi_editor.js:84 Server connected: {health: {…}, init: {…}, products: Array(12), status: 'connected'}
 roi_editor.js:91 Products data: {products: Array(12), source: 'server'}
 roi_editor.js:136 ✅ Populated 12 products in dropdown

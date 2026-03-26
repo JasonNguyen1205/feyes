@@ -269,7 +269,7 @@ System Signal (SIGINT/SIGTERM) OR Normal Exit
 ### 1. Check Active Sessions on Server
 
 ```bash
-curl http://10.100.27.156:5000/api/sessions
+curl http://10.100.10.156:5000/api/sessions
 ```
 
 ### 2. Test Normal Shutdown
@@ -281,7 +281,7 @@ python3 app.py
 # In another terminal
 curl -X POST http://127.0.0.1:5100/api/server/connect \
   -H "Content-Type: application/json" \
-  -d '{"server_url": "http://10.100.27.156:5000"}'
+  -d '{"server_url": "http://10.100.10.156:5000"}'
 
 curl -X POST http://127.0.0.1:5100/api/session \
   -H "Content-Type: application/json" \

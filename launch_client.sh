@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 # Default values
 PORT=5100
 HOST="0.0.0.0"
-SERVER_URL="http://10.100.27.156:5000"
+SERVER_URL="http://10.100.10.156:5000"
 DEBUG=false
 NO_VENV=false
 CHECK_CAMERA=false

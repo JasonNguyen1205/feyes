@@ -37,7 +37,7 @@ response = requests.post(f"{server_url}/api/products/create", ...)
 
 ## Server API Documentation Reference
 
-**Source:** <http://10.100.27.156:5000/apidocs/> (Swagger/Flasgger)
+**Source:** <http://10.100.10.156:5000/apidocs/> (Swagger/Flasgger)
 
 ### Correct Endpoint: `/api/products/create`
 
@@ -243,9 +243,9 @@ ERROR: ❌ Failed to create product: Invalid product name
 
 ## API Endpoint Reference (Visual AOI Server)
 
-**Base URL:** <http://10.100.27.156:5000>
+**Base URL:** <http://10.100.10.156:5000>
 
-**API Docs:** <http://10.100.27.156:5000/apidocs/>
+**API Docs:** <http://10.100.10.156:5000/apidocs/>
 
 ### Product Management Endpoints
 
@@ -288,7 +288,7 @@ ERROR: ❌ Failed to create product: Invalid product name
 
 When implementing API calls:
 
-1. ✅ Check server Swagger docs: <http://10.100.27.156:5000/apidocs/>
+1. ✅ Check server Swagger docs: <http://10.100.10.156:5000/apidocs/>
 2. ✅ Verify endpoint path exactly
 3. ✅ Verify HTTP method (GET/POST/PUT/DELETE)
 4. ✅ Check request body schema
@@ -331,8 +331,8 @@ elif response.status_code == 500:
 
 ## Related Documentation
 
-- **Server API Docs:** <http://10.100.27.156:5000/apidocs/>
-- **Swagger Spec:** <http://10.100.27.156:5000/apispec_1.json>
+- **Server API Docs:** <http://10.100.10.156:5000/apidocs/>
+- **Swagger Spec:** <http://10.100.10.156:5000/apispec_1.json>
 - **Client Architecture:** `docs/CLIENT_SERVER_ARCHITECTURE.md`
 - **Error Handling:** `docs/TIMEOUT_AND_ERROR_HANDLING_FIX.md`
 

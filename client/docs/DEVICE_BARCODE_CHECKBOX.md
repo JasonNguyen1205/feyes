@@ -37,7 +37,7 @@ The ROI Editor now includes a **"Device Barcode" checkbox** for barcode-type ROI
 
 ### API Schema Integration
 
-According to the API schema (http://10.100.27.156:5000/apispec_1.json):
+According to the API schema (http://10.100.10.156:5000/apispec_1.json):
 
 **Barcode Processing Priority:**
 | Priority | Source | Description |
@@ -403,7 +403,7 @@ if roi.is_device_barcode:
 
 - **Linked Barcode System:** `docs/LINKED_BARCODE_SYSTEM.md`
 - **Dual Barcode Display:** `docs/DUAL_BARCODE_DISPLAY.md`
-- **API Schema:** http://10.100.27.156:5000/apispec_1.json
+- **API Schema:** http://10.100.10.156:5000/apispec_1.json
 
 ## Future Enhancements
 

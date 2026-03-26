@@ -5,7 +5,7 @@
 set -e
 
 # Configuration
-NFS_SERVER="10.100.27.156"
+NFS_SERVER="10.100.10.156"
 SHARED_EXPORT="/home/jason_nguyen/visual-aoi-server/shared"
 GOLDEN_EXPORT="/home/jason_nguyen/visual-aoi-server/config/products"
 MOUNT_BASE="/mnt/visual-aoi-shared"

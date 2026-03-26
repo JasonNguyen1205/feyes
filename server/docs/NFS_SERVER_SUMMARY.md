@@ -1,20 +1,20 @@
 # NFS Server Configuration - Summary
 
 **Date**: October 13, 2025  
-**Server**: 10.100.27.156 (FVN-ML-001)  
+**Server**: 10.100.10.156 (FVN-ML-001)  
 **Status**: ✅ **CONFIGURED AND OPERATIONAL**
 
 ---
 
 ## 🎯 What Was Done
 
-Successfully configured the Visual AOI Server (10.100.27.156) as an NFS server to share folders with client machines over the network.
+Successfully configured the Visual AOI Server (10.100.10.156) as an NFS server to share folders with client machines over the network.
 
 ---
 
 ## ✅ Configuration Complete
 
-### Server Setup (10.100.27.156)
+### Server Setup (10.100.10.156)
 
 1. ✅ **NFS Server Installed**: `nfs-kernel-server` and `nfs-common` packages
 2. ✅ **Exports Configured**: 2 directories shared via `/etc/exports`
@@ -27,8 +27,8 @@ Successfully configured the Visual AOI Server (10.100.27.156) as an NFS server t
 
 | Server Path | Network Export | Client Mount |
 |------------|----------------|--------------|
-| `/home/jason_nguyen/visual-aoi-server/shared` | `10.100.27.156:/home/jason_nguyen/visual-aoi-server/shared` | `/mnt/visual-aoi-shared` |
-| `/home/jason_nguyen/visual-aoi-server/config/products` | `10.100.27.156:/home/jason_nguyen/visual-aoi-server/config/products` | `/mnt/visual-aoi-shared/golden` |
+| `/home/jason_nguyen/visual-aoi-server/shared` | `10.100.10.156:/home/jason_nguyen/visual-aoi-server/shared` | `/mnt/visual-aoi-shared` |
+| `/home/jason_nguyen/visual-aoi-server/config/products` | `10.100.10.156:/home/jason_nguyen/visual-aoi-server/config/products` | `/mnt/visual-aoi-shared/golden` |
 
 ### Access Permissions
 
@@ -102,7 +102,7 @@ Export list for localhost:
 ```bash
 # On client machine:
 # 1. Copy setup script
-scp jason_nguyen@10.100.27.156:/home/jason_nguyen/visual-aoi-server/scripts/setup_nfs_client.sh .
+scp jason_nguyen@10.100.10.156:/home/jason_nguyen/visual-aoi-server/scripts/setup_nfs_client.sh .
 
 # 2. Run setup
 sudo bash setup_nfs_client.sh
@@ -128,8 +128,8 @@ sudo mkdir -p /mnt/visual-aoi-shared
 sudo mkdir -p /mnt/visual-aoi-shared/golden
 
 # Mount shares
-sudo mount -t nfs 10.100.27.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared
-sudo mount -t nfs 10.100.27.156:/home/jason_nguyen/visual-aoi-server/config/products /mnt/visual-aoi-shared/golden
+sudo mount -t nfs 10.100.10.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared
+sudo mount -t nfs 10.100.10.156:/home/jason_nguyen/visual-aoi-server/config/products /mnt/visual-aoi-shared/golden
 
 # Verify
 df -h | grep visual-aoi
@@ -140,8 +140,8 @@ df -h | grep visual-aoi
 Add to `/etc/fstab` for automatic mounting on boot:
 
 ```
-10.100.27.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared nfs defaults,_netdev 0 0
-10.100.27.156:/home/jason_nguyen/visual-aoi-server/config/products /mnt/visual-aoi-shared/golden nfs defaults,_netdev 0 0
+10.100.10.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared nfs defaults,_netdev 0 0
+10.100.10.156:/home/jason_nguyen/visual-aoi-server/config/products /mnt/visual-aoi-shared/golden nfs defaults,_netdev 0 0
 ```
 
 ---
@@ -175,7 +175,7 @@ import requests
 import cv2
 
 # Call API
-response = requests.post('http://10.100.27.156:5000/api/session/uuid/inspect', json=data)
+response = requests.post('http://10.100.10.156:5000/api/session/uuid/inspect', json=data)
 result = response.json()
 
 # Access images directly via NFS mount
@@ -255,7 +255,7 @@ golden_image = cv2.imread(result['roi_results'][0]['golden_image_path'])
 
 ## ✅ Verification Checklist
 
-**Server (10.100.27.156)**:
+**Server (10.100.10.156)**:
 
 - [x] NFS packages installed
 - [x] `/etc/exports` configured
@@ -302,7 +302,7 @@ showmount -e localhost
 
 ```bash
 # Mount
-sudo mount -t nfs 10.100.27.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared
+sudo mount -t nfs 10.100.10.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared
 
 # Unmount
 sudo umount /mnt/visual-aoi-shared
@@ -311,7 +311,7 @@ sudo umount /mnt/visual-aoi-shared
 df -h | grep visual-aoi
 
 # List available exports
-showmount -e 10.100.27.156
+showmount -e 10.100.10.156
 ```
 
 ---
@@ -348,7 +348,7 @@ showmount -e 10.100.27.156
 
 **Common Issues**:
 
-- Cannot mount → Check connectivity with `ping 10.100.27.156`
+- Cannot mount → Check connectivity with `ping 10.100.10.156`
 - Permission denied → Verify `no_root_squash` in exports
 - Stale file handle → Unmount and remount shares
 
@@ -366,7 +366,7 @@ sudo tail -f /var/log/syslog | grep nfs
 
 ## 🎉 Success Criteria - All Met! ✅
 
-- ✅ NFS server configured and running on 10.100.27.156
+- ✅ NFS server configured and running on 10.100.10.156
 - ✅ Two directories shared over network (shared + products)
 - ✅ Accessible from 10.100.27.0/24 subnet
 - ✅ Read-write access enabled
@@ -381,7 +381,7 @@ sudo tail -f /var/log/syslog | grep nfs
 
 **NFS Server Configuration**: ✅ **COMPLETE AND OPERATIONAL**
 
-The Visual AOI Server at 10.100.27.156 is now sharing folders over the network via NFS. Client machines can mount these shares to access inspection results, golden samples, and product configurations in real-time with direct filesystem access.
+The Visual AOI Server at 10.100.10.156 is now sharing folders over the network via NFS. Client machines can mount these shares to access inspection results, golden samples, and product configurations in real-time with direct filesystem access.
 
 **Performance**: 99.6% reduction in API response size  
 **Speed**: 50x faster than Base64 image transfer  
@@ -392,5 +392,5 @@ The Visual AOI Server at 10.100.27.156 is now sharing folders over the network v
 
 **Configuration Date**: October 13, 2025  
 **Configured By**: GitHub Copilot  
-**Server**: 10.100.27.156 (FVN-ML-001)  
+**Server**: 10.100.10.156 (FVN-ML-001)  
 **Status**: Production Ready ✅

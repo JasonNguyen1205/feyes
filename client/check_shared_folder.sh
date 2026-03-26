@@ -93,7 +93,8 @@ fi
 # Network connectivity to server
 echo ""
 echo "7. Checking server connectivity..."
-SERVER_IP="10.100.27.156"
+# SERVER_IP="10.100.10.156"
+SERVER_IP="10.100.10.156"
 if ping -c 1 -W 2 $SERVER_IP >/dev/null 2>&1; then
     echo -e "${GREEN}✓${NC} Server $SERVER_IP is reachable"
     
@@ -134,7 +135,8 @@ else
     echo -e "${RED}✗ SHARED FOLDER IS NOT MOUNTED${NC}"
     echo ""
     echo "Action required:"
-    echo "  1. Configure NFS server on 10.100.27.156 (see SHARED_FOLDER_SETUP.md)"
+    # echo "  1. Configure NFS server on 10.100.10.156 (see SHARED_FOLDER_SETUP.md)"
+    echo "  1. Configure NFS server on 10.100.10.156 (see SHARED_FOLDER_SETUP.md)"
     echo "  2. Run: ./mount_shared_folder.sh"
 fi
 

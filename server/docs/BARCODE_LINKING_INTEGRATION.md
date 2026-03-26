@@ -521,7 +521,7 @@ HTTP/1.1 500 Internal Server Error
 ```python
 # Client sends inspection request
 response = requests.post(
-    'http://10.100.27.156:5000/api/session/UUID/inspect',
+    'http://10.100.10.156:5000/api/session/UUID/inspect',
     json={
         'image': base64_image,
         'product_name': '20003548'

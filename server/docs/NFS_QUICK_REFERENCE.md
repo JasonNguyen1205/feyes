@@ -1,11 +1,11 @@
 # NFS Setup - Quick Reference Card
 
-**Server**: 10.100.27.156 (FVN-ML-001)  
+**Server**: 10.100.10.156 (FVN-ML-001)  
 **Date**: October 13, 2025
 
 ---
 
-## 🖥️ SERVER (10.100.27.156)
+## 🖥️ SERVER (10.100.10.156)
 
 ### Status Check
 
@@ -41,7 +41,7 @@ showmount -a
 
 ```bash
 # Copy script from server
-scp jason_nguyen@10.100.27.156:/home/jason_nguyen/visual-aoi-server/scripts/setup_nfs_client.sh .
+scp jason_nguyen@10.100.10.156:/home/jason_nguyen/visual-aoi-server/scripts/setup_nfs_client.sh .
 
 # Run setup script
 sudo bash setup_nfs_client.sh
@@ -59,8 +59,8 @@ sudo mkdir -p /mnt/visual-aoi-shared
 sudo mkdir -p /mnt/visual-aoi-shared/golden
 
 # 3. Mount shares
-sudo mount -t nfs 10.100.27.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared
-sudo mount -t nfs 10.100.27.156:/home/jason_nguyen/visual-aoi-server/config/products /mnt/visual-aoi-shared/golden
+sudo mount -t nfs 10.100.10.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared
+sudo mount -t nfs 10.100.10.156:/home/jason_nguyen/visual-aoi-server/config/products /mnt/visual-aoi-shared/golden
 
 # 4. Verify
 df -h | grep visual-aoi
@@ -71,8 +71,8 @@ df -h | grep visual-aoi
 Add to `/etc/fstab`:
 
 ```
-10.100.27.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared nfs defaults,_netdev 0 0
-10.100.27.156:/home/jason_nguyen/visual-aoi-server/config/products /mnt/visual-aoi-shared/golden nfs defaults,_netdev 0 0
+10.100.10.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared nfs defaults,_netdev 0 0
+10.100.10.156:/home/jason_nguyen/visual-aoi-server/config/products /mnt/visual-aoi-shared/golden nfs defaults,_netdev 0 0
 ```
 
 Then: `sudo mount -a`
@@ -124,13 +124,13 @@ sudo umount -f /mnt/visual-aoi-shared
 
 ```bash
 # Check server is reachable
-ping 10.100.27.156
+ping 10.100.10.156
 
 # Check NFS port
-telnet 10.100.27.156 2049
+telnet 10.100.10.156 2049
 
 # Check exports available
-showmount -e 10.100.27.156
+showmount -e 10.100.10.156
 ```
 
 ### Problem: Permission Denied
@@ -148,7 +148,7 @@ sudo ls /mnt/visual-aoi-shared
 ```bash
 # Unmount and remount
 sudo umount -f /mnt/visual-aoi-shared
-sudo mount -t nfs 10.100.27.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared
+sudo mount -t nfs 10.100.10.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared
 ```
 
 ---
@@ -170,7 +170,7 @@ Client applications can access these paths directly after mounting NFS.
 
 ## ✅ Verification Checklist
 
-**Server (10.100.27.156)**:
+**Server (10.100.10.156)**:
 
 - [x] NFS server running
 - [x] Exports configured

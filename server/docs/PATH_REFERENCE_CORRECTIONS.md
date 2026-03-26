@@ -37,7 +37,7 @@ Corrected documentation to accurately reflect that the server uses absolute path
    - Type: CIFS/SMB network mount
    - Usage: Clients mount this share for file exchange
    - Protocol: SMB 2.0 with credentials
-   - Share: `//10.100.27.156/visual-aoi-shared`
+   - Share: `//10.100.10.156/visual-aoi-shared`
 
 ### Physical Reality
 
@@ -95,7 +95,7 @@ the same physical location on disk.
 The server is hosting a SMB/CIFS share of its own local directory:
 
 1. **Local Directory:** `/home/jason_nguyen/visual-aoi-server/shared/` (actual data location)
-2. **SMB Share:** The server shares this directory as `//10.100.27.156/visual-aoi-shared`
+2. **SMB Share:** The server shares this directory as `//10.100.10.156/visual-aoi-shared`
 3. **Mount Point:** The same server mounts it back at `/mnt/visual-aoi-shared/`
 4. **Inode Evidence:** Both paths show inode 58335949 - **same physical directory**
 
@@ -333,7 +333,7 @@ grep -n "session_dir.*=.*shared" server/simple_api_server.py
 mount | grep visual-aoi
 
 # Expected output:
-# //10.100.27.156/visual-aoi-shared on /mnt/visual-aoi-shared type cifs (...)
+# //10.100.10.156/visual-aoi-shared on /mnt/visual-aoi-shared type cifs (...)
 ```
 
 ---
@@ -373,7 +373,7 @@ mount | grep visual-aoi
    # Use mount point or direct SMB
    mount_dir = "/mnt/visual-aoi-shared/sessions/{session_id}"
    # OR
-   smb_share = "//10.100.27.156/visual-aoi-shared/sessions/{session_id}"
+   smb_share = "//10.100.10.156/visual-aoi-shared/sessions/{session_id}"
    ```
 
 3. **Documentation References**
