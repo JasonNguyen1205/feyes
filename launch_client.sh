@@ -29,7 +29,7 @@ Usage: $0 [OPTIONS]
 Options:
     -p, --port PORT         Port to run client on (default: 5100)
     -h, --host HOST         Host to bind to (default: 0.0.0.0)
-    -s, --server URL        Server API URL (default: http://localhost:5000)
+    -s, --server URL        Server API URL (default: http://10.100.10.156:5000)
     -d, --debug             Enable debug mode
     -n, --no-venv          Skip virtual environment creation/activation
     -c, --check-camera     Check TIS camera availability before starting
@@ -226,6 +226,21 @@ if [ "$TARGET_SERVER" = "localhost" ] || [ "$TARGET_SERVER" = "127.0.0.1" ]; the
 else
     # Remote server - setup network mount
     MOUNT_SCRIPT="$CLIENT_DIR/mount_shared_folder_dynamic.sh"
+    MOUNT_USER="${AOI_SMB_USERNAME:-jason_nguyen}"
+    MOUNT_PASS="${AOI_SMB_PASSWORD:-}"
+
+    run_mount_script() {
+        if [ ! -f "$MOUNT_SCRIPT" ]; then
+            return 1
+        fi
+
+        if [ -n "$MOUNT_PASS" ]; then
+            bash "$MOUNT_SCRIPT" "$TARGET_SERVER" "$MOUNT_USER" "$MOUNT_PASS"
+        else
+            # No password provided via env: let mount script prompt securely.
+            bash "$MOUNT_SCRIPT" "$TARGET_SERVER" "$MOUNT_USER"
+        fi
+    }
 
     if [ -L "$SHARED_FOLDER" ]; then
         # Symlink exists but server is remote - need to switch to network mount
@@ -250,7 +265,11 @@ else
 
             if [ -f "$MOUNT_SCRIPT" ]; then
                 echo -e "${CYAN}Mounting shared folder from $TARGET_SERVER...${NC}"
-                bash "$MOUNT_SCRIPT" "$TARGET_SERVER" || echo -e "${YELLOW}⚠ Auto-mount failed, you may need to run manually${NC}"
+                if run_mount_script; then
+                    echo -e "${GREEN}✓ Shared folder remounted to $TARGET_SERVER${NC}"
+                else
+                    echo -e "${YELLOW}⚠ Auto-mount failed, you may need to run manually${NC}"
+                fi
             fi
         else
             echo -e "${GREEN}✓ Shared folder mounted from server $MOUNTED_SERVER${NC}"
@@ -260,17 +279,37 @@ else
         if [ -f "$MOUNT_SCRIPT" ]; then
             echo -e "${YELLOW}Network mount not found, setting up automatically...${NC}"
             echo -e "${CYAN}Mounting shared folder from $TARGET_SERVER...${NC}"
-            echo -e "${CYAN}(using default credentials: jason_nguyen / 1)${NC}"
+            if [ -n "$MOUNT_PASS" ]; then
+                echo -e "${CYAN}(using credentials from AOI_SMB_USERNAME/AOI_SMB_PASSWORD env vars)${NC}"
+            else
+                echo -e "${CYAN}(no AOI_SMB_PASSWORD set: launcher will prompt if needed)${NC}"
+            fi
 
-            # Run mount script with server IP and default credentials (non-interactive)
-            bash "$MOUNT_SCRIPT" "$TARGET_SERVER" "jason_nguyen" "1" 2>&1 | grep -E "(✓|✅|❌|⚠|Mounting|Successfully)" || true
+            # Run mount script without filtering output so errors/prompts remain visible.
+            run_mount_script || true
 
             # Check if mount succeeded
             if mountpoint -q "$SHARED_FOLDER" 2>/dev/null; then
                 echo -e "${GREEN}✓ Shared folder mounted successfully${NC}"
             else
                 echo -e "${YELLOW}⚠ Auto-mount incomplete${NC}"
-                echo -e "${YELLOW}   Run manually: cd $CLIENT_DIR && ./mount_shared_folder_dynamic.sh $TARGET_SERVER${NC}"
+                echo -e "${YELLOW}Attempting one interactive retry...${NC}"
+
+                read -r -p "SMB username [$MOUNT_USER]: " RETRY_USER
+                RETRY_USER=${RETRY_USER:-$MOUNT_USER}
+                read -rs -p "SMB password: " RETRY_PASS
+                echo ""
+
+                if bash "$MOUNT_SCRIPT" "$TARGET_SERVER" "$RETRY_USER" "$RETRY_PASS"; then
+                    if mountpoint -q "$SHARED_FOLDER" 2>/dev/null; then
+                        echo -e "${GREEN}✓ Shared folder mounted successfully${NC}"
+                    else
+                        echo -e "${YELLOW}⚠ Mount command returned success but mount not detected${NC}"
+                    fi
+                else
+                    echo -e "${YELLOW}⚠ Interactive retry failed${NC}"
+                    echo -e "${YELLOW}   Run manually: cd $CLIENT_DIR && ./mount_shared_folder_dynamic.sh $TARGET_SERVER${NC}"
+                fi
             fi
         else
             echo -e "${YELLOW}⚠ Mount script not found at $MOUNT_SCRIPT${NC}"

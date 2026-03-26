@@ -5,8 +5,6 @@ Utility functions for Visual AOI system.
 import os
 import time
 import psutil
-import tkinter as tk
-import tkinter.simpledialog
 import gc
 from PIL import Image
 import cv2
@@ -19,7 +17,9 @@ def print_memory_usage():
     print(f"DEBUG: Memory usage: {mem_mb:.2f} MB")
 
 def get_product_name():
-    """Get product name from user input."""
+    """Get product name from user input (requires a display; not available in headless/container deployments)."""
+    import tkinter as tk
+    import tkinter.simpledialog
     root = tk.Tk()
     root.withdraw()
     pname = tkinter.simpledialog.askstring("Product Selection", "Enter or select product name:")

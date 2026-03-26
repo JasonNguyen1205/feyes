@@ -1,0 +1,620 @@
+[
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      2424,
+      3057,
+      2455,
+      3110
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 500,
+    "feature_method": "mobilenet",
+    "focus": 210,
+    "idx": 7,
+    "is_device_barcode": null,
+    "notes": "",
+    "roi_type_name": "compare",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      2453,
+      3060,
+      2478,
+      3109
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 500,
+    "feature_method": "mobilenet",
+    "focus": 210,
+    "idx": 8,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      2482,
+      3060,
+      2507,
+      3108
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 500,
+    "feature_method": "mobilenet",
+    "focus": 210,
+    "idx": 9,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      2512,
+      3063,
+      2537,
+      3112
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 500,
+    "feature_method": "mobilenet",
+    "focus": 210,
+    "idx": 10,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      2414,
+      3167,
+      2623,
+      3384
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 650,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 11,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      2485,
+      3456,
+      2869,
+      3678
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 650,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 12,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      2864,
+      3460,
+      3303,
+      3689
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 650,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 13,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      3326,
+      3460,
+      3583,
+      3584
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 650,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 14,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      3269,
+      2799,
+      3611,
+      2928
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 650,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 15,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      3551,
+      1737,
+      3693,
+      1993
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 650,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 16,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      3544,
+      1199,
+      3704,
+      1716
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 650,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 17,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      2589,
+      1399,
+      2713,
+      1791
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 650,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 18,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      2606,
+      1180,
+      2690,
+      1351
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 650,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 19,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      2379,
+      2274,
+      2549,
+      2433
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 650,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 20,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      4207,
+      3070,
+      4233,
+      3120
+    ],
+    "device_id": 2,
+    "device_location": 2,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 500,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 22,
+    "is_device_barcode": null,
+    "notes": "",
+    "roi_type_name": "compare",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      4232,
+      3073,
+      4258,
+      3117
+    ],
+    "device_id": 2,
+    "device_location": 2,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 500,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 23,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      4263,
+      3074,
+      4289,
+      3118
+    ],
+    "device_id": 2,
+    "device_location": 2,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 500,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 24,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      4293,
+      3070,
+      4320,
+      3117
+    ],
+    "device_id": 2,
+    "device_location": 2,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 500,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 25,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      4235,
+      3177,
+      4411,
+      3401
+    ],
+    "device_id": 2,
+    "device_location": 2,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 700,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 26,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      4334,
+      3507,
+      4717,
+      3686
+    ],
+    "device_id": 2,
+    "device_location": 2,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 700,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 27,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      4729,
+      3473,
+      5176,
+      3701
+    ],
+    "device_id": 2,
+    "device_location": 2,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 700,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 28,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      5152,
+      3437,
+      5421,
+      3587
+    ],
+    "device_id": 2,
+    "device_location": 2,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 700,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 29,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      5085,
+      2797,
+      5453,
+      2937
+    ],
+    "device_id": 2,
+    "device_location": 2,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 700,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 30,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      4224,
+      2297,
+      4406,
+      2451
+    ],
+    "device_id": 2,
+    "device_location": 2,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 700,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 31,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      4425,
+      1428,
+      4590,
+      1808
+    ],
+    "device_id": 2,
+    "device_location": 2,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 850,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 32,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      4437,
+      1196,
+      4585,
+      1377
+    ],
+    "device_id": 2,
+    "device_location": 2,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 850,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 33,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      5504,
+      1225,
+      5543,
+      1739
+    ],
+    "device_id": 2,
+    "device_location": 2,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1200,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 34,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.9,
+    "coords": [
+      5497,
+      1753,
+      5522,
+      2006
+    ],
+    "device_id": 2,
+    "device_location": 2,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1300,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 35,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": null,
+    "coords": [
+      2718,
+      2273,
+      2926,
+      2620
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 650,
+    "feature_method": null,
+    "focus": 260,
+    "idx": 36,
+    "is_device_barcode": null,
+    "notes": "",
+    "roi_type_name": "barcode",
+    "rotation": 0,
+    "type": 1
+  },
+  {
+    "ai_threshold": null,
+    "coords": [
+      4577,
+      2274,
+      4781,
+      2633
+    ],
+    "device_id": 2,
+    "device_location": 2,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 650,
+    "feature_method": null,
+    "focus": 260,
+    "idx": 37,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 1
+  }
+]

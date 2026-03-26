@@ -1,0 +1,53 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+*.cover
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Documentation (not needed in image)
+docs/
+
+# Session data in shared folder (large, runtime-generated)
+shared/sessions/
+shared/roi_editor/
+
+# Existing Docker files (avoid recursive COPY confusion)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Startup / helper scripts (not needed inside container)
+*.sh
+*.ps1
+
+# Test files
+test_*.py
+tests/
+
+# Logs
+*.log

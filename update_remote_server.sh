@@ -1,7 +1,7 @@
 #!/bin/bash
-# Script to update server at 10.100.27.75
+# Script to update server at 10.100.10.156
 
-SERVER_IP="10.100.27.75"
+SERVER_IP="10.100.10.156"
 SERVER_USER="jason_nguyen"
 SERVER_PATH="/home/jason_nguyen/feyes"
 
