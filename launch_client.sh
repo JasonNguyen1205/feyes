@@ -318,6 +318,31 @@ else
     fi
 fi
 
+# Final shared folder verification (prevents runtime save failures).
+if [ "$TARGET_SERVER" != "localhost" ] && [ "$TARGET_SERVER" != "127.0.0.1" ]; then
+    if ! mountpoint -q "$SHARED_FOLDER" 2>/dev/null; then
+        echo -e "${RED}❌ Shared folder is not mounted at $SHARED_FOLDER${NC}"
+        echo -e "${YELLOW}Cannot continue: client would save files to local disk instead of network share.${NC}"
+        echo -e "${YELLOW}Fix manually:${NC}"
+        echo -e "${YELLOW}  cd $CLIENT_DIR && ./mount_shared_folder_dynamic.sh $TARGET_SERVER${NC}"
+        echo -e "${YELLOW}Or set credentials and retry launcher:${NC}"
+        echo -e "${YELLOW}  AOI_SMB_USERNAME=jason_nguyen AOI_SMB_PASSWORD='<password>' ./launch_client.sh -s $SERVER_URL${NC}"
+        exit 1
+    fi
+
+    SHARED_WRITE_TEST="$SHARED_FOLDER/.client_write_test_$$"
+    if touch "$SHARED_WRITE_TEST" 2>/dev/null; then
+        rm -f "$SHARED_WRITE_TEST"
+        echo -e "${GREEN}✓ Shared folder write access confirmed${NC}"
+    else
+        echo -e "${RED}❌ No write permission on $SHARED_FOLDER${NC}"
+        echo -e "${YELLOW}Cannot continue: image capture/save would fail.${NC}"
+        echo -e "${YELLOW}Check SMB credentials and remount:${NC}"
+        echo -e "${YELLOW}  cd $CLIENT_DIR && ./mount_shared_folder_dynamic.sh $TARGET_SERVER${NC}"
+        exit 1
+    fi
+fi
+
 # Check client script exists
 CLIENT_SCRIPT="$CLIENT_DIR/app.py"
 if [ ! -f "$CLIENT_SCRIPT" ]; then
