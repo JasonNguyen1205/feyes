@@ -1,0 +1,63 @@
+services:
+  visual-aoi-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: visual-aoi-server:latest
+    container_name: visual-aoi-server
+    restart: unless-stopped
+
+    ports:
+      - "5000:5000"
+
+    # -----------------------------------------------------------------------
+    # Volumes
+    #
+    # shared/   — bind-mount so the HOST Samba server exposes the exact same
+    #             physical directory that the container writes to.
+    #             Client accesses session images via:
+    #               CIFS //server_ip/visual-aoi-shared → /mnt/visual-aoi-shared/
+    #             Container writes to /app/shared/sessions/{uuid}/...
+    #             Server response paths are /mnt/visual-aoi-shared/sessions/...
+    #
+    # config/   — bind-mount so product configs and golden ROI images survive
+    #             container rebuilds.
+    #
+    # easyocr_cache — named volume for EasyOCR model downloads (~1 GB).
+    #                 Prevents re-downloading on every restart.
+    # -----------------------------------------------------------------------
+    volumes:
+      - ./shared:/app/shared
+      - ./config:/app/config
+      - easyocr_cache:/root/.EasyOCR
+
+    environment:
+      # Required for RTX 5080 (compute capability 12.0) PTX JIT compilation
+      - CUDA_FORCE_PTX_JIT=1
+      - PYTHONUNBUFFERED=1
+
+      # -----------------------------------------------------------------------
+      # Ollama vision scoring (feature/ollama-vision branch only).
+      # If Ollama runs on the host, use host.docker.internal:11434.
+      # Uncomment and set when using the Ollama feature branch.
+      # -----------------------------------------------------------------------
+      # - OLLAMA_URL=http://host.docker.internal:11434
+      # - OLLAMA_MODEL=llama3.2-vision:11b
+
+    # -----------------------------------------------------------------------
+    # GPU access — requires nvidia-container-toolkit on the host.
+    # Install: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/
+    # -----------------------------------------------------------------------
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+    # Alternative gpu flag for `docker run` / older compose versions:
+    # runtime: nvidia
+
+volumes:
+  easyocr_cache:

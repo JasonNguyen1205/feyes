@@ -20,12 +20,12 @@ Corporate proxy at `10.100.10.1:8080` was blocking non-standard destination port
 **Solution:**
 ```bash
 # Set no_proxy to bypass proxy for local network
-export no_proxy="localhost,127.0.0.1,10.100.27.156"
-export NO_PROXY="localhost,127.0.0.1,10.100.27.156"
+export no_proxy="localhost,127.0.0.1,10.100.10.156"
+export NO_PROXY="localhost,127.0.0.1,10.100.10.156"
 
 # Made permanent in ~/.bashrc
-echo 'export no_proxy="localhost,127.0.0.1,10.100.27.156"' >> ~/.bashrc
-echo 'export NO_PROXY="localhost,127.0.0.1,10.100.27.156"' >> ~/.bashrc
+echo 'export no_proxy="localhost,127.0.0.1,10.100.10.156"' >> ~/.bashrc
+echo 'export NO_PROXY="localhost,127.0.0.1,10.100.10.156"' >> ~/.bashrc
 ```
 
 **Status:** ✅ RESOLVED
@@ -104,7 +104,7 @@ Set up NFS (Network File System) to actually share the folder over the network.
 
 ### Quick Steps:
 
-1. **On Server (10.100.27.156)**  
+1. **On Server (10.100.10.156)**  
    SSH and run these commands:
    ```bash
    sudo apt-get update && sudo apt-get install -y nfs-kernel-server
@@ -145,7 +145,7 @@ Set up NFS (Network File System) to actually share the folder over the network.
 - [x] NFS client tools installed
 
 ### Needs Configuration ⚠️
-- [ ] **NFS server setup on 10.100.27.156** ← **REQUIRED**
+- [ ] **NFS server setup on 10.100.10.156** ← **REQUIRED**
 - [ ] **Client mount to server** ← **After server setup**
 
 ### Will Work After NFS Setup ✅
@@ -204,12 +204,12 @@ After NFS setup is complete:
 
 ### Proxy Settings (Permanent)
 ```bash
-export no_proxy="localhost,127.0.0.1,10.100.27.156"
-export NO_PROXY="localhost,127.0.0.1,10.100.27.156"
+export no_proxy="localhost,127.0.0.1,10.100.10.156"
+export NO_PROXY="localhost,127.0.0.1,10.100.10.156"
 ```
 
 ### Server Details
-- **IP:** 10.100.27.156
+- **IP:** 10.100.10.156
 - **Port:** 5000 (API)
 - **Port:** 2049 (NFS - needs to be configured)
 - **User:** jason_nguyen
@@ -228,7 +228,7 @@ export NO_PROXY="localhost,127.0.0.1,10.100.27.156"
 ```bash
 # Check proxy settings
 env | grep -i proxy
-# Should show no_proxy includes 10.100.27.156
+# Should show no_proxy includes 10.100.10.156
 ```
 
 ### If permission denied:
@@ -255,7 +255,7 @@ sudo chown -R pi:pi /mnt/visual-aoi-shared
 ## Next Steps
 
 **Priority 1 (CRITICAL):**  
-Configure NFS server on 10.100.27.156 to enable shared folder functionality
+Configure NFS server on 10.100.10.156 to enable shared folder functionality
 
 **Priority 2:**  
 Test full inspection workflow after NFS is working
@@ -271,7 +271,7 @@ Set up monitoring/logging for shared folder access
 - **Quick Commands:** `QUICK_FIX.txt`
 - **Diagnostics:** `./check_shared_folder.sh`
 - **Architecture Docs:** `.github/copilot-instructions.md`
-- **Server API Docs:** http://10.100.27.156:5000/apidocs/
+- **Server API Docs:** http://10.100.10.156:5000/apidocs/
 
 ---
 

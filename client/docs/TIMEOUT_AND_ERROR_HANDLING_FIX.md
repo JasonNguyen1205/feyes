@@ -9,7 +9,7 @@
 ### 1. Inspection Timeout After PyTorch Migration
 
 ```
-ERROR: HTTPConnectionPool(host='10.100.27.156', port=5000): Read timed out. (read timeout=60)
+ERROR: HTTPConnectionPool(host='10.100.10.156', port=5000): Read timed out. (read timeout=60)
 ERROR: Inspection failed
 ```
 

@@ -247,7 +247,7 @@ Client-provided barcodes have no additional overhead - linking happens server-si
 ### Swagger UI
 
 ```
-http://10.100.27.156:5000/apidocs/
+http://10.100.10.156:5000/apidocs/
 ```
 
 Navigate to: `POST /api/session/{session_id}/inspect`
@@ -255,7 +255,7 @@ Navigate to: `POST /api/session/{session_id}/inspect`
 ### OpenAPI Spec
 
 ```bash
-curl http://10.100.27.156:5000/apispec_1.json > visual-aoi-api.json
+curl http://10.100.10.156:5000/apispec_1.json > visual-aoi-api.json
 ```
 
 ---
@@ -384,8 +384,8 @@ set_barcode_link_timeout(5.0)  # 5 seconds
 
 ### API Documentation
 
-- Swagger UI: `http://10.100.27.156:5000/apidocs/`
-- OpenAPI Spec: `http://10.100.27.156:5000/apispec_1.json`
+- Swagger UI: `http://10.100.10.156:5000/apidocs/`
+- OpenAPI Spec: `http://10.100.10.156:5000/apispec_1.json`
 
 ---
 

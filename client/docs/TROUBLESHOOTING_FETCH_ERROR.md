@@ -44,7 +44,7 @@ Image fetch response: { status: 404, statusText: 'Not Found', ok: false }
 **Error Message:**
 ```
 Failed to save golden sample: Failed to fetch
-Access to fetch at 'http://10.100.27.156:5000/api/golden-sample/save' has been blocked by CORS policy
+Access to fetch at 'http://10.100.10.156:5000/api/golden-sample/save' has been blocked by CORS policy
 ```
 
 **Root Causes:**
@@ -148,7 +148,7 @@ Image blob created: {
   image_type: 'image/jpeg',
   filename: 'roi_5.jpg'
 }
-Sending request to: http://10.100.27.156:5000/api/golden-sample/save
+Sending request to: http://10.100.10.156:5000/api/golden-sample/save
 ```
 
 #### 3. Server Response
@@ -191,7 +191,7 @@ ls -la /mnt/visual-aoi-shared/sessions/xxx/output/roi_5.jpg
 #### Case 2: Server Error
 ```javascript
 📤 Sending to server: { ... }
-Sending request to: http://10.100.27.156:5000/api/golden-sample/save
+Sending request to: http://10.100.10.156:5000/api/golden-sample/save
 Server response: {
   status: 500,
   statusText: 'Internal Server Error',
@@ -208,7 +208,7 @@ Server result: {
 #### Case 3: Network Error
 ```javascript
 📤 Sending to server: { ... }
-Sending request to: http://10.100.27.156:5000/api/golden-sample/save
+Sending request to: http://10.100.10.156:5000/api/golden-sample/save
 ❌ Error: Failed to fetch
 ```
 
@@ -261,7 +261,7 @@ Server response: { status: 200 }
 2. Filter by "Fetch/XHR"
 3. Look for:
    - Request to `/shared/sessions/.../roi_X.jpg`
-   - Request to `http://10.100.27.156:5000/api/golden-sample/save`
+   - Request to `http://10.100.10.156:5000/api/golden-sample/save`
 
 **Check each request:**
 - Status code (200 = success, 404 = not found, 500 = server error)
@@ -286,7 +286,7 @@ curl http://localhost:5100/shared/sessions/{session_id}/output/roi_5.jpg
 ```bash
 # Test server endpoint directly
 curl -X POST \
-  http://10.100.27.156:5000/api/golden-sample/save \
+  http://10.100.10.156:5000/api/golden-sample/save \
   -F "product_name=20003548" \
   -F "roi_id=5" \
   -F "golden_image=@/path/to/test.jpg"
@@ -395,7 +395,7 @@ After applying enhanced debugging:
    Image fetch response: { status: 200, ok: true }
    Image blob created: { size: 1847290, type: 'image/jpeg' }
    📤 Sending to server: { ... }
-   Sending request to: http://10.100.27.156:5000/...
+   Sending request to: http://10.100.10.156:5000/...
    Server response: { status: 200, ok: true }
    Server result: { message: '...' }
    ✅ Golden sample saved successfully
@@ -426,7 +426,7 @@ After applying enhanced debugging:
 
 - Missing `sessionProduct` - Fixed in `FIX_NO_PRODUCT_SELECTED_ERROR.md`
 - Image loading from shared folder - `SHARED_FOLDER_IMAGE_LOADING.md`
-- Server API spec - Server Swagger: `http://10.100.27.156:5000/apidocs/`
+- Server API spec - Server Swagger: `http://10.100.10.156:5000/apidocs/`
 
 ---
 

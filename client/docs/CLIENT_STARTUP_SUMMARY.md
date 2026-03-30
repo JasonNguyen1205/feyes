@@ -172,12 +172,12 @@ python3 app.py
 
 **Check server:**
 ```bash
-curl http://10.100.27.156:5000/api/health
+curl http://10.100.10.156:5000/api/health
 ```
 
 **Update server URL in UI or app.py:**
 ```python
-server_url: str = "http://10.100.27.156:5000"
+server_url: str = "http://10.100.10.156:5000"
 ```
 
 ---
@@ -201,7 +201,7 @@ sudo usermod -a -G video $USER
 
 ✅ **Web client started successfully**  
 ✅ **Accessible at http://localhost:5100**  
-✅ **Connected to server: http://10.100.27.156:5000**  
+✅ **Connected to server: http://10.100.10.156:5000**  
 ✅ **Cameras detected:**
 - NTx-Mini PT01-PBXMX1-32XG25 (00:11:1c:03:e4:8d)
 - DFK AFU420-L62 (30320436)

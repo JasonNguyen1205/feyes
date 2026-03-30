@@ -391,7 +391,7 @@ escapeHtml(cleanLinked)     // Prevents <script> injection
 
 - **Linked Barcode System:** `docs/LINKED_BARCODE_SYSTEM.md`
 - **Barcode Format Fix:** `docs/BARCODE_FORMAT_FIX.md`
-- **API Schema:** http://10.100.27.156:5000/apispec_1.json
+- **API Schema:** http://10.100.10.156:5000/apispec_1.json
 
 ## Future Enhancements
 

@@ -10,7 +10,7 @@
 ## 🔍 Issue Detected
 
 ### Server Schema (Authoritative)
-**Source:** http://10.100.27.156:5000/api/schema/roi  
+**Source:** http://10.100.10.156:5000/api/schema/roi  
 **ROI Structure Version:** 3.0  
 **Updated:** 2025-10-03
 
@@ -116,7 +116,7 @@ When determining device barcode in inspection results, server uses this priority
 
 ### Test 1: Schema Fetch
 ```bash
-curl http://10.100.27.156:5000/api/schema/roi
+curl http://10.100.10.156:5000/api/schema/roi
 ```
 ✅ Confirmed field [10] = `is_device_barcode`
 
@@ -150,7 +150,7 @@ curl http://10.100.27.156:5000/api/schema/roi
 
 **Authority:** Server API is the authoritative schema  
 **Reason:** Multiple clients may exist (web, desktop, mobile)  
-**Rule:** Always check http://10.100.27.156:5000/apidocs/ before schema changes
+**Rule:** Always check http://10.100.10.156:5000/apidocs/ before schema changes
 
 ---
 
@@ -248,7 +248,7 @@ return (idx, typ, coords, focus, exp, thresh, method, rot, device, text, is_devi
 ## 📞 References
 
 **Server API Documentation:**  
-http://10.100.27.156:5000/apidocs/
+http://10.100.10.156:5000/apidocs/
 
 **Schema Endpoints:**
 - ROI Structure: `GET /api/schema/roi`

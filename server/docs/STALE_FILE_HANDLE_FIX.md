@@ -31,7 +31,7 @@ Status: Active (running) since October 3, 2025 20:19
 
 ### 4. Remounted CIFS Share
 ```bash
-sudo mount -t cifs //10.100.27.156/visual-aoi-shared /mnt/visual-aoi-shared \
+sudo mount -t cifs //10.100.10.156/visual-aoi-shared /mnt/visual-aoi-shared \
   -o credentials=/etc/samba/visual-aoi-credentials,uid=1000,gid=1000,\
      file_mode=0664,dir_mode=0775
 ```
@@ -56,7 +56,7 @@ cat /mnt/visual-aoi-shared/sessions/test.txt
 
 ### Mount Information
 ```
-//10.100.27.156/visual-aoi-shared on /mnt/visual-aoi-shared type cifs
+//10.100.10.156/visual-aoi-shared on /mnt/visual-aoi-shared type cifs
 - SMB Version: 3.1.1 (upgraded from 2.0)
 - User: jason_nguyen (uid=1000, gid=1000)
 - Permissions: file_mode=0664, dir_mode=0775

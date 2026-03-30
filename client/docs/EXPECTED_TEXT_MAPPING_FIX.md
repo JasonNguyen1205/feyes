@@ -503,7 +503,7 @@ editorState.rois.forEach(roi => {
 
 ```bash
 # Check server returns sample_text
-curl -s http://10.100.27.156:5000/api/products/20003548/rois | \
+curl -s http://10.100.10.156:5000/api/products/20003548/rois | \
   jq '.rois[] | select(.type == 3 or .type == 4) | {idx, type, sample_text}'
 ```
 

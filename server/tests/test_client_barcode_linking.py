@@ -85,7 +85,7 @@ def demonstrate_api_flow():
     print("\n📱 Step 1: Client sends API request")
     print("─"*70)
     client_barcode = "1897848 S/N: 65514 3969 1006 V"
-    print("POST http://10.100.27.156:5000/api/session/SESSION_ID/inspect")
+    print("POST http://10.100.10.156:5000/api/session/SESSION_ID/inspect")
     print("{")
     print('  "image_filename": "device_image.jpg",')
     print('  "device_barcodes": {')

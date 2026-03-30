@@ -1,8 +1,8 @@
 # Inspection Result Schema Update - Version 2.0
 
 **Date:** October 3, 2025  
-**Server API:** http://10.100.27.156:5000/apidocs/  
-**Schema Endpoint:** http://10.100.27.156:5000/api/schema/result
+**Server API:** http://10.100.10.156:5000/apidocs/  
+**Schema Endpoint:** http://10.100.10.156:5000/api/schema/result
 
 ## 🚨 BREAKING CHANGES
 

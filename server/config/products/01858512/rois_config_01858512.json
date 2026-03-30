@@ -1,0 +1,343 @@
+[
+  {
+    "ai_threshold": 0.88,
+    "coords": [
+      5153,
+      2263,
+      5197,
+      2293
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 1,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.88,
+    "coords": [
+      5154,
+      2233,
+      5199,
+      2265
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 2,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.88,
+    "coords": [
+      5155,
+      2200,
+      5198,
+      2233
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 3,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.88,
+    "coords": [
+      5159,
+      2170,
+      5196,
+      2200
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 4,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.88,
+    "coords": [
+      5146,
+      2439,
+      5189,
+      2469
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 5,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.88,
+    "coords": [
+      5146,
+      2494,
+      5192,
+      2527
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 6,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.88,
+    "coords": [
+      5081,
+      2467,
+      5123,
+      2501
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 7,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.88,
+    "coords": [
+      5206,
+      2359,
+      5250,
+      2394
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 8,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.88,
+    "coords": [
+      5152,
+      2550,
+      5193,
+      2582
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 9,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.88,
+    "coords": [
+      5191,
+      2055,
+      5236,
+      2085
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 10,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.88,
+    "coords": [
+      5191,
+      2106,
+      5235,
+      2139
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 11,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.88,
+    "coords": [
+      5228,
+      2751,
+      5271,
+      2785
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 12,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.925,
+    "coords": [
+      5243,
+      2037,
+      5291,
+      2100
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 13,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.925,
+    "coords": [
+      5240,
+      2107,
+      5292,
+      2169
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 14,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.925,
+    "coords": [
+      5146,
+      2609,
+      5199,
+      2672
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 15,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": 0.925,
+    "coords": [
+      5239,
+      2788,
+      5296,
+      2845
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": "mobilenet",
+    "focus": 230,
+    "idx": 16,
+    "is_device_barcode": null,
+    "notes": "",
+    "rotation": 0,
+    "type": 2
+  },
+  {
+    "ai_threshold": null,
+    "coords": [
+      2301,
+      2333,
+      2857,
+      2708
+    ],
+    "device_location": 1,
+    "enabled": true,
+    "expected_text": null,
+    "exposure": 1000,
+    "feature_method": null,
+    "focus": 230,
+    "idx": 17,
+    "is_device_barcode": null,
+    "notes": "",
+    "roi_type_name": "barcode",
+    "rotation": 0,
+    "type": 1
+  }
+]

@@ -9,7 +9,7 @@
 
 ┌──────────────────────┐                            ┌──────────────────────┐
 │   CLIENT MACHINE     │                            │   SERVER MACHINE     │
-│  (This Application)  │                            │  (10.100.27.156)     │
+│  (This Application)  │                            │  (10.100.10.156)     │
 │                      │                            │                      │
 │  ┌────────────────┐  │                            │  ┌────────────────┐  │
 │  │ client_app_    │  │     HTTP API (JSON)       │  │  Server API    │  │

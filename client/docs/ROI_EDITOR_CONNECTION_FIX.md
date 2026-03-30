@@ -221,7 +221,7 @@ test_sample_text_config - Legacy product configuration for test_sample_text_conf
 **Flask `state` Object:**
 ```python
 class ServerState:
-    server_url: str = "http://10.100.27.156:5000"
+    server_url: str = "http://10.100.10.156:5000"
     connected: bool = False  # ← Key flag
     products_cache: List[Dict[str, Any]] = []
     # ... other fields
@@ -257,7 +257,7 @@ def get_products():
 **JavaScript `editorState` Object:**
 ```javascript
 const editorState = {
-    serverUrl: 'http://10.100.27.156:5000',
+    serverUrl: 'http://10.100.10.156:5000',
     connected: false,  // UI connection status
     currentProduct: null,
     // ... other fields
@@ -324,7 +324,7 @@ try {
 
 **Expected Console Output:**
 ```
-Connecting to server: http://10.100.27.156:5000
+Connecting to server: http://10.100.10.156:5000
 Server connected: {status: "connected", health: {...}, products: [...]}
 Products data: {products: [...], source: "server"}
 ✅ Populated 12 products in dropdown
@@ -336,7 +336,7 @@ Products data: {products: [...], source: "server"}
 ```bash
 curl -X POST http://localhost:5100/api/server/connect \
   -H "Content-Type: application/json" \
-  -d '{"server_url": "http://10.100.27.156:5000"}'
+  -d '{"server_url": "http://10.100.10.156:5000"}'
 ```
 
 **Expected Response:**
@@ -438,7 +438,7 @@ POST /api/server/connect
 3. **Troubleshooting:**
    - If only 2 products shown → Connection failed
    - Click "Connect" button to retry
-   - Check server is running: `curl http://10.100.27.156:5000/api/health`
+   - Check server is running: `curl http://10.100.10.156:5000/api/health`
 
 ---
 

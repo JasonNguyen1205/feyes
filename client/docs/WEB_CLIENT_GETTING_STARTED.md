@@ -120,7 +120,7 @@ start_client.sh               # Desktop client startup
                        ↓
 ┌─────────────────────────────────────────────────────────────┐
 │            AOI Server (Processing Backend)                   │
-│            http://10.100.27.156:5000                        │
+│            http://10.100.10.156:5000                        │
 │                                                              │
 │  • AI-based inspection processing                            │
 │  • ROI configuration management                              │
@@ -168,7 +168,7 @@ start_client.sh               # Desktop client startup
 The default server URL is configured in `app.py`:
 
 ```python
-server_url: str = "http://10.100.27.156:5000"
+server_url: str = "http://10.100.10.156:5000"
 ```
 
 **To change:**
@@ -234,17 +234,17 @@ Failed to connect to server
 **Solutions:**
 1. **Check server is running**
    ```bash
-   curl http://10.100.27.156:5000/api/health
+   curl http://10.100.10.156:5000/api/health
    ```
 
 2. **Check network connectivity**
    ```bash
-   ping 10.100.27.156
+   ping 10.100.10.156
    ```
 
 3. **Verify server URL in app.py**
    ```python
-   server_url: str = "http://10.100.27.156:5000"  # Check this
+   server_url: str = "http://10.100.10.156:5000"  # Check this
    ```
 
 ---
@@ -305,7 +305,7 @@ POST /api/server/connect
 Content-Type: application/json
 
 {
-  "server_url": "http://10.100.27.156:5000"
+  "server_url": "http://10.100.10.156:5000"
 }
 ```
 
@@ -522,7 +522,7 @@ sudo systemctl restart visual-aoi-web  # If using systemd
 
 ✅ **Web client starts with:** `python3 app.py` or `./start_web_client.sh`  
 ✅ **Access at:** http://localhost:5100  
-✅ **Default server:** http://10.100.27.156:5000  
+✅ **Default server:** http://10.100.10.156:5000  
 ✅ **Desktop client:** `python3 client/client_app.py` or `./start_client.sh`
 
 ---

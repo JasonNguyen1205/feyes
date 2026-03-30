@@ -11,7 +11,7 @@ The Visual AOI Client connects to a central API server to perform automated insp
 ```
 ┌─────────────────┐         API          ┌─────────────────┐
 │  CLIENT APP     │◄───────────────────►│  SERVER API     │
-│  (This folder)  │    HTTP/JSON        │  (10.100.27.156)│
+│  (This folder)  │    HTTP/JSON        │  (10.100.10.156)│
 └────────┬────────┘                      └────────┬────────┘
          │                                        │
          │ Captures Images                        │ Processes
@@ -146,7 +146,7 @@ cd ..
 ## Configuration
 
 ### Server Connection
-Default server URL: `http://10.100.27.156:5000`
+Default server URL: `http://10.100.10.156:5000`
 
 Can be changed in the UI or configured via:
 ```python
@@ -376,7 +376,7 @@ For issues or questions:
 - Check `../docs/SHARED_FOLDER_ACCESS.md` for API details
 - Review `example_integration.py` for usage examples
 - Run unit tests to verify functionality
-- Check server logs at `http://10.100.27.156:5000/logs`
+- Check server logs at `http://10.100.10.156:5000/logs`
 
 ## Change Log
 

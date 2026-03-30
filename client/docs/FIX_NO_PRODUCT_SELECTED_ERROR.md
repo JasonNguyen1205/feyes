@@ -166,11 +166,11 @@ async function closeSession() {
 2. Select product "20003548" ✅
 3. Create session ✅
    → appState.sessionProduct = "20003548" ✅
-   → appState.serverUrl = "http://10.100.27.156:5000" ✅
+   → appState.serverUrl = "http://10.100.10.156:5000" ✅
 4. Run inspection ✅
 5. Click "Save as Golden Sample" ✅
    → Product found: "20003548" ✅
-   → Server URL found: "http://10.100.27.156:5000" ✅
+   → Server URL found: "http://10.100.10.156:5000" ✅
    → Request sent successfully ✅
 ```
 
@@ -198,7 +198,7 @@ These functions now have access to session data:
 ### saveAsGoldenSample()
 ```javascript
 const productName = appState.sessionProduct; // ✅ Now available
-const serverUrl = appState.serverUrl || 'http://10.100.27.156:5000';
+const serverUrl = appState.serverUrl || 'http://10.100.10.156:5000';
 ```
 
 ### Future Functions
@@ -284,7 +284,7 @@ To verify the fix works:
 ```javascript
 // After connecting
 console.log('Server URL:', appState.serverUrl);
-// Expected: "http://10.100.27.156:5000"
+// Expected: "http://10.100.10.156:5000"
 
 // After creating session
 console.log('Product:', appState.sessionProduct);
@@ -307,7 +307,7 @@ appState
 //   sessionActive: true,
 //   sessionId: "...",
 //   sessionProduct: "20003548",
-//   serverUrl: "http://10.100.27.156:5000",
+//   serverUrl: "http://10.100.10.156:5000",
 //   currentResult: {...}
 // }
 ```
@@ -337,7 +337,7 @@ If issues occur, revert these lines:
 
 - `docs/GOLDEN_SAMPLE_SAVE_BUTTON.md` - Feature documentation
 - `docs/SHARED_FOLDER_IMAGE_LOADING.md` - Image handling
-- Server Swagger API: `http://10.100.27.156:5000/apidocs/`
+- Server Swagger API: `http://10.100.10.156:5000/apidocs/`
 
 ## Version History
 

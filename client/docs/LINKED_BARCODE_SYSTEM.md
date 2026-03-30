@@ -1,7 +1,7 @@
 # Linked Barcode System Documentation
 
 **Date:** October 20, 2025  
-**API Schema:** http://10.100.27.156:5000/apispec_1.json  
+**API Schema:** http://10.100.10.156:5000/apispec_1.json  
 **Status:** ✅ DOCUMENTED & IMPLEMENTED
 
 ## Overview
@@ -142,7 +142,7 @@ Output (Linked):  "1897848-0001555-118714"
 
 ```javascript
 // Clean barcode format - handles both linked and legacy formats
-// API Schema Reference: http://10.100.27.156:5000/apispec_1.json
+// API Schema Reference: http://10.100.10.156:5000/apispec_1.json
 // 
 // device_summaries[device_id]["barcode"]: LINKED/VALIDATED barcode (string)
 //   - Transformed by external API
@@ -397,7 +397,7 @@ The `cleanBarcode()` function handles both formats:
 ### Get API Schema
 
 ```bash
-curl http://10.100.27.156:5000/apispec_1.json
+curl http://10.100.10.156:5000/apispec_1.json
 ```
 
 ### Inspect Endpoint
@@ -442,7 +442,7 @@ POST /api/session/{session_id}/inspect
 ## Related Documentation
 
 - **Barcode Format Fix:** `docs/BARCODE_FORMAT_FIX.md`
-- **API Schema:** http://10.100.27.156:5000/apispec_1.json
+- **API Schema:** http://10.100.10.156:5000/apispec_1.json
 - **Server Documentation:** Visual AOI Server docs
 
 ## Conclusion

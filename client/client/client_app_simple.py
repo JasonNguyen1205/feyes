@@ -45,7 +45,7 @@ class VisualAOIClient:
         self.session_status_var = tk.StringVar(value="No Session")
         
         # API client
-        self.server_url = "http://10.100.27.156:5000"
+        self.server_url = "http://10.100.10.156:5000"
         self.session_id = None
         
         # Session management

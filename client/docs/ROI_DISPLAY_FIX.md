@@ -331,7 +331,7 @@ client_rois = normalize_roi_list(server_rois, "20003548")
 
 ```bash
 # Direct server API call
-curl -s http://10.100.27.156:5000/api/products/20003548/rois | jq '.rois[0]'
+curl -s http://10.100.10.156:5000/api/products/20003548/rois | jq '.rois[0]'
 
 # Should show: idx, type, coords, device_location (server format)
 ```

@@ -1,0 +1,128 @@
+[
+  {
+    "idx": 1,
+    "type": 2,
+    "coords": [
+      1716,
+      975,
+      2423,
+      1399
+    ],
+    "focus": 310,
+    "exposure": 800,
+    "ai_threshold": 0.8,
+    "feature_method": "mobilenet",
+    "rotation": 0,
+    "device_location": 1,
+    "expected_text": null,
+    "is_device_barcode": null
+  },
+  {
+    "idx": 2,
+    "type": 2,
+    "coords": [
+      2488,
+      996,
+      3195,
+      1455
+    ],
+    "focus": 310,
+    "exposure": 800,
+    "ai_threshold": 0.8,
+    "feature_method": "mobilenet",
+    "rotation": 0,
+    "device_location": 1,
+    "expected_text": null,
+    "is_device_barcode": null
+  },
+  {
+    "idx": 3,
+    "type": 2,
+    "coords": [
+      3242,
+      988,
+      4185,
+      1496
+    ],
+    "focus": 310,
+    "exposure": 800,
+    "ai_threshold": 0.8,
+    "feature_method": "mobilenet",
+    "rotation": 0,
+    "device_location": 1,
+    "expected_text": null,
+    "is_device_barcode": null
+  },
+  {
+    "idx": 4,
+    "type": 2,
+    "coords": [
+      4256,
+      1048,
+      4883,
+      1553
+    ],
+    "focus": 310,
+    "exposure": 800,
+    "ai_threshold": 0.8,
+    "feature_method": "mobilenet",
+    "rotation": 0,
+    "device_location": 1,
+    "expected_text": null,
+    "is_device_barcode": null
+  },
+  {
+    "idx": 5,
+    "type": 2,
+    "coords": [
+      4967,
+      1073,
+      5535,
+      1578
+    ],
+    "focus": 310,
+    "exposure": 800,
+    "ai_threshold": 0.8,
+    "feature_method": "mobilenet",
+    "rotation": 0,
+    "device_location": 1,
+    "expected_text": null,
+    "is_device_barcode": null
+  },
+  {
+    "idx": 6,
+    "type": 2,
+    "coords": [
+      5627,
+      1115,
+      6549,
+      1670
+    ],
+    "focus": 310,
+    "exposure": 800,
+    "ai_threshold": 0.8,
+    "feature_method": "mobilenet",
+    "rotation": 0,
+    "device_location": 1,
+    "expected_text": null,
+    "is_device_barcode": null
+  },
+  {
+    "idx": 7,
+    "type": 1,
+    "coords": [
+      505,
+      4240,
+      1181,
+      4599
+    ],
+    "focus": 310,
+    "exposure": 800,
+    "ai_threshold": 0.8,
+    "feature_method": "mobilenet",
+    "rotation": 0,
+    "device_location": 1,
+    "expected_text": null,
+    "is_device_barcode": null
+  }
+]

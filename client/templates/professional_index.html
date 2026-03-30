@@ -11,8 +11,8 @@
     <meta name="force-rendering" content="webkit">
 
     <!-- Resource Hints for Faster Loading -->
-    <link rel="preconnect" href="http://10.100.27.156:5000">
-    <link rel="dns-prefetch" href="http://10.100.27.156:5000">
+    <link rel="preconnect" href="http://10.100.10.156:5000">
+    <link rel="dns-prefetch" href="http://10.100.10.156:5000">
 
     <!-- Google Fonts - Titillium Web -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2518,7 +2518,7 @@
         }
 
         // Clean barcode format - handles both linked and legacy formats
-        // API Schema Reference: http://10.100.27.156:5000/apispec_1.json
+        // API Schema Reference: http://10.100.10.156:5000/apispec_1.json
         // 
         // device_summaries[device_id]["barcode"]: LINKED/VALIDATED barcode (string)
         //   - Transformed by external API: POST http://10.100.10.83:5000/api/ProcessLock/FA/GetLinkData
@@ -3290,7 +3290,7 @@
                 });
 
                 // Send to CLIENT proxy endpoint (avoids CORS issues)
-                // Client will forward to server at http://10.100.27.156:5000
+                // Client will forward to server at http://10.100.10.156:5000
                 const saveEndpoint = `/api/golden-sample/save`;
                 console.log('Sending request to:', saveEndpoint, '(client proxy → server)');
 
@@ -3456,14 +3456,14 @@
                     
                     // Clear the input so user knows they need to enter it
                     document.getElementById('serverUrl').value = '';
-                    document.getElementById('serverUrl').placeholder = 'Enter server IP (e.g., http://10.100.27.156:5000)';
+                    document.getElementById('serverUrl').placeholder = 'Enter server IP (e.g., http://10.100.10.156:5000)';
                 }
             } catch (error) {
                 console.error('Failed to check localhost server:', error);
                 // If check fails, assume localhost not available
                 updateConnectionStatus('disconnected', 'Server not configured - please enter server IP');
                 document.getElementById('serverUrl').value = '';
-                document.getElementById('serverUrl').placeholder = 'Enter server IP (e.g., http://10.100.27.156:5000)';
+                document.getElementById('serverUrl').placeholder = 'Enter server IP (e.g., http://10.100.10.156:5000)';
             }
 
             // Check camera status on page load (handles webpage refresh)

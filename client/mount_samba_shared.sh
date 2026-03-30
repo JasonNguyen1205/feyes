@@ -1,9 +1,9 @@
 #!/bin/bash
 # Mount shared folder from server via Samba/CIFS
-# Server: 10.100.27.156
-# Share: \\10.100.27.156\visual-aoi-shared
+# Server: 10.100.10.156
+# Share: \\10.100.10.156\visual-aoi-shared
 
-SERVER_IP="10.100.27.156"
+SERVER_IP="10.100.10.156"
 SHARE_NAME="visual-aoi-shared"
 MOUNT_POINT="/mnt/visual-aoi-shared"
 USERNAME="jason_nguyen"

@@ -1,14 +1,14 @@
 # NFS Server Setup for Visual AOI Server
 
 **Date**: October 13, 2025  
-**Server**: 10.100.27.156 (FVN-ML-001)  
+**Server**: 10.100.10.156 (FVN-ML-001)  
 **Status**: ✅ **CONFIGURED AND ACTIVE**
 
 ---
 
 ## 📋 Overview
 
-The Visual AOI Server at 10.100.27.156 is now configured as an NFS server to share inspection data and golden samples with client machines over the network.
+The Visual AOI Server at 10.100.10.156 is now configured as an NFS server to share inspection data and golden samples with client machines over the network.
 
 ---
 
@@ -17,7 +17,7 @@ The Visual AOI Server at 10.100.27.156 is now configured as an NFS server to sha
 ### 1. **Session Data** (Inspection Results & Images)
 
 **Server Path**: `/home/jason_nguyen/visual-aoi-server/shared`  
-**Network Export**: `10.100.27.156:/home/jason_nguyen/visual-aoi-server/shared`  
+**Network Export**: `10.100.10.156:/home/jason_nguyen/visual-aoi-server/shared`  
 **Client Mount Point**: `/mnt/visual-aoi-shared`
 
 **Contents**:
@@ -29,7 +29,7 @@ The Visual AOI Server at 10.100.27.156 is now configured as an NFS server to sha
 ### 2. **Golden Samples** (Reference Images)
 
 **Server Path**: `/home/jason_nguyen/visual-aoi-server/config/products`  
-**Network Export**: `10.100.27.156:/home/jason_nguyen/visual-aoi-server/config/products`  
+**Network Export**: `10.100.10.156:/home/jason_nguyen/visual-aoi-server/config/products`  
 **Client Mount Point**: `/mnt/visual-aoi-shared/golden`
 
 **Contents**:
@@ -140,10 +140,10 @@ sudo mkdir -p /mnt/visual-aoi-shared/golden
 
 ```bash
 # Mount shared directory
-sudo mount -t nfs 10.100.27.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared
+sudo mount -t nfs 10.100.10.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared
 
 # Mount golden samples
-sudo mount -t nfs 10.100.27.156:/home/jason_nguyen/visual-aoi-server/config/products /mnt/visual-aoi-shared/golden
+sudo mount -t nfs 10.100.10.156:/home/jason_nguyen/visual-aoi-server/config/products /mnt/visual-aoi-shared/golden
 ```
 
 **Option B: Automatic Mount on Boot (recommended)**
@@ -158,8 +158,8 @@ Add these lines:
 
 ```
 # Visual AOI Server NFS Shares
-10.100.27.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared nfs defaults,_netdev 0 0
-10.100.27.156:/home/jason_nguyen/visual-aoi-server/config/products /mnt/visual-aoi-shared/golden nfs defaults,_netdev 0 0
+10.100.10.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared nfs defaults,_netdev 0 0
+10.100.10.156:/home/jason_nguyen/visual-aoi-server/config/products /mnt/visual-aoi-shared/golden nfs defaults,_netdev 0 0
 ```
 
 Mount all:
@@ -186,8 +186,8 @@ rm /mnt/visual-aoi-shared/test_file.txt
 **Expected Output**:
 
 ```
-10.100.27.156:/home/jason_nguyen/visual-aoi-server/shared         100G   50G   50G  50% /mnt/visual-aoi-shared
-10.100.27.156:/home/jason_nguyen/visual-aoi-server/config/products 100G   50G   50G  50% /mnt/visual-aoi-shared/golden
+10.100.10.156:/home/jason_nguyen/visual-aoi-server/shared         100G   50G   50G  50% /mnt/visual-aoi-shared
+10.100.10.156:/home/jason_nguyen/visual-aoi-server/config/products 100G   50G   50G  50% /mnt/visual-aoi-shared/golden
 ```
 
 ---
@@ -289,8 +289,8 @@ sudo systemctl status nfs-kernel-server
 sudo exportfs -v
 
 # On client - check connectivity
-ping 10.100.27.156
-telnet 10.100.27.156 2049
+ping 10.100.10.156
+telnet 10.100.10.156 2049
 
 # On client - check NFS client is installed
 dpkg -l | grep nfs-common
@@ -322,7 +322,7 @@ sudo exportfs -v | grep no_root_squash
 ```bash
 # On client - unmount and remount
 sudo umount -f /mnt/visual-aoi-shared
-sudo mount -t nfs 10.100.27.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared
+sudo mount -t nfs 10.100.10.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared
 
 # On server - re-export
 sudo exportfs -ra
@@ -335,10 +335,10 @@ sudo exportfs -ra
 ```bash
 # On client - mount with performance options
 sudo mount -t nfs -o rsize=8192,wsize=8192,timeo=14,intr \
-  10.100.27.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared
+  10.100.10.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared
 
 # Or in /etc/fstab:
-10.100.27.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared nfs rsize=8192,wsize=8192,timeo=14,intr,_netdev 0 0
+10.100.10.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared nfs rsize=8192,wsize=8192,timeo=14,intr,_netdev 0 0
 ```
 
 ---
@@ -436,7 +436,7 @@ RPCNFSDCOUNT=16
 ```bash
 # High performance mount options
 mount -t nfs -o rsize=131072,wsize=131072,hard,timeo=600,retrans=2,_netdev \
-  10.100.27.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared
+  10.100.10.156:/home/jason_nguyen/visual-aoi-server/shared /mnt/visual-aoi-shared
 ```
 
 **Mount Options Explained**:
@@ -480,7 +480,7 @@ Client Setup:
 ✅ **Permissions**: Read-write with no_root_squash  
 ✅ **Auto-start**: Enabled on boot  
 
-**Server**: 10.100.27.156  
+**Server**: 10.100.10.156  
 **Exports**:
 
 - `/home/jason_nguyen/visual-aoi-server/shared` → Client: `/mnt/visual-aoi-shared`

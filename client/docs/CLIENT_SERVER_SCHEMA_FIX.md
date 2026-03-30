@@ -212,7 +212,7 @@ interface ROIResult {
 
 2. **Open Browser:**
    - Navigate to http://localhost:5100
-   - Connect to server: http://10.100.27.156:5000
+   - Connect to server: http://10.100.10.156:5000
 
 3. **Run Inspection:**
    - Select product (e.g., 20003548)
@@ -346,7 +346,7 @@ export interface InspectionResult {
 
 ## Related Documentation
 
-- **Server API:** http://10.100.27.156:5000/apidocs/
+- **Server API:** http://10.100.10.156:5000/apidocs/
 - **Schema Endpoints:**
   - `/api/schema/roi` - ROI structure
   - `/api/schema/result` - Result structure

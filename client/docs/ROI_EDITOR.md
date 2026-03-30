@@ -44,7 +44,7 @@ Navigate to the ROI editor from the main interface:
 
 ### 2. Connect to Server
 
-1. Enter server URL (default: `http://10.100.27.156:5000`)
+1. Enter server URL (default: `http://10.100.10.156:5000`)
 2. Click **Connect**
 3. Wait for "✓ Connected" status
 

@@ -2,7 +2,7 @@
 # Mount shared folder from server via NFS
 # This script mounts /mnt/visual-aoi-shared from the server
 
-SERVER_IP="10.100.27.156"
+SERVER_IP="10.100.10.156"
 MOUNT_POINT="/mnt/visual-aoi-shared"
 SERVER_PATH="/mnt/visual-aoi-shared"
 

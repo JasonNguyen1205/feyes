@@ -135,7 +135,7 @@ def test_color_roi_validation():
     print("✅ ALL VALIDATION TESTS PASSED")
     print("=" * 70)
     print("\nReady to POST to server:")
-    print(f"  POST http://10.100.27.156:5000/api/products/test_product_with_color/config")
+    print(f"  POST http://10.100.10.156:5000/api/products/test_product_with_color/config")
     print(f"  Body: {json.dumps(server_config, indent=2)[:200]}...")
 
 if __name__ == '__main__':

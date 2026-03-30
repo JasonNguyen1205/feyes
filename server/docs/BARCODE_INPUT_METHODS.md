@@ -56,7 +56,7 @@ The server detects barcodes from the inspection image using configured barcode R
 ### API Request Example
 
 ```bash
-curl -X POST "http://10.100.27.156:5000/api/session/d34614ce/inspect" \
+curl -X POST "http://10.100.10.156:5000/api/session/d34614ce/inspect" \
   -H "Content-Type: application/json" \
   -d '{
     "image_filename": "device_image.jpg"
@@ -111,7 +111,7 @@ The client sends device barcodes directly as API parameters, bypassing ROI detec
 **API Request Example**:
 
 ```bash
-curl -X POST "http://10.100.27.156:5000/api/session/d34614ce/inspect" \
+curl -X POST "http://10.100.10.156:5000/api/session/d34614ce/inspect" \
   -H "Content-Type: application/json" \
   -d '{
     "image_filename": "device_image.jpg",
@@ -144,7 +144,7 @@ curl -X POST "http://10.100.27.156:5000/api/session/d34614ce/inspect" \
 **Alternative List Format**:
 
 ```bash
-curl -X POST "http://10.100.27.156:5000/api/session/d34614ce/inspect" \
+curl -X POST "http://10.100.10.156:5000/api/session/d34614ce/inspect" \
   -H "Content-Type: application/json" \
   -d '{
     "image_filename": "device_image.jpg",
@@ -164,7 +164,7 @@ curl -X POST "http://10.100.27.156:5000/api/session/d34614ce/inspect" \
 **API Request Example**:
 
 ```bash
-curl -X POST "http://10.100.27.156:5000/api/session/d34614ce/inspect" \
+curl -X POST "http://10.100.10.156:5000/api/session/d34614ce/inspect" \
   -H "Content-Type: application/json" \
   -d '{
     "image_filename": "device_image.jpg",
@@ -290,7 +290,7 @@ scanned_barcode = "1897848 S/N: 65514 3969 1006 V"
 
 # Send to server for inspection
 response = requests.post(
-    'http://10.100.27.156:5000/api/session/d34614ce/inspect',
+    'http://10.100.10.156:5000/api/session/d34614ce/inspect',
     json={
         'image_filename': 'device_image.jpg',
         'device_barcodes': {
@@ -334,7 +334,7 @@ var json = JsonSerializer.Serialize(requestData);
 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
 var response = await client.PostAsync(
-    "http://10.100.27.156:5000/api/session/d34614ce/inspect",
+    "http://10.100.10.156:5000/api/session/d34614ce/inspect",
     content
 );
 
@@ -361,7 +361,7 @@ import axios from 'axios';
 const scannedBarcode = "1897848 S/N: 65514 3969 1006 V";
 
 const response = await axios.post(
-  'http://10.100.27.156:5000/api/session/d34614ce/inspect',
+  'http://10.100.10.156:5000/api/session/d34614ce/inspect',
   {
     image_filename: 'device_image.jpg',
     device_barcode: scannedBarcode  // Legacy format (server will link)

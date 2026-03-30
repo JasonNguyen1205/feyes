@@ -8,7 +8,7 @@
 ### Symptoms
 
 ```
-INFO:__main__:Sending to server: http://10.100.27.156:5000/api/products/20003548/config
+INFO:__main__:Sending to server: http://10.100.10.156:5000/api/products/20003548/config
 ERROR:__main__:❌ Server returned 404: <!doctype html>...The requested URL was not found on the server
 ```
 
@@ -169,11 +169,11 @@ Overall: ✅ ALL TESTS PASSED
 
 ```bash
 # Test GET endpoint
-curl -s http://10.100.27.156:5000/api/products/20003548/rois | jq '.rois | length'
+curl -s http://10.100.10.156:5000/api/products/20003548/rois | jq '.rois | length'
 # Output: 6
 
 # Verify server format
-curl -s http://10.100.27.156:5000/api/products/20003548/rois | jq '.rois[0] | keys'
+curl -s http://10.100.10.156:5000/api/products/20003548/rois | jq '.rois[0] | keys'
 # Output: ["ai_threshold", "coords", "device_location", "exposure", ...]
 ```
 
@@ -324,10 +324,10 @@ Always use these endpoints for ROI configuration:
 tail -f /home/jason_nguyen/visual-aoi-server/logs/server.log
 
 # Test endpoint manually
-curl -X GET http://10.100.27.156:5000/api/products/20003548/rois | jq '.'
+curl -X GET http://10.100.10.156:5000/api/products/20003548/rois | jq '.'
 
 # Verify payload format
-curl -X POST http://10.100.27.156:5000/api/products/test/rois \
+curl -X POST http://10.100.10.156:5000/api/products/test/rois \
   -H "Content-Type: application/json" \
   -d '{"rois": [{"idx": 1, "type": 1, "coords": [0,0,100,100], "device_location": 1}]}'
 ```

@@ -3,7 +3,7 @@
 
 **Date:** October 3, 2025  
 **Status:** ✅ COMPLIANT  
-**Server:** http://10.100.27.156:5000  
+**Server:** http://10.100.10.156:5000  
 **Schema Version:** ROI v3.0, Result v2.0
 
 ---
@@ -17,7 +17,7 @@ Successfully identified and fixed a **critical schema mismatch** between client 
 ## 🔍 Schema Verification
 
 ### Server ROI Structure (Authoritative)
-**Source:** `GET http://10.100.27.156:5000/api/schema/roi`
+**Source:** `GET http://10.100.10.156:5000/api/schema/roi`
 
 ```json
 {
@@ -114,7 +114,7 @@ Result: ✅ FULLY COMPLIANT
 
 ## 📊 Server Barcode Priority Logic
 
-**Source:** `GET http://10.100.27.156:5000/api/schema/result`
+**Source:** `GET http://10.100.10.156:5000/api/schema/result`
 
 The server uses this priority order for selecting device barcodes in inspection results:
 
@@ -232,8 +232,8 @@ def normalize_roi(r):
 
 1. **Check Server Schema First**
    ```bash
-   curl http://10.100.27.156:5000/api/schema/roi | python3 -m json.tool
-   curl http://10.100.27.156:5000/api/schema/result | python3 -m json.tool
+   curl http://10.100.10.156:5000/api/schema/roi | python3 -m json.tool
+   curl http://10.100.10.156:5000/api/schema/result | python3 -m json.tool
    ```
 
 2. **Verify Field Names**
@@ -243,7 +243,7 @@ def normalize_roi(r):
 
 3. **Check Version Compatibility**
    ```bash
-   curl http://10.100.27.156:5000/api/schema/version | python3 -m json.tool
+   curl http://10.100.10.156:5000/api/schema/version | python3 -m json.tool
    ```
 
 4. **Review Backward Compatibility**
@@ -279,8 +279,8 @@ def normalize_roi(r):
 ## 📞 References
 
 **Server API:**
-- Base URL: `http://10.100.27.156:5000`
-- API Docs: `http://10.100.27.156:5000/apidocs/`
+- Base URL: `http://10.100.10.156:5000`
+- API Docs: `http://10.100.10.156:5000/apidocs/`
 
 **Schema Endpoints:**
 - ROI Structure: `GET /api/schema/roi`

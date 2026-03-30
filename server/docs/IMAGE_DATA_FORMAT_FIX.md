@@ -179,8 +179,8 @@ response = requests.post(f"http://localhost:5000/api/session/{session_id}/proces
 ✅ **Code Updated:** server/simple_api_server.py (line 1540-1590)  
 ✅ **Server Restarted:** October 3, 2025 21:05:54  
 ✅ **GPU Detected:** NVIDIA GeForce RTX 5080 x2  
-✅ **Server Running:** http://10.100.27.156:5000  
-✅ **Swagger UI:** http://10.100.27.156:5000/apidocs/  
+✅ **Server Running:** http://10.100.10.156:5000  
+✅ **Swagger UI:** http://10.100.10.156:5000/apidocs/  
 
 ## Related Issues
 

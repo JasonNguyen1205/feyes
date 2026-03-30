@@ -87,7 +87,7 @@ Removed all references to `sample_text` from function documentation.
 ### Server API Confirmation
 
 ```bash
-curl -s http://10.100.27.156:5000/api/products/20003548/rois | jq '.rois[0] | keys'
+curl -s http://10.100.10.156:5000/api/products/20003548/rois | jq '.rois[0] | keys'
 ```
 
 Output shows:

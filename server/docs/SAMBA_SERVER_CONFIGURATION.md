@@ -1,7 +1,7 @@
 # Samba/CIFS Server Configuration - Visual AOI Server
 
 **Date**: October 13, 2025  
-**Server**: 10.100.27.156 (FVN-ML-001)  
+**Server**: 10.100.10.156 (FVN-ML-001)  
 **Status**: ✅ **ALREADY CONFIGURED AND OPERATIONAL**
 
 ---
@@ -32,7 +32,7 @@ The Visual AOI Server is using **Samba/CIFS** (not NFS) to share folders with Wi
 ### 1. **visual-aoi-shared** (Primary Share)
 
 **Path**: `/home/jason_nguyen/visual-aoi-server/shared`  
-**Network Path**: `\\10.100.27.156\visual-aoi-shared`  
+**Network Path**: `\\10.100.10.156\visual-aoi-shared`  
 **Purpose**: Session data, inspection results, ROI images
 
 **Contents**:
@@ -60,7 +60,7 @@ The Visual AOI Server is using **Samba/CIFS** (not NFS) to share folders with Wi
 ### 2. **visual-aoi-server** (Full Server Share)
 
 **Path**: `/home/jason_nguyen/visual-aoi-server`  
-**Network Path**: `\\10.100.27.156\visual-aoi-server`  
+**Network Path**: `\\10.100.10.156\visual-aoi-server`  
 **Purpose**: Full server access (config, code, documentation)
 
 **Contents**:
@@ -90,7 +90,7 @@ The Visual AOI Server is using **Samba/CIFS** (not NFS) to share folders with Wi
 ### 3. **visual-aoi-client** (Client Application Share)
 
 **Path**: `/home/jason_nguyen/visual-aoi-client`  
-**Network Path**: `\\10.100.27.156\visual-aoi-client`  
+**Network Path**: `\\10.100.10.156\visual-aoi-client`  
 **Purpose**: Client application code and resources
 
 ---
@@ -105,7 +105,7 @@ The Visual AOI Server is using **Samba/CIFS** (not NFS) to share folders with Wi
 | 10.100.27.82 | visual-aoi-server | Oct 10, 10:51 AM | ✅ Active |
 | 10.100.27.82 | visual-aoi-client | Oct 10, 10:52 AM | ✅ Active |
 | 10.100.27.112 | visual-aoi-shared | Oct 13, 11:02 AM | ✅ Active |
-| 10.100.27.156 | visual-aoi-shared | Oct 3, 8:19 PM | ✅ Active (localhost) |
+| 10.100.10.156 | visual-aoi-shared | Oct 3, 8:19 PM | ✅ Active (localhost) |
 
 **Total Active Connections**: 3 unique clients
 
@@ -144,7 +144,7 @@ sudo smbpasswd -x username
 1. Open **File Explorer**
 2. Right-click **This PC** → **Map network drive**
 3. Choose drive letter (e.g., Z:)
-4. Folder: `\\10.100.27.156\visual-aoi-shared`
+4. Folder: `\\10.100.10.156\visual-aoi-shared`
 5. Check **"Connect using different credentials"**
 6. Enter:
    - Username: `jason_nguyen`
@@ -156,10 +156,10 @@ sudo smbpasswd -x username
 
 ```cmd
 REM Map visual-aoi-shared to Z: drive
-net use Z: \\10.100.27.156\visual-aoi-shared /user:jason_nguyen /persistent:yes
+net use Z: \\10.100.10.156\visual-aoi-shared /user:jason_nguyen /persistent:yes
 
 REM Map visual-aoi-server to Y: drive
-net use Y: \\10.100.27.156\visual-aoi-server /user:jason_nguyen /persistent:yes
+net use Y: \\10.100.10.156\visual-aoi-server /user:jason_nguyen /persistent:yes
 
 REM View mapped drives
 net use
@@ -170,7 +170,7 @@ net use
 Simply use in code or File Explorer:
 
 ```
-\\10.100.27.156\visual-aoi-shared\sessions\uuid\output\roi_3.jpg
+\\10.100.10.156\visual-aoi-shared\sessions\uuid\output\roi_3.jpg
 ```
 
 ---
@@ -193,7 +193,7 @@ sudo apt-get install cifs-utils
 sudo mkdir -p /mnt/visual-aoi-shared
 
 # Mount share
-sudo mount -t cifs //10.100.27.156/visual-aoi-shared /mnt/visual-aoi-shared \
+sudo mount -t cifs //10.100.10.156/visual-aoi-shared /mnt/visual-aoi-shared \
   -o username=jason_nguyen,password=YOUR_PASSWORD,uid=$(id -u),gid=$(id -g)
 
 # Verify
@@ -224,7 +224,7 @@ sudo chmod 600 /etc/samba-credentials
 4. Add to `/etc/fstab`:
 
 ```
-//10.100.27.156/visual-aoi-shared /mnt/visual-aoi-shared cifs credentials=/etc/samba-credentials,uid=1000,gid=1000,_netdev 0 0
+//10.100.10.156/visual-aoi-shared /mnt/visual-aoi-shared cifs credentials=/etc/samba-credentials,uid=1000,gid=1000,_netdev 0 0
 ```
 
 5. Mount:
@@ -263,7 +263,7 @@ The Visual AOI API returns file paths that work with Samba mounts:
 **Convert to Windows**:
 
 - If mounted as Z: drive: `Z:\sessions\uuid\output\roi_3.jpg`
-- Or UNC path: `\\10.100.27.156\visual-aoi-shared\sessions\uuid\output\roi_3.jpg`
+- Or UNC path: `\\10.100.10.156\visual-aoi-shared\sessions\uuid\output\roi_3.jpg`
 
 **Python Example (Windows)**:
 
@@ -279,7 +279,7 @@ if linux_path.startswith('/mnt/visual-aoi-shared'):
     windows_path = linux_path.replace('/mnt/visual-aoi-shared', 'Z:').replace('/', '\\')
     
     # Option 2: UNC path
-    unc_path = linux_path.replace('/mnt/visual-aoi-shared', '\\\\10.100.27.156\\visual-aoi-shared').replace('/', '\\')
+    unc_path = linux_path.replace('/mnt/visual-aoi-shared', '\\\\10.100.10.156\\visual-aoi-shared').replace('/', '\\')
 
 # Use the path
 from PIL import Image
@@ -358,19 +358,19 @@ sudo systemctl restart smbd
 1. **Check connectivity**:
 
 ```cmd
-ping 10.100.27.156
+ping 10.100.10.156
 ```
 
 2. **Test SMB port**:
 
 ```cmd
-telnet 10.100.27.156 445
+telnet 10.100.10.156 445
 ```
 
 3. **Try direct UNC path**:
 
 ```cmd
-\\10.100.27.156\visual-aoi-shared
+\\10.100.10.156\visual-aoi-shared
 ```
 
 4. **Clear credentials cache**:
@@ -406,7 +406,7 @@ sudo apt-get install cifs-utils
 
 ```bash
 # Test with verbose output
-sudo mount -t cifs //10.100.27.156/visual-aoi-shared /mnt/test \
+sudo mount -t cifs //10.100.10.156/visual-aoi-shared /mnt/test \
   -o username=jason_nguyen,password=PASS,vers=3.0 -v
 ```
 
@@ -414,7 +414,7 @@ sudo mount -t cifs //10.100.27.156/visual-aoi-shared /mnt/test \
 
 ```bash
 # Try different SMB versions
-sudo mount -t cifs //10.100.27.156/visual-aoi-shared /mnt/test \
+sudo mount -t cifs //10.100.10.156/visual-aoi-shared /mnt/test \
   -o username=jason_nguyen,password=PASS,vers=2.1
 ```
 
@@ -428,7 +428,7 @@ sudo mount -t cifs //10.100.27.156/visual-aoi-shared /mnt/test \
 
 ```bash
 # Mount with proper uid/gid
-sudo mount -t cifs //10.100.27.156/visual-aoi-shared /mnt/test \
+sudo mount -t cifs //10.100.10.156/visual-aoi-shared /mnt/test \
   -o username=jason_nguyen,password=PASS,uid=$(id -u),gid=$(id -g)
 ```
 
@@ -461,7 +461,7 @@ sudo chmod -R 755 /home/jason_nguyen/visual-aoi-server/shared
 ```bash
 # Test bandwidth
 iperf3 -s  # On server
-iperf3 -c 10.100.27.156  # On client
+iperf3 -c 10.100.10.156  # On client
 ```
 
 2. **Optimize Samba** (add to `/etc/samba/smb.conf` under `[global]`):
@@ -645,7 +645,7 @@ sudo journalctl -u smbd -f                    # System logs
 
 ```cmd
 REM Map drive
-net use Z: \\10.100.27.156\visual-aoi-shared /user:jason_nguyen
+net use Z: \\10.100.10.156\visual-aoi-shared /user:jason_nguyen
 
 REM List mapped drives
 net use
@@ -657,21 +657,21 @@ REM Clear all connections
 net use * /delete
 
 REM View shared resources
-net view \\10.100.27.156
+net view \\10.100.10.156
 ```
 
 ### Client Commands (Linux)
 
 ```bash
 # Mount
-sudo mount -t cifs //10.100.27.156/visual-aoi-shared /mnt/share \
+sudo mount -t cifs //10.100.10.156/visual-aoi-shared /mnt/share \
   -o username=jason_nguyen,password=PASS
 
 # Unmount
 sudo umount /mnt/share
 
 # List available shares
-smbclient -L //10.100.27.156 -U jason_nguyen
+smbclient -L //10.100.10.156 -U jason_nguyen
 
 # Check mount
 df -h | grep cifs
@@ -686,22 +686,22 @@ mount | grep cifs
 
 - **Service**: Running for 1 week 2 days
 - **Active Shares**: 3 shares configured
-- **Connected Clients**: 3 active clients (10.100.27.82, 10.100.27.112, 10.100.27.156)
+- **Connected Clients**: 3 active clients (10.100.27.82, 10.100.27.112, 10.100.10.156)
 - **Authentication**: Password-based, user `jason_nguyen`
 - **Auto-start**: Enabled on boot
 - **Performance**: Good (1.5GB memory usage)
 
 **Network Paths**:
 
-- `\\10.100.27.156\visual-aoi-shared` - Primary share for inspection data
-- `\\10.100.27.156\visual-aoi-server` - Full server access
-- `\\10.100.27.156\visual-aoi-client` - Client application code
+- `\\10.100.10.156\visual-aoi-shared` - Primary share for inspection data
+- `\\10.100.10.156\visual-aoi-server` - Full server access
+- `\\10.100.10.156\visual-aoi-client` - Client application code
 
 **Next Steps**: None needed - system is working perfectly! Continue using Samba for file sharing.
 
 ---
 
 **Documentation Date**: October 13, 2025  
-**Server**: 10.100.27.156 (FVN-ML-001)  
+**Server**: 10.100.10.156 (FVN-ML-001)  
 **Protocol**: Samba/CIFS (SMB)  
 **Status**: Production Ready ✅

@@ -569,7 +569,7 @@ Cmd + Shift + R (Mac)
 
 ## Related Documentation
 
-- Server Swagger API: `http://10.100.27.156:5000/apidocs/`
+- Server Swagger API: `http://10.100.10.156:5000/apidocs/`
 - ROI Schema: `/api/schema/roi`
 - App.py normalization: `roi_from_server_format()`, `roi_to_server_format()`
 

@@ -227,7 +227,7 @@ Device 1: FAIL
 
 ## Server API for ROI configurations, Inspection Results schema:
 
-- Server API: http://10.100.27.156:5000/apidocs/
+- Server API: http://10.100.10.156:5000/apidocs/
 
 Schema Endpoints:
 - /api/schema/roi - ROI structure specification

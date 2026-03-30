@@ -8,7 +8,7 @@ import requests
 import json
 import sys
 
-SERVER_URL = "http://10.100.27.156:5000"
+SERVER_URL = "http://10.100.10.156:5000"
 TEST_PRODUCT = "20003548"
 
 

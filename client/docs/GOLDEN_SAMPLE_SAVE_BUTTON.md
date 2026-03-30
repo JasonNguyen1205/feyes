@@ -83,7 +83,7 @@ async function saveAsGoldenSample(roiId, roiType) {
     formData.append('roi_id', roiId.toString()); // String type per Swagger
     formData.append('golden_image', imageBlob, `roi_${roiId}.jpg`);
     
-    const serverUrl = appState.serverUrl || 'http://10.100.27.156:5000';
+    const serverUrl = appState.serverUrl || 'http://10.100.10.156:5000';
     const response = await fetch(`${serverUrl}/api/golden-sample/save`, {
         method: 'POST',
         body: formData
@@ -131,7 +131,7 @@ button.primary:hover {
 
 ### 4. API Endpoint (Server)
 
-**Server:** `http://10.100.27.156:5000`  
+**Server:** `http://10.100.10.156:5000`  
 **Endpoint:** `POST /api/golden-sample/save`  
 **Source:** Server Swagger API Documentation
 
@@ -193,7 +193,7 @@ button.primary:hover {
 
 **Important Notes:**
 - ⚠️ Request goes to **SERVER** endpoint, not client
-- ✅ Server URL: `http://10.100.27.156:5000` (or from `appState.serverUrl`)
+- ✅ Server URL: `http://10.100.10.156:5000` (or from `appState.serverUrl`)
 - ✅ Image fetched from client's shared folder first, then uploaded to server
 - ✅ `roi_id` must be string type (per Swagger spec)
 

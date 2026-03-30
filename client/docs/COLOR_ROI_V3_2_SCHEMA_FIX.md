@@ -189,24 +189,24 @@ Flask app handles the wrapping/unwrapping of `color_config` during server commun
 
 ```bash
 # Check server schema version
-curl -s http://10.100.27.156:5000/api/schema/roi | python3 -c "import json, sys; data=json.load(sys.stdin); print('Version:', data['version'])"
+curl -s http://10.100.10.156:5000/api/schema/roi | python3 -c "import json, sys; data=json.load(sys.stdin); print('Version:', data['version'])"
 
 # Verify Type 4 exists
-curl -s http://10.100.27.156:5000/api/schema/roi | python3 -c "import json, sys; data=json.load(sys.stdin); print('ROI Types:', list(data['roi_types'].keys()))"
+curl -s http://10.100.10.156:5000/api/schema/roi | python3 -c "import json, sys; data=json.load(sys.stdin); print('ROI Types:', list(data['roi_types'].keys()))"
 
 # Check field 11 (color_config)
-curl -s http://10.100.27.156:5000/api/schema/roi | python3 -c "import json, sys; data=json.load(sys.stdin); print('Field 11:', data['fields'][11]['name'])"
+curl -s http://10.100.10.156:5000/api/schema/roi | python3 -c "import json, sys; data=json.load(sys.stdin); print('Field 11:', data['fields'][11]['name'])"
 
 # View color type details
-curl -s http://10.100.27.156:5000/api/schema/roi | python3 -c "import json, sys; data=json.load(sys.stdin); import pprint; pprint.pprint(data['roi_types']['4'])"
+curl -s http://10.100.10.156:5000/api/schema/roi | python3 -c "import json, sys; data=json.load(sys.stdin); import pprint; pprint.pprint(data['roi_types']['4'])"
 ```
 
 ---
 
 ## References
 
-- **Server API**: http://10.100.27.156:5000/apidocs/
-- **ROI Schema**: http://10.100.27.156:5000/api/schema/roi
+- **Server API**: http://10.100.10.156:5000/apidocs/
+- **ROI Schema**: http://10.100.10.156:5000/api/schema/roi
 - **Schema Version**: v3.2 (updated November 1, 2025)
 - **Related Docs**: 
   - `docs/CLIENT_SERVER_SCHEMA_FIX.md` - General schema alignment

@@ -69,7 +69,7 @@ http://127.0.0.1:5100
 
 ### Basic Workflow
 
-1. **Connect to Server** → Enter server URL (default: `http://10.100.27.156:5000`)
+1. **Connect to Server** → Enter server URL (default: `http://10.100.10.156:5000`)
 2. **Initialize Camera** → Select camera and product
 3. **Create Session** → Start inspection session
 4. **Run Inspection** → Capture and analyze images
@@ -142,7 +142,7 @@ ls -la /mnt/visual-aoi-shared/
 - Click "🔗 Connect to Server"
 - Wait for green "✓ Connected" status
 
-**Default Server**: `http://10.100.27.156:5000`
+**Default Server**: `http://10.100.10.156:5000`
 
 ### 2. Camera Initialization
 
@@ -426,7 +426,7 @@ Edit `config/theme_settings.json`:
 Configure in web UI or environment variable:
 
 ```bash
-export AOI_SERVER_URL=http://10.100.27.156:5000
+export AOI_SERVER_URL=http://10.100.10.156:5000
 ```
 
 **Server API Endpoints:**
@@ -507,7 +507,7 @@ Action: Reinstall gstreamer1.0-* packages
 **Connection Refused**
 ```bash
 # Check server status
-curl http://10.100.27.156:5000/api/health
+curl http://10.100.10.156:5000/api/health
 
 # Check firewall
 sudo ufw status
@@ -611,7 +611,7 @@ pytest tests/ -m "unit"
 python3 -c "import TIS; print(TIS.get_devices())"
 
 # Test server connection
-curl http://10.100.27.156:5000/api/health
+curl http://10.100.10.156:5000/api/health
 
 # Test shared folder
 ls -la /mnt/visual-aoi-shared/sessions/

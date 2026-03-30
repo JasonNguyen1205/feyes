@@ -1,7 +1,7 @@
 # Color ROI Checking Implementation
 
 ## Overview
-Implemented **complete color ROI checking support** including configuration UI and result display based on the server API at `http://10.100.27.156:5000/apidocs/`. The client now supports creating, editing, and viewing color ROI results alongside existing ROI types (barcode, OCR, compare, text).
+Implemented **complete color ROI checking support** including configuration UI and result display based on the server API at `http://10.100.10.156:5000/apidocs/`. The client now supports creating, editing, and viewing color ROI results alongside existing ROI types (barcode, OCR, compare, text).
 
 ## Changes Made
 
@@ -192,7 +192,7 @@ Follows existing ROI detail item structure:
 11. **Check badge color** matches configuration editor color (#FF2D55)
 
 ## API Reference
-- **Documentation**: http://10.100.27.156:5000/apidocs/
+- **Documentation**: http://10.100.10.156:5000/apidocs/
 - **Endpoint**: `/api/products/{product_name}/colors` (GET, POST)
 - **Schema Version**: v2.0
 - **Related Docs**: `docs/SCHEMA_V2_QUICK_REFERENCE.md`

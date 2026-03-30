@@ -2,7 +2,7 @@
 
 **Date:** October 3, 2025  
 **Status:** ✅ COMPLETED  
-**Server API:** http://10.100.27.156:5000/apidocs/
+**Server API:** http://10.100.10.156:5000/apidocs/
 
 ## Overview
 

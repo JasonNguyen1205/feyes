@@ -8,7 +8,7 @@ import requests
 import json
 
 # Configuration
-SERVER_URL = "http://10.100.27.156:5000"
+SERVER_URL = "http://10.100.10.156:5000"
 PRODUCT_ID = "20003548"
 TEST_BARCODE = "1897848 S/N: 65514 3969 1006 V"
 EXPECTED_LINKED = "1897848-0001555-118714"  # Expected transformation
